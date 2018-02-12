@@ -1,0 +1,15 @@
+diff --git a/src/core/player.h b/src/core/player.h
+index 19c2821b4..d03a4ad54 100644
+--- a/src/core/player.h
++++ b/src/core/player.h
+@@ -153,8 +153,8 @@ class Player : public PlayerInterface {
+   void Next();
+   void Previous();
+   void SetVolume(int value);
+-  void VolumeUp() { SetVolume(GetVolume() + 5); }
+-  void VolumeDown() { SetVolume(GetVolume() - 5); }
++  void VolumeUp() { SetVolume(GetVolume() + 1); }
++  void VolumeDown() { SetVolume(GetVolume() - 1); }
+   void SeekTo(int seconds);
+   void SeekForward();
+   void SeekBackward();
