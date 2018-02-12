@@ -1,0 +1,57 @@
+From 0a22983beffe1daf987acee76de4f8617d9bfade Mon Sep 17 00:00:00 2001
+From: Alex Nemeth <alex.nemeth329@gmail.com>
+Date: Thu, 1 Feb 2018 19:56:51 +0100
+Subject: [PATCH] Updated blur default value from 5/15 to 10/15
+
+Summary: The default blur value of 5/15 is too low.
+
+Test Plan:
+Before:
+{F5681825}
+
+After:
+{F5681826}
+
+Reviewers: #vdg, #kwin, fredrik
+
+Reviewed By: #vdg, fredrik
+
+Subscribers: ngraham, kwin, #kwin
+
+Tags: #kwin
+
+Differential Revision: https://phabricator.kde.org/D10180
+---
+ effects/blur/blur.kcfg      | 2 +-
+ effects/blur/blur_config.ui | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/effects/blur/blur.kcfg b/effects/blur/blur.kcfg
+index 9fc659d3a..cc3a9f700 100644
+--- a/effects/blur/blur.kcfg
++++ b/effects/blur/blur.kcfg
+@@ -6,7 +6,7 @@
+     <kcfgfile arg="true"/>
+     <group name="Effect-Blur">
+         <entry name="BlurStrength" type="Int">
+-            <default>5</default>
++            <default>10</default>
+         </entry>
+         <entry name="UseSimpleBlur" type="Bool">
+             <default>false</default>
+diff --git a/effects/blur/blur_config.ui b/effects/blur/blur_config.ui
+index 068637ca0..a5629a0fc 100644
+--- a/effects/blur/blur_config.ui
++++ b/effects/blur/blur_config.ui
+@@ -58,7 +58,7 @@
+         <number>1</number>
+        </property>
+        <property name="value">
+-        <number>5</number>
++        <number>10</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+-- 
+2.16.1
+
