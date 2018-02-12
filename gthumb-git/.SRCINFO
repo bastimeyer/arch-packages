@@ -1,6 +1,6 @@
 pkgbase = gthumb-git
 	pkgdesc = Image browser and viewer for the GNOME Desktop
-	pkgver = 3.3.4
+	pkgver = 3.6.0.7.gb0c1d5dc
 	pkgrel = 1
 	url = http://live.gnome.org/gthumb/
 	install = gthumb.install

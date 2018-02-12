@@ -1,0 +1,13 @@
+diff --git a/configure.ac b/configure.ac
+index 58fb18d7..01ebc892 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -624,7 +624,7 @@ AM_CONDITIONAL(ENABLE_BRASERO_TOOLS, test "x$enable_libbrasero" = xyes)
+ 
+ dnl ===========================================================================
+ 
+-enable_web_albums=yes
++enable_web_albums=no
+ if test x$enable_web_albums = xyes; then
+ 	AC_CHECK_PROGS(BISON, bison, no)
+ 	if test "$BISON" = "no"; then
