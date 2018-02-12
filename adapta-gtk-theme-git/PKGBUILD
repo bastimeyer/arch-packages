@@ -1,8 +1,9 @@
 # Maintainer: Maxime Gauduin <alucryd@archlinux.org>
 # Contributor: Phillip Schichtel <phillip.public@schich.tel>
+# Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=adapta-gtk-theme-git
-pkgver=3.92.2.63
+pkgver=3.93.0.117.r1.13cc593f
 pkgrel=1
 pkgdesc='An adaptive Gtk+ theme based on Material Design Guidelines'
 arch=('any')
@@ -29,16 +30,20 @@ pkgver() {
 build() {
   cd adapta-gtk-theme
 
-  #bundle install --path .
-  #export PATH="$(find $PWD/ruby -maxdepth 2 -type d -name bin):$PATH"
+  patch -p1 < "${startdir}/0000-cinnamon-changes.patch"
 
   ./autogen.sh \
     --prefix='/usr' \
-    --enable-parallel \
+    --enable-cinnamon \
     --enable-chrome \
-    --enable-plank \
-    --enable-telegram \
-    --disable-unity
+    --enable-gnome \
+    --enable-parallel \
+    --disable-flashback \
+    --disable-mate \
+    --disable-openbox \
+    --disable-telegram \
+    --disable-unity \
+    --disable-xfce
   make
 }
 
@@ -46,9 +51,6 @@ package() {
   cd adapta-gtk-theme
 
   make DESTDIR="${pkgdir}" install
-
-  install -dm 755 "${pkgdir}"/usr/share/plank/themes
-  ln -s /usr/share/themes/Adapta/plank "${pkgdir}"/usr/share/plank/themes/Adapta
 }
 
 # vim: ts=2 sw=2 et:

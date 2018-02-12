@@ -1,0 +1,84 @@
+diff --git a/shell/sass/cinnamon/_common.scss b/shell/sass/cinnamon/_common.scss
+index 47ee5694..64000aa4 100644
+--- a/shell/sass/cinnamon/_common.scss
++++ b/shell/sass/cinnamon/_common.scss
+@@ -12,7 +12,7 @@
+   transition-duration: 0.2s;
+ }
+ 
+-$font-family: Noto Sans, Sans-Serif;
++$font-family: Roboto, Noto Sans, Cantarell, Sans-Serif;
+ 
+ stage {
+   @include fontscaling($ref_size);
+@@ -655,13 +655,13 @@ $ws_thumb_spacing: 32px;
+     }
+   }
+ 
+-  &-overview-background-shade { background-color: rgba(0, 0, 0, 0.54); }
++  &-overview-background-shade { background-color: rgba(0, 0, 0, 0); }
+ }
+ 
+ .workspace-close-button,
+ .window-close {
+-  height: 36px;
+-  width: 36px;
++  height: 0;
++  width: 0;
+   -cinnamon-close-overlap: 24px;
+   background-image: url("assets/misc/close.svg");
+   background-size: 36px;
+@@ -1458,9 +1458,8 @@ $ws_thumb_spacing: 32px;
+   }
+ 
+   &-item-label {
+-    width: 15em;
+     min-width: 5px;
+-    font-weight: 400;
++    font-weight: 700;
+   }
+ 
+   &-item-box {
+@@ -1470,7 +1469,7 @@ $ws_thumb_spacing: 32px;
+     background-color: $hidden_fill_color;
+     color: $osd_fg_color;
+     box-shadow: $empty_shadow;
+-    font-weight: 400;
++    font-weight: 700;
+     &:hover {
+       color: $selected_fg_color;
+ 
+@@ -2007,21 +2006,13 @@ $ws_thumb_spacing: 32px;
+   text-shadow: none;
+ }
+ 
+-$top_gap: 2px;
+-$bottom_gap: 4px;
+-
+ .expo {
+   &-workspaces-name-entry {
+     @include fontscaling($ref_size * 0.9);
+-    -cinnamon-caption-spacing: 12px;
+-    // FIXME: use 'height' property instead of min-height since total height
+-    // affects to the size of vertically gap between thumbnails. And we can't
+-    // use margins either. Foolish...
+-    height: $ws_thumb_spacing - $top_gap - $bottom_gap;
+-    padding: 0 8px;
++    -cinnamon-caption-spacing: 0;
++    height: 0;
++    padding: 10px 8px;
+     border-radius: 0;
+-    border-top: $top_gap solid transparent; // add extra top gap
+-    border-bottom: $bottom_gap solid transparent; // add extra bottom gap
+     color: $osd_tertiary_fg_color;
+     background-color: $hidden_fill_color;
+     caret-color: $osd_fg_color;
+@@ -2049,7 +2040,7 @@ $bottom_gap: 4px;
+     }
+   }
+ 
+-  &-background { background-color: rgba(0, 0, 0, 0.54); }
++  &-background { background-color: $osd_bg_color; }
+ }
+ 
+ 
