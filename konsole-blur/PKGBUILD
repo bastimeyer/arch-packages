@@ -1,0 +1,48 @@
+# $Id$
+# Maintainer: Felix Yan <felixonmars@archlinux.org>
+# Maintainer: Antonio Rojas <arojas@archlinux.org>
+# Contributor: Andrea Scarpino <andrea@archlinux.org>
+# Contributor: Sebastian Meyer <mail@bastimeyer.de>
+
+_pkgname=konsole
+pkgname="${_pkgname}-blur"
+pkgver=17.12.2
+pkgrel=1
+replaces=("${_pkgname}")
+conflicts=("${_pkgname}")
+arch=(x86_64)
+url='https://kde.org/applications/system/konsole/'
+pkgdesc="KDE's terminal emulator"
+license=(GPL LGPL FDL)
+groups=(kde-applications kdebase)
+depends=(knotifyconfig kpty kparts kinit)
+makedepends=(extra-cmake-modules kdoctools python)
+optdepends=('keditbookmarks: to manage bookmarks')
+source=("https://download.kde.org/stable/applications/${pkgver}/src/${_pkgname}-${pkgver}.tar.xz"{,.sig})
+sha256sums=('ece6ea3c07074128bb2a601f49cade8e5d6d3cccc17c58a1052e34c0b1ab7ab5'
+            'SKIP')
+validpgpkeys=(CA262C6C83DE4D2FB28A332A3A6A4DB839EAA6D7  # Albert Astals Cid <aacid@kde.org>
+              F23275E4BF10AFC1DF6914A6DBD2CE893E2D1C87) # Christoph Feck <cfeck@kde.org>
+
+prepare() {
+  mkdir -p build
+
+  cd "${_pkgname}-${pkgver}"
+  patch -p1 -i ../../kdebug-384620.patch # Add support for ECMA-48 REP
+  patch -Np1 -i ../../0001-add-blur-effect-when-set-transparency.patch
+}
+
+build() {
+  cd build
+  cmake "../${_pkgname}-${pkgver}" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DBUILD_TESTING=OFF
+  make
+}
+
+package() {
+  cd build
+  make DESTDIR="$pkgdir" install
+}
