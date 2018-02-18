@@ -1,0 +1,697 @@
+From cc0325af41528b4f68e9f376c4d2d27ed1e28f11 Mon Sep 17 00:00:00 2001
+From: Alex Nemeth <alex.nemeth329@gmail.com>
+Date: Wed, 14 Feb 2018 00:12:39 +0100
+Subject: [PATCH] Added noise blur effect
+
+Summary:
+Added the option to turn on noise behind the blurred area.
+The lowest strength value disables it completely, so it is optional and is disabled by default.
+
+Test Plan:
+Edit: this new screenshot shows the updated noise generation.
+Edit2: separated the screenshots so you can flick through them to clearly see the differences
+
+{F5694024}
+
+{F5694031}
+
+{F5694025}
+
+{F5694028}
+
+Reviewers: #kwin, #vdg, fredrik
+
+Reviewed By: #vdg, fredrik
+
+Subscribers: davidedmundson, matheusm, romangg, ivan, zzag, ngraham, kwin, #kwin
+
+Tags: #kwin
+
+Differential Revision: https://phabricator.kde.org/D10281
+
+diff --git a/effects/blur/blur.cpp b/effects/blur/blur.cpp
+index 000285fb9..cc4734e60 100644
+--- a/effects/blur/blur.cpp
++++ b/effects/blur/blur.cpp
+@@ -27,12 +27,16 @@
+ 
+ #include <QMatrix4x4>
+ #include <QLinkedList>
++#include <QScreen> // for QGuiApplication
++#include <QTime>
+ #include <cmath> // for ceil()
+ 
+ #include <KWayland/Server/surface_interface.h>
+ #include <KWayland/Server/blur_interface.h>
+ #include <KWayland/Server/shadow_interface.h>
+ #include <KWayland/Server/display.h>
++#include <KSharedConfig>
++#include <KConfigGroup>
+ 
+ namespace KWin
+ {
+@@ -143,7 +147,7 @@ void BlurEffect::updateTexture()
+ 
+     // Prepare the stack for the rendering
+     m_renderTargetStack.clear();
+-    m_renderTargets.reserve(m_downSampleIterations * 2 - 1);
++    m_renderTargetStack.reserve(m_downSampleIterations * 2);
+ 
+     // Upsample
+     for (int i = 1; i < m_downSampleIterations; i++) {
+@@ -157,6 +161,9 @@ void BlurEffect::updateTexture()
+ 
+     // Copysample
+     m_renderTargetStack.push(m_renderTargets[0]);
++
++    // Generate the noise helper texture
++    generateNoiseTexture();
+ }
+ 
+ void BlurEffect::initBlurStrengthValues()
+@@ -227,6 +234,9 @@ void BlurEffect::reconfigure(ReconfigureFlags flags)
+     m_downSampleIterations = blurStrengthValues[blurStrength].iteration;
+     m_offset = blurStrengthValues[blurStrength].offset;
+     m_expandSize = blurOffsets[m_downSampleIterations - 1].expandSize;
++    m_noiseStrength = BlurConfig::noiseStrength();
++
++    m_scalingFactor = QGuiApplication::primaryScreen()->logicalDotsPerInch() / 96.0;
+ 
+     updateTexture();
+ 
+@@ -550,7 +560,7 @@ void BlurEffect::drawWindow(EffectWindow *w, int mask, QRegion region, WindowPai
+         }
+ 
+         if (!shape.isEmpty()) {
+-            doBlur(shape, screen, data.opacity(), data.screenProjectionMatrix(), w->isDock());
++            doBlur(shape, screen, data.opacity(), data.screenProjectionMatrix(), w->isDock(), w->geometry());
+         }
+     }
+ 
+@@ -566,12 +576,39 @@ void BlurEffect::paintEffectFrame(EffectFrame *frame, QRegion region, double opa
+     QRegion shape = frame->geometry().adjusted(-borderSize, -borderSize, borderSize, borderSize) & screen;
+ 
+     if (valid && !shape.isEmpty() && region.intersects(shape.boundingRect()) && frame->style() != EffectFrameNone) {
+-        doBlur(shape, screen, opacity * frameOpacity, frame->screenProjectionMatrix(), false);
++        doBlur(shape, screen, opacity * frameOpacity, frame->screenProjectionMatrix(), false, frame->geometry());
+     }
+     effects->paintEffectFrame(frame, region, opacity, frameOpacity);
+ }
+ 
+-void BlurEffect::doBlur(const QRegion& shape, const QRect& screen, const float opacity, const QMatrix4x4 &screenProjection, bool isDock)
++void BlurEffect::generateNoiseTexture()
++{
++    if (m_noiseStrength == 0) {
++        return;
++    }
++
++    // Init randomness based on time
++    qsrand((uint)QTime::currentTime().msec());
++
++    QImage noiseImage(QSize(256, 256), QImage::Format_Grayscale8);
++
++    for (int y = 0; y < noiseImage.height(); y++) {
++        uint8_t *noiseImageLine = (uint8_t *) noiseImage.scanLine(y);
++
++        for (int x = 0; x < noiseImage.width(); x++) {
++            noiseImageLine[x] = qrand() % m_noiseStrength + (128 - m_noiseStrength / 2);
++        }
++    }
++
++    // The noise texture looks distorted when not scaled with integer
++    noiseImage = noiseImage.scaled(noiseImage.size() * m_scalingFactor);
++
++    m_noiseTexture = GLTexture(noiseImage);
++    m_noiseTexture.setFilter(GL_NEAREST);
++    m_noiseTexture.setWrapMode(GL_REPEAT);
++}
++
++void BlurEffect::doBlur(const QRegion& shape, const QRect& screen, const float opacity, const QMatrix4x4 &screenProjection, bool isDock, QRect windowRect)
+ {
+     QRegion expandedBlurRegion = expand(shape) & expand(screen);
+ 
+@@ -628,24 +665,40 @@ void BlurEffect::doBlur(const QRegion& shape, const QRect& screen, const float o
+         glBlendFunc(GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA);
+     }
+ 
+-    //Final upscale to the screen
+-    m_shader->bind(BlurShader::UpSampleType);
+-    m_shader->setOffset(m_offset);
++    upscaleRenderToScreen(vbo, blurRectCount * (m_downSampleIterations + 1), shape.rectCount() * 6, screenProjection, shape.boundingRect(), windowRect.topLeft());
+ 
+-    m_shader->setModelViewProjectionMatrix(screenProjection);
+-    m_shader->setTargetSize(m_renderTextures[0].size());
++    if (opacity < 1.0) {
++        glDisable(GL_BLEND);
++    }
+ 
+-    //Copy the image from this texture
++    vbo->unbindArrays();
++}
++
++void BlurEffect::upscaleRenderToScreen(GLVertexBuffer *vbo, int vboStart, int blurRectCount, QMatrix4x4 screenProjection, QRect windowShape, QPoint windowPosition)
++{
++    glActiveTexture(GL_TEXTURE0);
+     m_renderTextures[1].bind();
+ 
+-    //Render to the screen
+-    vbo->draw(GL_TRIANGLES, blurRectCount * (m_downSampleIterations + 1), shape.rectCount() * 6);
++    if (m_noiseStrength > 0) {
++        m_shader->bind(BlurShader::NoiseSampleType);
++        m_shader->setTargetTextureSize(m_renderTextures[0].size());
++        m_shader->setNoiseTextureSize(m_noiseTexture.size());
++        m_shader->setTexturePosition(windowPosition);
+ 
+-    if (opacity < 1.0) {
+-        glDisable(GL_BLEND);
++        glActiveTexture(GL_TEXTURE1);
++        m_noiseTexture.bind();
++    } else {
++        m_shader->bind(BlurShader::UpSampleType);
++        m_shader->setTargetTextureSize(m_renderTextures[0].size());
+     }
+ 
+-    vbo->unbindArrays();
++    m_shader->setOffset(m_offset);
++    m_shader->setModelViewProjectionMatrix(screenProjection);
++
++    //Render to the screen
++    vbo->draw(GL_TRIANGLES, vboStart, blurRectCount);
++
++    glActiveTexture(GL_TEXTURE0);
+     m_shader->unbind();
+ }
+ 
+@@ -661,7 +714,7 @@ void BlurEffect::downSampleTexture(GLVertexBuffer *vbo, int blurRectCount)
+         modelViewProjectionMatrix.ortho(0, m_renderTextures[i].width(), m_renderTextures[i].height(), 0 , 0, 65535);
+ 
+         m_shader->setModelViewProjectionMatrix(modelViewProjectionMatrix);
+-        m_shader->setTargetSize(m_renderTextures[i].size());
++        m_shader->setTargetTextureSize(m_renderTextures[i].size());
+ 
+         //Copy the image from this texture
+         m_renderTextures[i - 1].bind();
+@@ -680,12 +733,12 @@ void BlurEffect::upSampleTexture(GLVertexBuffer *vbo, int blurRectCount)
+     m_shader->bind(BlurShader::UpSampleType);
+     m_shader->setOffset(m_offset);
+ 
+-    for (int i = m_downSampleIterations - 1; i > 0; i--) {
++    for (int i = m_downSampleIterations - 1; i >= 1; i--) {
+         modelViewProjectionMatrix.setToIdentity();
+         modelViewProjectionMatrix.ortho(0, m_renderTextures[i].width(), m_renderTextures[i].height(), 0 , 0, 65535);
+ 
+         m_shader->setModelViewProjectionMatrix(modelViewProjectionMatrix);
+-        m_shader->setTargetSize(m_renderTextures[i].size());
++        m_shader->setTargetTextureSize(m_renderTextures[i].size());
+ 
+         //Copy the image from this texture
+         m_renderTextures[i + 1].bind();
+@@ -702,7 +755,7 @@ void BlurEffect::copyScreenSampleTexture(GLVertexBuffer *vbo, int blurRectCount,
+     m_shader->bind(BlurShader::CopySampleType);
+ 
+     m_shader->setModelViewProjectionMatrix(screenProjection);
+-    m_shader->setTargetSize(screenSize);
++    m_shader->setTargetTextureSize(screenSize);
+ 
+     /*
+      * This '1' sized adjustment is necessary do avoid windows affecting the blur that are
+diff --git a/effects/blur/blur.h b/effects/blur/blur.h
+index 334352317..06274e2d3 100644
+--- a/effects/blur/blur.h
++++ b/effects/blur/blur.h
+@@ -83,10 +83,12 @@ private:
+     QRegion blurRegion(const EffectWindow *w) const;
+     bool shouldBlur(const EffectWindow *w, int mask, const WindowPaintData &data) const;
+     void updateBlurRegion(EffectWindow *w) const;
+-    void doBlur(const QRegion &shape, const QRect &screen, const float opacity, const QMatrix4x4 &screenProjection, bool isDock);
++    void doBlur(const QRegion &shape, const QRect &screen, const float opacity, const QMatrix4x4 &screenProjection, bool isDock, QRect windowRect);
+     void uploadRegion(QVector2D *&map, const QRegion &region, const int downSampleIterations);
+     void uploadGeometry(GLVertexBuffer *vbo, const QRegion &blurRegion, const QRegion &windowRegion);
++    void generateNoiseTexture();
+ 
++    void upscaleRenderToScreen(GLVertexBuffer *vbo, int vboStart, int blurRectCount, QMatrix4x4 screenProjection, QRect windowShape, QPoint windowPosition);
+     void downSampleTexture(GLVertexBuffer *vbo, int blurRectCount);
+     void upSampleTexture(GLVertexBuffer *vbo, int blurRectCount);
+     void copyScreenSampleTexture(GLVertexBuffer *vbo, int blurRectCount, QRegion blurShape, QSize screenSize, QMatrix4x4 screenProjection);
+@@ -96,6 +98,9 @@ private:
+     QVector <GLRenderTarget*> m_renderTargets;
+     QVector <GLTexture> m_renderTextures;
+     QStack <GLRenderTarget*> m_renderTargetStack;
++
++    GLTexture m_noiseTexture;
++
+     bool m_renderTargetsValid;
+     long net_wm_blur_region;
+     QRegion m_damagedArea; // keeps track of the area which has been damaged (from bottom to top)
+@@ -105,6 +110,8 @@ private:
+     int m_downSampleIterations; // number of times the texture will be downsized to half size
+     int m_offset;
+     int m_expandSize;
++    int m_noiseStrength;
++    int m_scalingFactor;
+ 
+     struct OffsetStruct {
+         float minOffset;
+diff --git a/effects/blur/blur.kcfg b/effects/blur/blur.kcfg
+index 7e0c26332..8c215404d 100644
+--- a/effects/blur/blur.kcfg
++++ b/effects/blur/blur.kcfg
+@@ -8,5 +8,8 @@
+         <entry name="BlurStrength" type="Int">
+             <default>10</default>
+         </entry>
++        <entry name="NoiseStrength" type="Int">
++            <default>5</default>
++        </entry>
+     </group>
+ </kcfg>
+diff --git a/effects/blur/blur_config.ui b/effects/blur/blur_config.ui
+index a5da6ed7c..283fff79a 100644
+--- a/effects/blur/blur_config.ui
++++ b/effects/blur/blur_config.ui
+@@ -7,14 +7,14 @@
+     <x>0</x>
+     <y>0</y>
+     <width>480</width>
+-    <height>95</height>
++    <height>184</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+-    <widget class="QLabel" name="labelConstantExplanation">
++    <widget class="QLabel" name="labelConstantBlurDescription">
+      <property name="text">
+-      <string>Strength of the effect:</string>
++      <string>Blur strength:</string>
+      </property>
+     </widget>
+    </item>
+@@ -37,7 +37,7 @@
+       </spacer>
+      </item>
+      <item>
+-      <widget class="QLabel" name="labelConstantLight">
++      <widget class="QLabel" name="labelConstantBlurLight">
+        <property name="text">
+         <string>Light</string>
+        </property>
+@@ -69,7 +69,70 @@
+       </widget>
+      </item>
+      <item>
+-      <widget class="QLabel" name="labelConstantStrong">
++      <widget class="QLabel" name="labelConstantBlurStrong">
++       <property name="text">
++        <string>Strong</string>
++       </property>
++      </widget>
++     </item>
++    </layout>
++   </item>
++   <item>
++    <widget class="QLabel" name="labelConstantNoiseDescription">
++     <property name="text">
++      <string>Noise strength:</string>
++     </property>
++    </widget>
++   </item>
++   <item>
++    <layout class="QHBoxLayout" name="horizontalLayout_2">
++     <item>
++      <spacer name="horizontalSpacer_2">
++       <property name="orientation">
++        <enum>Qt::Horizontal</enum>
++       </property>
++       <property name="sizeType">
++        <enum>QSizePolicy::Fixed</enum>
++       </property>
++       <property name="sizeHint" stdset="0">
++        <size>
++         <width>20</width>
++         <height>20</height>
++        </size>
++       </property>
++      </spacer>
++     </item>
++     <item>
++      <widget class="QLabel" name="labelConstantNoiseLight">
++       <property name="text">
++        <string>Light</string>
++       </property>
++      </widget>
++     </item>
++     <item>
++      <widget class="QSlider" name="kcfg_NoiseStrength">
++       <property name="maximum">
++        <number>14</number>
++       </property>
++       <property name="pageStep">
++        <number>5</number>
++       </property>
++       <property name="value">
++        <number>5</number>
++       </property>
++       <property name="orientation">
++        <enum>Qt::Horizontal</enum>
++       </property>
++       <property name="tickPosition">
++        <enum>QSlider::TicksBelow</enum>
++       </property>
++       <property name="tickInterval">
++        <number>1</number>
++       </property>
++      </widget>
++     </item>
++     <item>
++      <widget class="QLabel" name="labelConstantNoiseStrong">
+        <property name="text">
+         <string>Strong</string>
+        </property>
+diff --git a/effects/blur/blurshader.cpp b/effects/blur/blurshader.cpp
+index c6957a0d9..d16600ef1 100644
+--- a/effects/blur/blurshader.cpp
++++ b/effects/blur/blurshader.cpp
+@@ -73,6 +73,9 @@ void GLSLBlurShader::reset()
+     delete m_shaderCopysample;
+     m_shaderCopysample = nullptr;
+ 
++    delete m_shaderNoisesample;
++    m_shaderNoisesample = nullptr;
++
+     setIsValid(false);
+ }
+ 
+@@ -105,6 +108,14 @@ void GLSLBlurShader::setModelViewProjectionMatrix(const QMatrix4x4 &matrix)
+             m_matrixDownsample = matrix;
+             m_shaderDownsample->setUniform(m_mvpMatrixLocationDownsample, matrix);
+             break;
++
++        case NoiseSampleType:
++            if (matrix == m_matrixNoisesample)
++                return;
++
++            m_matrixNoisesample = matrix;
++            m_shaderNoisesample->setUniform(m_mvpMatrixLocationNoisesample, matrix);
++            break;
+     }
+ }
+ 
+@@ -129,10 +140,18 @@ void GLSLBlurShader::setOffset(float offset)
+             m_offsetDownsample = offset;
+             m_shaderDownsample->setUniform(m_offsetLocationDownsample, offset);
+             break;
++
++        case NoiseSampleType:
++            if (offset == m_offsetNoisesample)
++                return;
++
++            m_offsetNoisesample = offset;
++            m_shaderNoisesample->setUniform(m_offsetLocationNoisesample, offset);
++            break;
+     }
+ }
+ 
+-void GLSLBlurShader::setTargetSize(QSize renderTextureSize)
++void GLSLBlurShader::setTargetTextureSize(QSize renderTextureSize)
+ {
+     if (!isValid())
+         return;
+@@ -141,33 +160,41 @@ void GLSLBlurShader::setTargetSize(QSize renderTextureSize)
+ 
+     switch (m_activeSampleType) {
+         case CopySampleType:
+-            if (renderTextureSize == m_renderTextureSizeCopysample)
+-                return;
+-
+-            m_renderTextureSizeCopysample = renderTextureSize;
+             m_shaderCopysample->setUniform(m_renderTextureSizeLocationCopysample, texSize);
+             break;
+ 
+         case UpSampleType:
+-            if (renderTextureSize == m_renderTextureSizeUpsample)
+-                return;
+-
+-            m_renderTextureSizeUpsample = renderTextureSize;
+             m_shaderUpsample->setUniform(m_renderTextureSizeLocationUpsample, texSize);
+             m_shaderUpsample->setUniform(m_halfpixelLocationUpsample, QVector2D(0.5 / texSize.x(), 0.5 / texSize.y()));
+             break;
+ 
+         case DownSampleType:
+-            if (renderTextureSize == m_renderTextureSizeDownsample)
+-                return;
+-
+-            m_renderTextureSizeDownsample = renderTextureSize;
+             m_shaderDownsample->setUniform(m_renderTextureSizeLocationDownsample, texSize);
+             m_shaderDownsample->setUniform(m_halfpixelLocationDownsample, QVector2D(0.5 / texSize.x(), 0.5 / texSize.y()));
+             break;
++
++        case NoiseSampleType:
++            m_shaderNoisesample->setUniform(m_renderTextureSizeLocationNoisesample, texSize);
++            m_shaderNoisesample->setUniform(m_halfpixelLocationNoisesample, QVector2D(0.5 / texSize.x(), 0.5 / texSize.y()));
++            break;
+     }
+ }
+ 
++void GLSLBlurShader::setNoiseTextureSize(QSize noiseTextureSize)
++{
++    QVector2D noiseTexSize = QVector2D(noiseTextureSize.width(), noiseTextureSize.height());
++
++    if (noiseTexSize != m_noiseTextureSizeNoisesample) {
++        m_noiseTextureSizeNoisesample = noiseTexSize;
++        m_shaderNoisesample->setUniform(m_noiseTextureSizeLocationNoisesample, noiseTexSize);
++    }
++}
++
++void GLSLBlurShader::setTexturePosition(QPoint texPos)
++{
++    m_shaderNoisesample->setUniform(m_texStartPosLocationNoisesample, QVector2D(-texPos.x(), texPos.y()));
++}
++
+ void GLSLBlurShader::setBlurRect(QRect blurRect, QSize screenSize)
+ {
+     if (!isValid() || blurRect == m_blurRectCopysample)
+@@ -177,9 +204,9 @@ void GLSLBlurShader::setBlurRect(QRect blurRect, QSize screenSize)
+ 
+     QVector4D rect = QVector4D(
+         blurRect.bottomLeft().x()       / float(screenSize.width()),
+-        1.0 - blurRect.bottomLeft().y() / float(screenSize.height()),
+-        blurRect.topRight().x()         / float(screenSize.width()),
+-        1.0 - blurRect.topRight().y()   / float(screenSize.height())
++                               1.0 - blurRect.bottomLeft().y() / float(screenSize.height()),
++                               blurRect.topRight().x()         / float(screenSize.width()),
++                               1.0 - blurRect.topRight().y()   / float(screenSize.height())
+     );
+ 
+     m_shaderCopysample->setUniform(m_blurRectLocationCopysample, rect);
+@@ -202,6 +229,10 @@ void GLSLBlurShader::bind(SampleType sampleType)
+         case DownSampleType:
+             ShaderManager::instance()->pushShader(m_shaderDownsample);
+             break;
++
++        case NoiseSampleType:
++            ShaderManager::instance()->pushShader(m_shaderNoisesample);
++            break;
+     }
+ 
+     m_activeSampleType = sampleType;
+@@ -222,6 +253,7 @@ void GLSLBlurShader::init()
+     QByteArray fragmentDownSource;
+     QByteArray fragmentUpSource;
+     QByteArray fragmentCopySource;
++    QByteArray fragmentNoiseSource;
+ 
+     const QByteArray attribute = core ? "in"        : "attribute";
+     const QByteArray texture2D = core ? "texture"   : "texture2D";
+@@ -331,12 +363,46 @@ void GLSLBlurShader::init()
+ 
+     streamFragCopy.flush();
+ 
+-
+-    m_shaderDownsample = ShaderManager::instance()->loadShaderFromCode(vertexSource, fragmentDownSource);
+-    m_shaderUpsample   = ShaderManager::instance()->loadShaderFromCode(vertexSource, fragmentUpSource);
+-    m_shaderCopysample = ShaderManager::instance()->loadShaderFromCode(vertexSource, fragmentCopySource);
+-
+-    bool areShadersValid = m_shaderDownsample->isValid() && m_shaderUpsample->isValid() && m_shaderCopysample->isValid();
++    // Fragment shader - Noise texture
++    // ===================================================================
++    QTextStream streamFragNoise(&fragmentNoiseSource);
++
++    streamFragNoise << glHeaderString << glUniformString;
++
++    streamFragNoise << "uniform sampler2D noiseTexUnit;\n";
++    streamFragNoise << "uniform vec2 noiseTextureSize;\n";
++    streamFragNoise << "uniform vec2 texStartPos;\n";
++
++    // Upsampling + Noise
++    streamFragNoise << "void main(void)\n";
++    streamFragNoise << "{\n";
++    streamFragNoise << "    vec2 uv = vec2(gl_FragCoord.xy / renderTextureSize);\n";
++    streamFragNoise << "    vec2 uvNoise = vec2((texStartPos.xy + gl_FragCoord.xy) / noiseTextureSize);\n";
++    streamFragNoise << "    \n";
++    streamFragNoise << "    vec4 sum = " << texture2D << "(texUnit, uv + vec2(-halfpixel.x * 2.0, 0.0) * offset);\n";
++    streamFragNoise << "    sum += " << texture2D << "(texUnit, uv + vec2(-halfpixel.x, halfpixel.y) * offset) * 2.0;\n";
++    streamFragNoise << "    sum += " << texture2D << "(texUnit, uv + vec2(0.0, halfpixel.y * 2.0) * offset);\n";
++    streamFragNoise << "    sum += " << texture2D << "(texUnit, uv + vec2(halfpixel.x, halfpixel.y) * offset) * 2.0;\n";
++    streamFragNoise << "    sum += " << texture2D << "(texUnit, uv + vec2(halfpixel.x * 2.0, 0.0) * offset);\n";
++    streamFragNoise << "    sum += " << texture2D << "(texUnit, uv + vec2(halfpixel.x, -halfpixel.y) * offset) * 2.0;\n";
++    streamFragNoise << "    sum += " << texture2D << "(texUnit, uv + vec2(0.0, -halfpixel.y * 2.0) * offset);\n";
++    streamFragNoise << "    sum += " << texture2D << "(texUnit, uv + vec2(-halfpixel.x, -halfpixel.y) * offset) * 2.0;\n";
++    streamFragNoise << "    \n";
++    streamFragNoise << "    " << fragColor << " = sum / 12.0 - (vec4(0.5, 0.5, 0.5, 0) - vec4(" << texture2D << "(noiseTexUnit, uvNoise).rrr, 0));\n";
++    streamFragNoise << "}\n";
++
++    streamFragNoise.flush();
++
++
++    m_shaderDownsample  = ShaderManager::instance()->loadShaderFromCode(vertexSource, fragmentDownSource);
++    m_shaderUpsample    = ShaderManager::instance()->loadShaderFromCode(vertexSource, fragmentUpSource);
++    m_shaderCopysample  = ShaderManager::instance()->loadShaderFromCode(vertexSource, fragmentCopySource);
++    m_shaderNoisesample = ShaderManager::instance()->loadShaderFromCode(vertexSource, fragmentNoiseSource);
++
++    bool areShadersValid = m_shaderDownsample->isValid() &&
++        m_shaderUpsample->isValid() &&
++        m_shaderCopysample->isValid() &&
++        m_shaderNoisesample->isValid();
+     setIsValid(areShadersValid);
+ 
+     if (areShadersValid) {
+@@ -354,6 +420,13 @@ void GLSLBlurShader::init()
+         m_renderTextureSizeLocationCopysample = m_shaderCopysample->uniformLocation("renderTextureSize");
+         m_blurRectLocationCopysample = m_shaderCopysample->uniformLocation("blurRect");
+ 
++        m_mvpMatrixLocationNoisesample = m_shaderNoisesample->uniformLocation("modelViewProjectionMatrix");
++        m_offsetLocationNoisesample = m_shaderNoisesample->uniformLocation("offset");
++        m_renderTextureSizeLocationNoisesample = m_shaderNoisesample->uniformLocation("renderTextureSize");
++        m_noiseTextureSizeLocationNoisesample = m_shaderNoisesample->uniformLocation("noiseTextureSize");
++        m_texStartPosLocationNoisesample = m_shaderNoisesample->uniformLocation("texStartPos");
++        m_halfpixelLocationNoisesample = m_shaderNoisesample->uniformLocation("halfpixel");
++
+         QMatrix4x4 modelViewProjection;
+         const QSize screenSize = effects->virtualScreenSize();
+         modelViewProjection.ortho(0, screenSize.width(), screenSize.height(), 0, 0, 65535);
+@@ -379,6 +452,32 @@ void GLSLBlurShader::init()
+         m_shaderCopysample->setUniform(m_blurRectLocationCopysample, QVector4D(1.0, 1.0, 1.0, 1.0));
+         ShaderManager::instance()->popShader();
+ 
++        ShaderManager::instance()->pushShader(m_shaderNoisesample);
++        m_shaderNoisesample->setUniform(m_mvpMatrixLocationNoisesample, modelViewProjection);
++        m_shaderNoisesample->setUniform(m_offsetLocationNoisesample, float(1.0));
++        m_shaderNoisesample->setUniform(m_renderTextureSizeLocationNoisesample, QVector2D(1.0, 1.0));
++        m_shaderNoisesample->setUniform(m_noiseTextureSizeLocationNoisesample, QVector2D(1.0, 1.0));
++        m_shaderNoisesample->setUniform(m_texStartPosLocationNoisesample, QVector2D(1.0, 1.0));
++        m_shaderNoisesample->setUniform(m_halfpixelLocationNoisesample, QVector2D(1.0, 1.0));
++
++        glUniform1i(m_shaderNoisesample->uniformLocation("texUnit"), 0);
++        glUniform1i(m_shaderNoisesample->uniformLocation("noiseTexUnit"), 1);
++
++        ShaderManager::instance()->popShader();
++
+         m_activeSampleType = -1;
++
++        m_offsetDownsample = 0.0;
++        m_matrixDownsample = QMatrix4x4();
++
++        m_offsetUpsample = 0.0;
++        m_matrixUpsample = QMatrix4x4();
++
++        m_matrixCopysample = QMatrix4x4();
++        m_blurRectCopysample = QRect();
++
++        m_offsetNoisesample = 0.0;
++        m_noiseTextureSizeNoisesample = QVector2D();
++        m_matrixNoisesample = QMatrix4x4();
+     }
+ }
+diff --git a/effects/blur/blurshader.h b/effects/blur/blurshader.h
+index a69811a1f..81f4ddee9 100644
+--- a/effects/blur/blurshader.h
++++ b/effects/blur/blurshader.h
+@@ -45,13 +45,16 @@ public:
+ 
+     virtual void setModelViewProjectionMatrix(const QMatrix4x4 &matrix) = 0;
+     virtual void setOffset(float offset) = 0;
+-    virtual void setTargetSize(QSize renderTextureSize) = 0;
++    virtual void setTargetTextureSize(QSize renderTextureSize) = 0;
++    virtual void setNoiseTextureSize(QSize noiseTextureSize) = 0;
++    virtual void setTexturePosition(QPoint texPos) = 0;
+     virtual void setBlurRect(QRect blurRect, QSize screenSize) = 0;
+ 
+     enum SampleType {
+         DownSampleType,
+         UpSampleType,
+-        CopySampleType
++        CopySampleType,
++        NoiseSampleType
+     };
+ 
+     virtual void bind(SampleType sampleType) = 0;
+@@ -83,7 +86,9 @@ public:
+     void unbind() override final;
+     void setModelViewProjectionMatrix(const QMatrix4x4 &matrix) override final;
+     void setOffset(float offset) override final;
+-    void setTargetSize(QSize renderTextureSize) override final;
++    void setTargetTextureSize(QSize renderTextureSize) override final;
++    void setNoiseTextureSize(QSize noiseTextureSize) override final;
++    void setTexturePosition(QPoint texPos) override final;
+     void setBlurRect(QRect blurRect, QSize screenSize) override final;
+ 
+ protected:
+@@ -94,6 +99,7 @@ private:
+     GLShader *m_shaderDownsample = nullptr;
+     GLShader *m_shaderUpsample = nullptr;
+     GLShader *m_shaderCopysample = nullptr;
++    GLShader *m_shaderNoisesample = nullptr;
+ 
+     int m_mvpMatrixLocationDownsample;
+     int m_offsetLocationDownsample;
+@@ -109,22 +115,30 @@ private:
+     int m_renderTextureSizeLocationCopysample;
+     int m_blurRectLocationCopysample;
+ 
++    int m_mvpMatrixLocationNoisesample;
++    int m_offsetLocationNoisesample;
++    int m_renderTextureSizeLocationNoisesample;
++    int m_noiseTextureSizeLocationNoisesample;
++    int m_texStartPosLocationNoisesample;
++    int m_halfpixelLocationNoisesample;
++
+ 
+     //Caching uniform values to aviod unnecessary setUniform calls
+     int m_activeSampleType;
+ 
+     float m_offsetDownsample;
+     QMatrix4x4 m_matrixDownsample;
+-    QSize m_renderTextureSizeDownsample;
+ 
+     float m_offsetUpsample;
+     QMatrix4x4 m_matrixUpsample;
+-    QSize m_renderTextureSizeUpsample;
+ 
+     QMatrix4x4 m_matrixCopysample;
+-    QSize m_renderTextureSizeCopysample;
+     QRect m_blurRectCopysample;
+ 
++    float m_offsetNoisesample;
++    QVector2D m_noiseTextureSizeNoisesample;
++    QMatrix4x4 m_matrixNoisesample;
++
+ };
+ 
+ } // namespace KWin
+diff --git a/libkwineffects/kwingltexture.cpp b/libkwineffects/kwingltexture.cpp
+index 0ecce612b..8b9652028 100644
+--- a/libkwineffects/kwingltexture.cpp
++++ b/libkwineffects/kwingltexture.cpp
+@@ -125,6 +125,8 @@ GLTexture::GLTexture(const QImage& image, GLenum target)
+             { GL_RGB10_A2, GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV }, // QImage::Format_A2BGR30_Premultiplied
+             { GL_RGB10,    GL_BGRA, GL_UNSIGNED_INT_2_10_10_10_REV }, // QImage::Format_RGB30
+             { GL_RGB10_A2, GL_BGRA, GL_UNSIGNED_INT_2_10_10_10_REV }, // QImage::Format_A2RGB30_Premultiplied
++            { GL_R8,       GL_RED,  GL_UNSIGNED_BYTE               }, // QImage::Format_Alpha8
++            { GL_R8,       GL_RED,  GL_UNSIGNED_BYTE               }, // QImage::Format_Grayscale8
+         };
+ 
+         QImage im;
+-- 
+2.16.1
+

@@ -5,7 +5,7 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin-blur
-pkgver=5.12.0
+pkgver=5.12.1
 pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 provides=(kwin)
@@ -17,7 +17,7 @@ depends=(kscreenlocker xcb-util-cursor plasma-framework kcmutils breeze kinit qt
 makedepends=(extra-cmake-modules qt5-tools kdoctools python)
 optdepends=('qt5-virtualkeyboard: virtual keyboard support for kwin-wayland')
 groups=(plasma)
-source=("git+https://github.com/KDE/kwin.git#tag=v5.12.0")
+source=("git+https://github.com/KDE/kwin.git#tag=v5.12.1")
 sha256sums=(SKIP)
 
 prepare() {
@@ -27,6 +27,7 @@ prepare() {
   patch -p1 < "${startdir}/0001-new-blur-effect.patch"
   patch -p1 < "${startdir}/0002-new-blur-effect.patch"
   patch -p1 < "${startdir}/0003-new-blur-effect.patch"
+  patch -p1 < "${startdir}/0004-new-blur-effect.patch"
 }
 
 build() {
