@@ -7,7 +7,7 @@
 _pkgname=powerdevil
 pkgname=powerdevil-brightness
 pkgver=5.12.1
-pkgrel=1
+pkgrel=2
 provides=("${_pkgname}")
 conflicts=("${_pkgname}")
 pkgdesc='Manages the power consumption settings of a Plasma Shell'

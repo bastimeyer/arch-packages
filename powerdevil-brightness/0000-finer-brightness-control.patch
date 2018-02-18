@@ -8,7 +8,7 @@ index 66e2a96..9e02c4e 100644
  
 +    // enable finer control for screens with higher max brightness values
 +    if (maxValue >= 800) {
-+        return 40;
++        return 100;
 +    }
 +
      if (maxValue >= 100 || maxValue % 20 == 0 || (maxValue >= 80 && maxValue % 4 == 0)) {
