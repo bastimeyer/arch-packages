@@ -7,8 +7,7 @@
 _pkgname=konsole
 pkgname="${_pkgname}-blur"
 pkgver=17.12.2
-pkgrel=1
-replaces=("${_pkgname}")
+pkgrel=2
 provides=("${_pkgname}")
 conflicts=("${_pkgname}")
 arch=(x86_64)
