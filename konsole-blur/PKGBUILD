@@ -9,6 +9,7 @@ pkgname="${_pkgname}-blur"
 pkgver=17.12.2
 pkgrel=1
 replaces=("${_pkgname}")
+provides=("${_pkgname}")
 conflicts=("${_pkgname}")
 arch=(x86_64)
 url='https://kde.org/applications/system/konsole/'
