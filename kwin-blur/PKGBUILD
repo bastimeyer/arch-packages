@@ -5,7 +5,7 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin-blur
-pkgver=5.12.1
+pkgver=5.12.4
 pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 provides=(kwin)
@@ -14,10 +14,10 @@ arch=(x86_64)
 url='https://www.kde.org/workspaces/plasmadesktop/'
 license=(LGPL)
 depends=(kscreenlocker xcb-util-cursor plasma-framework kcmutils breeze kinit qt5-sensors)
-makedepends=(extra-cmake-modules qt5-tools kdoctools python)
+makedepends=(extra-cmake-modules qt5-tools kdoctools)
 optdepends=('qt5-virtualkeyboard: virtual keyboard support for kwin-wayland')
 groups=(plasma)
-source=("git+https://github.com/KDE/kwin.git#tag=v5.12.1")
+source=("git+https://github.com/KDE/kwin.git#tag=v${pkgver}")
 sha256sums=(SKIP)
 
 prepare() {
@@ -33,7 +33,6 @@ prepare() {
 build() {
   cd build
   cmake ../kwin \
-    -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr \
     -DCMAKE_INSTALL_LIBDIR=lib \
     -DCMAKE_INSTALL_LIBEXECDIR=lib \
