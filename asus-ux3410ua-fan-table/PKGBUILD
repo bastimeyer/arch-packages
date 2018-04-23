@@ -1,0 +1,26 @@
+# Maintainer: Sebastian Meyer <mail@bastimeyer.de>
+
+pkgname=asus-ux3410ua-fan-table
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Shifts the fan threshold of the Asus UX3410UA for more quieter or silent usage'
+arch=('any')
+license=('GPL3')
+install=asus-ux3410ua-fan-table.install
+depends=(
+  'acpi_call-dkms'
+  'python'
+)
+source=(
+  'asus-ux3410ua-fan-table.service'
+  'update-cooling-profile.py'
+)
+sha256sums=(
+  'b9d1e090c46ad763296ee498477de8eb577dce91326deacce39d871bc3a76c69'
+  '999da4bf439f07333dea297e25af2dd2fc72748742f69749563dc88ec87582db'
+)
+
+package() {
+  install -Dm644 asus-ux3410ua-fan-table.service "${pkgdir}/usr/lib/systemd/system/asus-ux3410ua-fan-table.service"
+  install -Dm744 update-cooling-profile.py "${pkgdir}/usr/share/asus-ux3410ua-fan-table/update-cooling-profile.py"
+}

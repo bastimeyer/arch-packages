@@ -1,0 +1,11 @@
+[Unit]
+Description=Adjusts fan temperature tipping points using acpi_call
+
+[Install]
+WantedBy=default.target
+
+[Service]
+ExecStart=/usr/bin/python /usr/share/asus-ux3410ua-fan-table/update-cooling-profile.py on
+ExecStop=/usr/bin/python /usr/share/asus-ux3410ua-fan-table/update-cooling-profile.py off
+Type=oneshot
+RemainAfterExit=yes

@@ -1,0 +1,15 @@
+post_install() {
+  systemctl enable --now asus-ux3410ua-fan-table.service
+}
+
+pre_remove() {
+  systemctl disable --now asus-ux3410ua-fan-table.service
+}
+
+pre_upgrade() {
+  pre_remove
+}
+
+post_upgrade() {
+  post_install
+}
