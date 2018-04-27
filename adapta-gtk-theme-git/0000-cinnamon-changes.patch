@@ -1,5 +1,5 @@
 diff --git a/shell/sass/cinnamon/_common.scss b/shell/sass/cinnamon/_common.scss
-index 47ee5694..64000aa4 100644
+index 863d4d59..37937848 100644
 --- a/shell/sass/cinnamon/_common.scss
 +++ b/shell/sass/cinnamon/_common.scss
 @@ -12,7 +12,7 @@
@@ -11,7 +11,7 @@ index 47ee5694..64000aa4 100644
  
  stage {
    @include fontscaling($ref_size);
-@@ -655,13 +655,13 @@ $ws_thumb_spacing: 32px;
+@@ -657,13 +657,13 @@ $ws_thumb_spacing: 32px;
      }
    }
  
@@ -28,18 +28,28 @@ index 47ee5694..64000aa4 100644
    -cinnamon-close-overlap: 24px;
    background-image: url("assets/misc/close.svg");
    background-size: 36px;
-@@ -1458,9 +1458,8 @@ $ws_thumb_spacing: 32px;
+@@ -1118,7 +1118,7 @@ $ws_thumb_spacing: 32px;
+   &-subject {
+     padding-top: 10px;
+     padding-bottom: 6px;
+-    
++
+     &:ltr { padding-left: 17px; }
+     &:rtl { padding-right: 17px; }
+   }
+@@ -1467,6 +1467,11 @@ $ws_thumb_spacing: 32px;
+     &:highlight { background-color: $accent_fill_color; }
    }
  
-   &-item-label {
--    width: 15em;
-     min-width: 5px;
--    font-weight: 400;
++  &-item-label {
++    min-width: 5px;
 +    font-weight: 700;
-   }
- 
++  }
++
    &-item-box {
-@@ -1470,7 +1469,7 @@ $ws_thumb_spacing: 32px;
+     border: 0 none transparent;
+     border-image: none;
+@@ -1474,7 +1479,7 @@ $ws_thumb_spacing: 32px;
      background-color: $hidden_fill_color;
      color: $osd_fg_color;
      box-shadow: $empty_shadow;
@@ -48,7 +58,32 @@ index 47ee5694..64000aa4 100644
      &:hover {
        color: $selected_fg_color;
  
-@@ -2007,21 +2006,13 @@ $ws_thumb_spacing: 32px;
+@@ -1520,12 +1525,12 @@ $ws_thumb_spacing: 32px;
+     }
+ 
+     StLabel {
+-      font-weight: 400;
++      font-weight: 700;
+ 
+       .panel-top &,
+       .panel-bottom & {
+-        &:ltr { padding-left: 6px - 2px; }
+-        &:rtl { padding-right: 6px - 2px; }
++        padding-left: 6px - 2px;
++        padding-right: 6px - 2px;
+       }
+     }
+ 
+@@ -1937,7 +1942,7 @@ $ws_thumb_spacing: 32px;
+     color: $osd_fg_color;
+   }
+ 
+-  &-drag-placeholder { 
++  &-drag-placeholder {
+     border: 2px solid $accent_color;
+     background-color: shellopacity($accent_color, 0.8);
+   }
+@@ -2027,21 +2032,13 @@ $ws_thumb_spacing: 32px;
    text-shadow: none;
  }
  
@@ -73,7 +108,7 @@ index 47ee5694..64000aa4 100644
      color: $osd_tertiary_fg_color;
      background-color: $hidden_fill_color;
      caret-color: $osd_fg_color;
-@@ -2049,7 +2040,7 @@ $bottom_gap: 4px;
+@@ -2069,7 +2066,7 @@ $bottom_gap: 4px;
      }
    }
  
