@@ -69,7 +69,7 @@ index 863d4d59..37937848 100644
        .panel-bottom & {
 -        &:ltr { padding-left: 6px - 2px; }
 -        &:rtl { padding-right: 6px - 2px; }
-+        padding-left: 6px - 2px;
++        padding-left: 0;
 +        padding-right: 6px - 2px;
        }
      }
