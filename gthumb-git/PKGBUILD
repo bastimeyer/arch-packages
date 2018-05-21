@@ -3,8 +3,8 @@
 # Maintainer: Adria Arrufat (swiftscythe) <swiftscythe@gmail.com>
 
 _pkgname=gthumb
-pkgname=gthumb-git
-pkgver=3.6.0.7.gb0c1d5dc
+pkgname="${_pkgname}-git"
+pkgver=3.6.1.64.g4dff961a
 pkgrel=1
 pkgdesc="Image browser and viewer for the GNOME Desktop"
 arch=(i686 x86_64)
@@ -25,11 +25,13 @@ depends=(
 makedepends=(
     docbook-xsl
     exiv2
+    git
     gnome-common
     intltool
     itstool
     libraw
     librsvg
+    meson
     yelp-tools
 )
 optdepends=(
@@ -50,28 +52,21 @@ prepare() {
     cd $_pkgname/
     patch -p1 < "${startdir}/0000-disable-web-albums.patch"
     patch -p1 < "${startdir}/0000-zoom-fixes.patch"
+    mkdir -p build
+    cd build/
+    meson setup .. \
+        -Dprefix=/usr \
+        -Dlibsecret=false \
+        -Dwebservices=false \
+        -Dlibbrasero=false
 }
 
 build() {
-    cd $_pkgname/
-    ./autogen.sh \
-        --prefix=/usr \
-        --sysconfdir=/etc \
-        --localstatedir=/var \
-        --disable-static \
-        --disable-libbrasero \
-        --disable-libjson-glib \
-        --disable-libchamplain \
-        --disable-libsecret \
-        --disable-libsoup \
-        --disable-webkit2 \
-        --enable-libraw \
-        --enable-librsvg
-    make
+    cd $_pkgname/build/
+    ninja
 }
 
 package() {
-    cd $_pkgname/
-    make DESTDIR="$pkgdir" install
-    install -D -m644 $srcdir/gthumb/data/icons/hicolor/48x48/apps/gthumb.png $pkgdir/usr/share/pixmaps/gthumb.png
+    cd $_pkgname/build/
+    DESTDIR="$pkgdir" ninja install
 }

@@ -1,13 +1,13 @@
-diff --git a/configure.ac b/configure.ac
-index 58fb18d7..01ebc892 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -624,7 +624,7 @@ AM_CONDITIONAL(ENABLE_BRASERO_TOOLS, test "x$enable_libbrasero" = xyes)
+diff --git a/meson.build b/meson.build
+index 174eb71c..5503c0be 100644
+--- a/meson.build
++++ b/meson.build
+@@ -202,7 +202,7 @@ endif
  
- dnl ===========================================================================
+ bison = find_program('bison', required : false)
+ flex = find_program('flex', 'lex', required : false)
+-with_webalbums = bison.found() and flex.found()
++with_webalbums = false # bison.found() and flex.found()
  
--enable_web_albums=yes
-+enable_web_albums=no
- if test x$enable_web_albums = xyes; then
- 	AC_CHECK_PROGS(BISON, bison, no)
- 	if test "$BISON" = "no"; then
+ vector_ops = (c_comp.get_id() == 'gcc') and (c_comp.version().version_compare('>=4.0.7'))
+ 
