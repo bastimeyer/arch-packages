@@ -1,21 +1,12 @@
 diff --git a/shell/sass/cinnamon/_common.scss b/shell/sass/cinnamon/_common.scss
-index 863d4d59..37937848 100644
+index 58ab029a..e6310679 100644
 --- a/shell/sass/cinnamon/_common.scss
 +++ b/shell/sass/cinnamon/_common.scss
-@@ -12,7 +12,7 @@
-   transition-duration: 0.2s;
- }
- 
--$font-family: Noto Sans, Sans-Serif;
-+$font-family: Roboto, Noto Sans, Cantarell, Sans-Serif;
- 
- stage {
-   @include fontscaling($ref_size);
-@@ -657,13 +657,13 @@ $ws_thumb_spacing: 32px;
+@@ -631,13 +631,13 @@ $ws_thumb_spacing: 32px;
      }
    }
  
--  &-overview-background-shade { background-color: rgba(0, 0, 0, 0.54); }
+-  &-overview-background-shade { background-color: opacity(black, $a_fg_3rd); }
 +  &-overview-background-shade { background-color: rgba(0, 0, 0, 0); }
  }
  
@@ -28,7 +19,7 @@ index 863d4d59..37937848 100644
    -cinnamon-close-overlap: 24px;
    background-image: url("assets/misc/close.svg");
    background-size: 36px;
-@@ -1118,7 +1118,7 @@ $ws_thumb_spacing: 32px;
+@@ -1089,7 +1089,7 @@ $ws_thumb_spacing: 32px;
    &-subject {
      padding-top: 10px;
      padding-bottom: 6px;
@@ -37,8 +28,8 @@ index 863d4d59..37937848 100644
      &:ltr { padding-left: 17px; }
      &:rtl { padding-right: 17px; }
    }
-@@ -1467,6 +1467,11 @@ $ws_thumb_spacing: 32px;
-     &:highlight { background-color: $accent_fill_color; }
+@@ -1443,6 +1443,11 @@ $ws_thumb_spacing: 32px;
+     &:highlight { background-color: $acc_fill_bg; }
    }
  
 +  &-item-label {
@@ -49,17 +40,17 @@ index 863d4d59..37937848 100644
    &-item-box {
      border: 0 none transparent;
      border-image: none;
-@@ -1474,7 +1479,7 @@ $ws_thumb_spacing: 32px;
-     background-color: $hidden_fill_color;
-     color: $osd_fg_color;
+@@ -1450,7 +1455,7 @@ $ws_thumb_spacing: 32px;
+     background-color: $hidden_fill_bg;
+     color: $osd_fg;
      box-shadow: $empty_shadow;
 -    font-weight: 400;
 +    font-weight: 700;
      &:hover {
-       color: $selected_fg_color;
- 
-@@ -1520,12 +1525,12 @@ $ws_thumb_spacing: 32px;
-     }
+       background-color: $osd_semi_fill_bg;
+       color: if($variant != light, $sel_fg, black);
+@@ -1492,7 +1497,7 @@ $ws_thumb_spacing: 32px;
+     &.vertical StBin { padding: 0; }
  
      StLabel {
 -      font-weight: 400;
@@ -67,29 +58,7 @@ index 863d4d59..37937848 100644
  
        .panel-top &,
        .panel-bottom & {
--        &:ltr { padding-left: 6px - 2px; }
--        &:rtl { padding-right: 6px - 2px; }
-+        padding-left: 0;
-+        padding-right: 6px - 2px;
-       }
-     }
- 
-@@ -1937,7 +1942,7 @@ $ws_thumb_spacing: 32px;
-     color: $osd_fg_color;
-   }
- 
--  &-drag-placeholder { 
-+  &-drag-placeholder {
-     border: 2px solid $accent_color;
-     background-color: shellopacity($accent_color, 0.8);
-   }
-@@ -2027,21 +2032,13 @@ $ws_thumb_spacing: 32px;
-   text-shadow: none;
- }
- 
--$top_gap: 2px;
--$bottom_gap: 4px;
--
+@@ -2000,12 +2005,9 @@ $bottom_gap: 4px;
  .expo {
    &-workspaces-name-entry {
      @include fontscaling($ref_size * 0.9);
@@ -103,17 +72,17 @@ index 863d4d59..37937848 100644
 +    height: 0;
 +    padding: 10px 8px;
      border-radius: 0;
--    border-top: $top_gap solid transparent; // add extra top gap
--    border-bottom: $bottom_gap solid transparent; // add extra bottom gap
-     color: $osd_tertiary_fg_color;
-     background-color: $hidden_fill_color;
-     caret-color: $osd_fg_color;
-@@ -2069,7 +2066,7 @@ $bottom_gap: 4px;
+     border-top: $top_gap solid transparent; // add extra top gap
+     border-bottom: $bottom_gap solid transparent; // add extra bottom gap
+@@ -2035,10 +2037,7 @@ $bottom_gap: 4px;
      }
    }
  
--  &-background { background-color: rgba(0, 0, 0, 0.54); }
-+  &-background { background-color: $osd_bg_color; }
+-  &-background {
+-    background-color: if($variant != light, opacity(black, $a_fg_3rd),
+-                                            opacity(white, $a_fg_dis));
+-  }
++  &-background { background-color: $bg; }
  }
  
- 
+ // /***********************
