@@ -1,0 +1,97 @@
+# Maintainer: Florian Bigard <florian.bigard@gmail.com>
+# Thanks to Adria Arrufat <swiftscythe@gmail.com>
+# Contributor: Sebastian Meyer <mail@bastimeyer.de>
+
+# Based on clementine-qt5-git AUR PKGBUILD
+
+_srcname=clementine
+pkgname=${_srcname}-qt5-git
+pkgver=1.3.1.r844.g6201247c0
+pkgrel=1
+pkgdesc='A modern music player and library organizer (experimental Qt5).'
+url='https://www.clementine-player.org/'
+arch=('i686' 'x86_64')
+license=('GPL')
+
+depends=(
+    'chromaprint'
+    'crypto++'
+    'desktop-file-utils'
+    'fftw'
+    'gst-libav'
+    'gst-plugins-base'
+    'gst-plugins-good'
+    'gst-plugins-bad'
+    'gst-plugins-ugly'
+    'hicolor-icon-theme'
+    'protobuf'
+    'qt5-base'
+    'qt5-x11extras'
+    'taglib'
+)
+makedepends=(
+    'git'
+    'boost'
+    'cmake'
+    'mesa'
+    'qt5-tools'
+)
+
+source=(
+    "${_srcname}::git+https://github.com/clementine-player/Clementine.git#branch=qt5"
+    'volume-up-down-adjustment.patch'
+)
+sha256sums=(
+    'SKIP'
+    'ab9663becb509379c9e05990de00881ed53096e0e77824218564d66b8059d507'
+)
+
+provides=("${_srcname}")
+conflicts=("${_srcname}" 'clementine-lxqt' 'clementine-git')
+replaces=("${_srcname}" 'clementine-lxqt' 'clementine-git')
+
+
+pkgver() {
+    cd "${_srcname}"
+    git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+prepare() {
+    cd "${_srcname}"
+    patch -p1 -i ../volume-up-down-adjustment.patch
+}
+
+build() {
+    mkdir -p build
+    cd build
+
+    args=(
+        -DCMAKE_INSTALL_PREFIX="/usr"
+        # Don't make a release build since it's experimental
+        #-DCMAKE_BUILD_TYPE=Release
+        -DBUILD_WERROR=off
+        -DENABLE_GOOGLE_DRIVE=off
+        -DENABLE_DROPBOX=off
+        -DENABLE_SKYDRIVE=off
+        -DENABLE_BOX=off
+        -DENABLE_SEAFILE=off
+        -DENABLE_AUDIOCD=off
+        -DENABLE_LIBGPOD=off
+        -DENABLE_GIO=off
+        -DENABLE_LIBMTP=off
+        -DENABLE_LIBLASTFM=off
+        -DENABLE_WIIMOTEDEV=off
+        -DENABLE_DEVICEKIT=off
+        -DENABLE_UDISKS2=off
+        -DENABLE_SPOTIFY_BLOB=off
+        -DENABLE_SPARKLE=off
+        -DENABLE_VISUALISATIONS=off
+    )
+    cmake "../${_srcname}" "${args[@]}"
+    make
+}
+
+package() {
+    cd build
+    make DESTDIR="${pkgdir}" install
+}

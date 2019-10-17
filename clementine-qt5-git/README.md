@@ -1,7 +1,7 @@
-clementine-git
+clementine-qt5-git
 ====
 
-forked from https://aur.archlinux.org/clementine-git.git
+forked from https://aur.archlinux.org/clementine-qt5-git.git
 
 ## Changes
 
