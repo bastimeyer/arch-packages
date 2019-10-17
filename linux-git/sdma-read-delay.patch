@@ -1,0 +1,31 @@
+diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c
+index fb48622c2abd..3912179a3c88 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gmc_v10_0.c
+@@ -345,6 +345,13 @@ static uint64_t gmc_v10_0_emit_flush_gpu_tlb(struct amdgpu_ring *ring,
+ 
+ 	amdgpu_ring_emit_wreg(ring, hub->vm_inv_eng0_req + eng, req);
+ 
++	/* Insert a dummy read to delay one cycle before the ACK
++	 * inquiry.
++	 */
++	if (ring->funcs->type == AMDGPU_RING_TYPE_SDMA)
++		amdgpu_ring_emit_reg_wait(ring,
++					  hub->vm_inv_eng0_req + eng, 0, 0);
++
+ 	/* wait for the invalidate to complete */
+ 	amdgpu_ring_emit_reg_wait(ring, hub->vm_inv_eng0_ack + eng,
+ 				  1 << vmid, 1 << vmid);
+diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
+index 6cd5d4ad0817..e187682932e6 100644
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
+@@ -1588,7 +1588,7 @@ static const struct amdgpu_ring_funcs sdma_v5_0_ring_funcs = {
+ 		6 + /* sdma_v5_0_ring_emit_pipeline_sync */
+ 		/* sdma_v5_0_ring_emit_vm_flush */
+ 		SOC15_FLUSH_GPU_TLB_NUM_WREG * 3 +
+-		SOC15_FLUSH_GPU_TLB_NUM_REG_WAIT * 6 +
++		SOC15_FLUSH_GPU_TLB_NUM_REG_WAIT * 6 * 2 +
+ 		10 + 10 + 10, /* sdma_v5_0_ring_emit_fence x3 for user fence, vm fence */
+ 	.emit_ib_size = 7 + 6, /* sdma_v5_0_ring_emit_ib */
+ 	.emit_ib = sdma_v5_0_ring_emit_ib,

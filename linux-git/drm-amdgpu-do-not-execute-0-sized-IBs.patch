@@ -1,0 +1,28 @@
+From c5087e15068bb9eaa66aa181dfa41fc98aa09df1 Mon Sep 17 00:00:00 2001
+From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Date: Tue, 10 Sep 2019 16:58:23 +0200
+Subject: [PATCH] drm/amdgpu: do not execute 0-sized IBs
+
+Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c
+index 6882eeb93b4e..f6873d0ee893 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ib.c
+@@ -224,6 +224,11 @@ int amdgpu_ib_schedule(struct amdgpu_ring *ring, unsigned num_ibs,
+ 			!amdgpu_sriov_vf(adev)) /* for SRIOV preemption, Preamble CE ib must be inserted anyway */
+ 			continue;
+ 
++		if (ib->length_dw == 0) {
++			/* On Navi gmc_v10_0_flush_gpu_tlb emits 0 sized IB */
++			continue;
++		}
++
+ 		amdgpu_ring_emit_ib(ring, job, ib, status);
+ 		status &= ~AMDGPU_HAVE_CTX_SWITCH;
+ 	}
+-- 
+2.23.0.rc1
