@@ -1,0 +1,64 @@
+diff --git a/config.def.h b/config.def.h
+index 9981ca3..28b7377 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -18,8 +18,22 @@ enum {
+  * (first/last value is used as min/max zoom level)
+  */
+ static const float zoom_levels[] = {
+-	 12.5,  25.0,  50.0,  75.0,
+-	100.0, 150.0, 200.0, 400.0, 800.0
++	  1.,   2.,   3.,   4.,   5.,   6.,   7.,   8.,   9.,  10.,
++	 11.,  12.,  13.,  14.,  15.,  16.,  17.,  18.,  19.,  20.,
++	 21.,  22.,  23.,  24.,  25.,  26.,  27.,  28.,  29.,  30.,
++	 31.,  32.,  33.,  34.,  35.,  36.,  37.,  38.,  39.,  40.,
++	 41.,  42.,  43.,  44.,  45.,  46.,  47.,  48.,  49.,  50.,
++	 51.,  52.,  53.,  54.,  55.,  56.,  57.,  58.,  59.,  60.,
++	 61.,  62.,  63.,  64.,  65.,  66.,  67.,  68.,  69.,  70.,
++	 71.,  72.,  73.,  74.,  75.,  76.,  77.,  78.,  79.,  80.,
++	 81.,  82.,  83.,  84.,  85.,  86.,  87.,  88.,  89.,  90.,
++	 91.,  92.,  93.,  94.,  95.,  96.,  97.,  98.,  99., 100.,
++	101., 102., 103., 104., 105., 106., 107., 108., 109., 110.,
++	111., 112., 113., 114., 115., 116., 117., 118., 119., 120.,
++	121., 122., 123., 124., 125., 126., 127., 128., 129., 130.,
++	131., 132., 133., 134., 135., 136., 137., 138., 139., 140.,
++	141., 142., 143., 144., 145., 146., 147., 148., 149., 150.,
++	160., 170., 180., 190., 200., 250., 300., 400., 500.
+ };
+ 
+ /* default slideshow delay (in sec, overwritten via -S option): */
+@@ -32,7 +46,7 @@ static const double GAMMA_MAX   = 10.0;
+ static const int    GAMMA_RANGE = 32;
+ 
+ /* command i_scroll pans image 1/PAN_FRACTION of screen width/height */
+-static const int PAN_FRACTION = 5;
++static const int PAN_FRACTION = 100;
+ 
+ /* if false, pixelate images at zoom level != 100%,
+  * toggled with 'a' key binding
+@@ -48,7 +62,7 @@ static const bool ALPHA_LAYER = false;
+ #ifdef _THUMBS_CONFIG
+ 
+ /* thumbnail sizes in pixels (width == height): */
+-static const int thumb_sizes[] = { 32, 64, 96, 128, 160 };
++static const int thumb_sizes[] = { 32, 64, 96, 128, 160, 256 };
+ 
+ /* thumbnail size at startup, index into thumb_sizes[]: */
+ static const int THUMB_SIZE = 3;
+@@ -78,6 +92,7 @@ static const keymap_t keys[] = {
+ 	{ ControlMask,  XK_Right,         g_scroll_screen,      DIR_RIGHT },
+ 	{ 0,            XK_plus,          g_zoom,               +1 },
+ 	{ 0,            XK_KP_Add,        g_zoom,               +1 },
++	{ 0,            XK_equal,         g_zoom,               +1 },
+ 	{ 0,            XK_minus,         g_zoom,               -1 },
+ 	{ 0,            XK_KP_Subtract,   g_zoom,               -1 },
+ 	{ 0,            XK_m,             g_toggle_image_mark,  None },
+@@ -124,7 +139,7 @@ static const keymap_t keys[] = {
+ 	{ 0,            XK_J,             i_scroll_to_edge,     DIR_DOWN },
+ 	{ 0,            XK_K,             i_scroll_to_edge,     DIR_UP },
+ 	{ 0,            XK_L,             i_scroll_to_edge,     DIR_RIGHT },
+-	{ 0,            XK_equal,         i_set_zoom,           100 },
++	{ ControlMask,  XK_equal,         i_set_zoom,           100 },
+ 	{ 0,            XK_w,             i_fit_to_win,         SCALE_DOWN },
+ 	{ 0,            XK_W,             i_fit_to_win,         SCALE_FIT },
+ 	{ 0,            XK_e,             i_fit_to_win,         SCALE_WIDTH },
