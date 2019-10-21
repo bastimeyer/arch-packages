@@ -4,8 +4,8 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-_srcname=linux
-pkgver=drm.fixes.5.4.2019.10.16.r0.gd12c50857c6e
+_srcname=linux-mainline
+pkgver=5.4rc4.r0.g7d194c2100ad
 pkgrel=1
 arch=(x86_64)
 url="http://www.kernel.org/"
@@ -16,8 +16,8 @@ makedepends=(
 )
 options=('!strip')
 source=(
-# "${_srcname}::git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux"
-  "${_srcname}::git://people.freedesktop.org/~agd5f/linux#tag=drm-fixes-5.4-2019-10-16"
+  "${_srcname}::git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux#tag=v5.4-rc4"
+# "${_srcname}::git://people.freedesktop.org/~agd5f/linux#tag=drm-fixes-5.4-2019-10-16"
   config         # the main kernel config file
   60-linux.hook  # pacman hook for depmod
   90-linux.hook  # pacman hook for initramfs regeneration
