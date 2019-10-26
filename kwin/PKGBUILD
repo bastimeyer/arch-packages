@@ -4,7 +4,7 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-pkgver=5.17.0
+pkgver=5.17.1
 pkgrel=2
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
@@ -15,11 +15,13 @@ makedepends=(extra-cmake-modules qt5-tools kdoctools)
 optdepends=('qt5-virtualkeyboard: virtual keyboard support for kwin-wayland')
 groups=(plasma)
 source=("https://download.kde.org/stable/plasma/$pkgver/$pkgname-$pkgver.tar.xz"{,.sig}
-        'desktopgrid-overlaying-tile-fix.patch')
+        'desktopgrid-overlaying-tile-fix.patch'
+        'disable-qpa-plugin.patch')
 install=$pkgname.install
-sha256sums=('d99443978a0f5f12d93d1d877312144d9387762933e12ac614992ae6e92daed7'
+sha256sums=('9be622116d4a39b699f43e147a31872d1d8a80eda5b5426d7e4272d8cfacdcd5'
             'SKIP'
-            '0dc655f8fd03daa9def2fa976b9627b2c5dee181461a894c10d97863084452f5')
+            '0dc655f8fd03daa9def2fa976b9627b2c5dee181461a894c10d97863084452f5'
+            'd95bc85cff36a7a7c0440baef244b1f382ae975db44cd9810249bbdb1cebfdd3')
 validpgpkeys=('2D1D5B0588357787DE9EE225EC94D18F7F05997E'  # Jonathan Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
               'D07BD8662C56CB291B316EB2F5675605C74E02CF'  # David Edmundson <davidedmundson@kde.org>
@@ -30,6 +32,7 @@ prepare() {
   mkdir -p build
   cd $pkgname-$pkgver
   patch -p1 < "${srcdir}/desktopgrid-overlaying-tile-fix.patch"
+  patch -p1 < "${srcdir}/disable-qpa-plugin.patch"
 }
 
 build() {

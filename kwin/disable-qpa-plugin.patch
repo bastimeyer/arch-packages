@@ -1,0 +1,10 @@
+diff --git a/plugins/CMakeLists.txt b/plugins/CMakeLists.txt
+index 9f26622d9..3b7a492b7 100644
+--- a/plugins/CMakeLists.txt
++++ b/plugins/CMakeLists.txt
+@@ -1,5 +1,4 @@
+ add_subdirectory(kglobalaccel)
+-add_subdirectory(qpa)
+ add_subdirectory(idletime)
+ add_subdirectory(platforms)
+ add_subdirectory(scenes)
