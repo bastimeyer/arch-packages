@@ -5,7 +5,7 @@
 
 pkgbase=linux-git
 _srcname=linux-mainline
-pkgver=5.4rc4.r0.g7d194c2100ad
+pkgver=5.4rc5.r0.gd6d5df1db6e9
 pkgrel=1
 arch=(x86_64)
 url="http://www.kernel.org/"
@@ -16,7 +16,7 @@ makedepends=(
 )
 options=('!strip')
 source=(
-  "${_srcname}::git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux#tag=v5.4-rc4"
+  "${_srcname}::git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux#tag=v5.4-rc5"
 # "${_srcname}::git://people.freedesktop.org/~agd5f/linux#tag=drm-fixes-5.4-2019-10-16"
   config         # the main kernel config file
   60-linux.hook  # pacman hook for depmod
