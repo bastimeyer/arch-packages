@@ -5,7 +5,7 @@
 
 pkgbase=linux-git
 _srcname=linux-mainline
-pkgver=5.4rc7.r0.g31f4f5b495a6
+pkgver=5.4rc8.r0.gaf42d3466bdc
 pkgrel=1
 pkgdesc='Linux'
 url="http://www.kernel.org/"
@@ -18,7 +18,7 @@ makedepends=(
 )
 options=('!strip')
 source=(
-  "${_srcname}::git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux#tag=v5.4-rc7"
+  "${_srcname}::git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux#tag=v5.4-rc8"
 # "${_srcname}::git://people.freedesktop.org/~agd5f/linux#tag=drm-fixes-5.4-2019-10-16"
   config         # the main kernel config file
   0007-v5.3-fsync.patch
