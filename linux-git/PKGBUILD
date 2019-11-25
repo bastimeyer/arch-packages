@@ -5,7 +5,7 @@
 
 pkgbase=linux-git
 _srcname=linux-mainline
-pkgver=5.4rc8.r0.gaf42d3466bdc
+pkgver=5.4.r0.g219d54332a09
 pkgrel=1
 pkgdesc='Linux'
 url="http://www.kernel.org/"
@@ -18,14 +18,16 @@ makedepends=(
 )
 options=('!strip')
 source=(
-  "${_srcname}::git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux#tag=v5.4-rc8"
+  "${_srcname}::git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux#tag=v5.4"
 # "${_srcname}::git://people.freedesktop.org/~agd5f/linux#tag=drm-fixes-5.4-2019-10-16"
   config         # the main kernel config file
   0007-v5.3-fsync.patch
+  re-enable-wait-in-pipelock-but-add-timeout.patch
 )
 sha256sums=('SKIP'
-            'e749cd85d37d4d70099b0a7f54e852b039ae07c14e4ab8be299c64edae5d4ba4'
-            '2d9260b80b43bbd605cf420d6bd53aa7262103dfd77196ba590ece5600b6dc0d')
+            '10ee7800902b1d82f9c184b367c9d904f4dc48f6d9ce3277327e825d7ab690d1'
+            '2d9260b80b43bbd605cf420d6bd53aa7262103dfd77196ba590ece5600b6dc0d'
+            '69278c31a51607634e4e12d326c206a89f828dbb9a08846ab17f5198ec81c58f')
 
 export KBUILD_BUILD_HOST=archlinux
 export KBUILD_BUILD_USER=$pkgbase
