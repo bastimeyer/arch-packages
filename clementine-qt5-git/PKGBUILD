@@ -6,7 +6,7 @@
 
 _srcname=clementine
 pkgname=${_srcname}-qt5-git
-pkgver=1.3.1.r844.g6201247c0
+pkgver=1.4.0rc1.r76.gd15777ea1
 pkgrel=1
 pkgdesc='A modern music player and library organizer (experimental Qt5).'
 url='https://www.clementine-player.org/'
@@ -38,7 +38,7 @@ makedepends=(
 )
 
 source=(
-    "${_srcname}::git+https://github.com/clementine-player/Clementine.git#branch=qt5"
+    "${_srcname}::git+https://github.com/clementine-player/Clementine.git"
     'volume-up-down-adjustment.patch'
 )
 sha256sums=(
