@@ -1,30 +1,65 @@
----
-v2: Added Tested-by: tags.
-    Don't try to report voltage and current information on Threadripper
-    and EPYC CPUs.
+From: Guenter Roeck <linux@roeck-us.net>
+To: linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	"Clemens Ladisch" <clemens@ladisch.de>,
+	"Jean Delvare" <jdelvare@suse.com>,
+	"Brad Campbell" <lists2009@fnarfbargle.com>,
+	"Ondrej Čerman" <ocerman@sda1.eu>,
+	"Bernhard Gebetsberger" <bernhard.gebetsberger@gmx.at>,
+	"Holger Kiehl" <Holger.Kiehl@dwd.de>,
+	"Michael Larabel" <michael@phoronix.com>,
+	"Jonathan McDowell" <noodles@earth.li>,
+	"Ken Moffat" <zarniwhoop73@googlemail.com>,
+	"Sebastian Reichel" <sebastian.reichel@collabora.com>,
+	"Darren Salt" <devspam@moreofthesa.me.uk>,
+	"Guenter Roeck" <linux@roeck-us.net>
+Subject: [PATCH v4 4/6] hwmon: (k10temp) Show core and SoC current and voltages on Ryzen CPUs
+Date: Wed, 22 Jan 2020 08:07:58 -0800
+Message-ID: <20200122160800.12560-5-linux@roeck-us.net> (raw)
+In-Reply-To: <20200122160800.12560-1-linux@roeck-us.net>
 
- drivers/hwmon/k10temp.c | 126 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 123 insertions(+), 3 deletions(-)
+Ryzen CPUs report core and SoC voltages and currents. Add support
+for it to the k10temp driver.
+
+For the time being, only report voltages and currents for Ryzen
+CPUs. Threadripper and EPYC appear to use a different mechanism.
+
+Tested-by: Brad Campbell <lists2009@fnarfbargle.com>
+Tested-by: Bernhard Gebetsberger <bernhard.gebetsberger@gmx.at>
+Tested-by: Holger Kiehl <holger.kiehl@dwd.de>
+Tested-by: Michael Larabel <michael@phoronix.com>
+Tested-by: Jonathan McDowell <noodles@earth.li>
+Tested-by: Ken Moffat <zarniwhoop73@googlemail.com>
+Tested-by: Darren Salt <devspam@moreofthesa.me.uk>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ drivers/hwmon/k10temp.c | 134 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 131 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
-index 944ba8008bc4..a4313b662a3a 100644
+index 0af096b061fa..b961e12c6f58 100644
 --- a/drivers/hwmon/k10temp.c
 +++ b/drivers/hwmon/k10temp.c
-@@ -11,6 +11,13 @@
+@@ -11,6 +11,18 @@
   *   convert raw register values is from https://github.com/ocerman/zenpower.
   *   The information is not confirmed from chip datasheets, but experiments
   *   suggest that it provides reasonable temperature values.
-+ * - Register addresses to read chip voltage and current is also from
++ * - Register addresses to read chip voltage and current are also from
 + *   https://github.com/ocerman/zenpower, and not confirmed from chip
-+ *   datasheets. Experiments suggest that reported current and voltage
-+ *   information is reasonable.
++ *   datasheets. Current calibration is board specific and not typically
++ *   shared by board vendors. For this reason, current values are
++ *   normalized to report 1A/LSB for core current and and 0.25A/LSB for SoC
++ *   current. Reported values can be adjusted using the sensors configuration
++ *   file.
 + * - It is unknown if the mechanism to read CCD1/CCD2 temperature as well as
-+ *   current and voltage information works on higher-end Ryzen CPUs, or if
-+ *   additional information is available on those CPUs.
++ *   current and voltage information works on higher-end Ryzen CPUs.
++ *   Information reported by Windows tools suggests that additional sensors
++ *   (both temperature and voltage/current) are supported, but their register
++ *   location is currently unknown.
   */
  
  #include <linux/bitops.h>
-@@ -70,6 +77,10 @@ static DEFINE_MUTEX(nb_smu_ind_mutex);
+@@ -70,9 +82,16 @@ static DEFINE_MUTEX(nb_smu_ind_mutex);
  #define F17H_M70H_CCD1_TEMP			0x00059954
  #define F17H_M70H_CCD2_TEMP			0x00059958
  
@@ -35,7 +70,13 @@ index 944ba8008bc4..a4313b662a3a 100644
  #define CUR_TEMP_SHIFT				21
  #define CUR_TEMP_RANGE_SEL_MASK			BIT(19)
  
-@@ -82,6 +93,9 @@ struct k10temp_data {
++#define CFACTOR_ICORE				1000000	/* 1A / LSB	*/
++#define CFACTOR_ISOC				250000	/* 0.25A / LSB	*/
++
+ struct k10temp_data {
+ 	struct pci_dev *pdev;
+ 	void (*read_htcreg)(struct pci_dev *pdev, u32 *regval);
+@@ -82,6 +101,9 @@ struct k10temp_data {
  	bool show_tdie;
  	bool show_tccd1;
  	bool show_tccd2;
@@ -45,7 +86,7 @@ index 944ba8008bc4..a4313b662a3a 100644
  };
  
  struct tctl_offset {
-@@ -99,6 +113,16 @@ static const struct tctl_offset tctl_offset_table[] = {
+@@ -99,6 +121,16 @@ static const struct tctl_offset tctl_offset_table[] = {
  	{ 0x17, "AMD Ryzen Threadripper 29", 27000 }, /* 29{20,50,70,90}[W]X */
  };
  
@@ -62,7 +103,7 @@ index 944ba8008bc4..a4313b662a3a 100644
  static void read_htcreg_pci(struct pci_dev *pdev, u32 *regval)
  {
  	pci_read_config_dword(pdev, REG_HARDWARE_THERMAL_CONTROL, regval);
-@@ -157,16 +181,76 @@ const char *k10temp_temp_label[] = {
+@@ -157,16 +189,76 @@ const char *k10temp_temp_label[] = {
  	"Tccd2",
  };
  
@@ -142,7 +183,7 @@ index 944ba8008bc4..a4313b662a3a 100644
  {
  	struct k10temp_data *data = dev_get_drvdata(dev);
  	u32 regval;
-@@ -216,6 +300,21 @@ static int k10temp_read(struct device *dev, enum hwmon_sensor_types type,
+@@ -216,6 +308,21 @@ static int k10temp_read(struct device *dev, enum hwmon_sensor_types type,
  	return 0;
  }
  
@@ -164,7 +205,7 @@ index 944ba8008bc4..a4313b662a3a 100644
  static umode_t k10temp_is_visible(const void *_data,
  				  enum hwmon_sensor_types type,
  				  u32 attr, int channel)
-@@ -290,6 +389,11 @@ static umode_t k10temp_is_visible(const void *_data,
+@@ -290,6 +397,11 @@ static umode_t k10temp_is_visible(const void *_data,
  			return 0;
  		}
  		break;
@@ -176,7 +217,7 @@ index 944ba8008bc4..a4313b662a3a 100644
  	default:
  		return 0;
  	}
-@@ -338,6 +442,12 @@ static const struct hwmon_channel_info *k10temp_info[] = {
+@@ -338,6 +450,12 @@ static const struct hwmon_channel_info *k10temp_info[] = {
  			   HWMON_T_INPUT | HWMON_T_LABEL,
  			   HWMON_T_INPUT | HWMON_T_LABEL,
  			   HWMON_T_INPUT | HWMON_T_LABEL),
@@ -189,20 +230,21 @@ index 944ba8008bc4..a4313b662a3a 100644
  	NULL
  };
  
-@@ -393,8 +503,18 @@ static int k10temp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+@@ -393,9 +511,19 @@ static int k10temp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
  		case 0x8:	/* Zen+ */
  		case 0x11:	/* Zen APU */
  		case 0x18:	/* Zen+ APU */
 +			data->show_current = !is_threadripper() && !is_epyc();
 +			data->svi_addr[0] = F17H_M01H_SVI_TEL_PLANE0;
 +			data->svi_addr[1] = F17H_M01H_SVI_TEL_PLANE1;
-+			data->cfactor[0] = 1039211;	/* core */
-+			data->cfactor[1] = 360772;	/* SoC */
++			data->cfactor[0] = CFACTOR_ICORE;
++			data->cfactor[1] = CFACTOR_ISOC;
  			break;
+ 		case 0x31:	/* Zen2 Threadripper */
  		case 0x71:	/* Zen2 */
 +			data->show_current = !is_threadripper() && !is_epyc();
-+			data->cfactor[0] = 658823;	/* core */
-+			data->cfactor[1] = 294300;	/* SoC */
++			data->cfactor[0] = CFACTOR_ICORE;
++			data->cfactor[1] = CFACTOR_ISOC;
 +			data->svi_addr[0] = F17H_M01H_SVI_TEL_PLANE1;
 +			data->svi_addr[1] = F17H_M01H_SVI_TEL_PLANE0;
  			amd_smn_read(amd_pci_dev_to_node_id(pdev),
@@ -210,5 +252,3 @@ index 944ba8008bc4..a4313b662a3a 100644
  			if (regval & 0xfff)
 -- 
 2.17.1
-
-  

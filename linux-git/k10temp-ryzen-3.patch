@@ -1,11 +1,40 @@
----
-v2: Added Tested-by: tags
+From: Guenter Roeck <linux@roeck-us.net>
+To: linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	"Clemens Ladisch" <clemens@ladisch.de>,
+	"Jean Delvare" <jdelvare@suse.com>,
+	"Brad Campbell" <lists2009@fnarfbargle.com>,
+	"Ondrej Čerman" <ocerman@sda1.eu>,
+	"Bernhard Gebetsberger" <bernhard.gebetsberger@gmx.at>,
+	"Holger Kiehl" <Holger.Kiehl@dwd.de>,
+	"Michael Larabel" <michael@phoronix.com>,
+	"Jonathan McDowell" <noodles@earth.li>,
+	"Ken Moffat" <zarniwhoop73@googlemail.com>,
+	"Sebastian Reichel" <sebastian.reichel@collabora.com>,
+	"Darren Salt" <devspam@moreofthesa.me.uk>,
+	"Guenter Roeck" <linux@roeck-us.net>
+Subject: [PATCH v4 3/6] hwmon: (k10temp) Report temperatures per CPU die
+Date: Wed, 22 Jan 2020 08:07:57 -0800
+Message-ID: <20200122160800.12560-4-linux@roeck-us.net> (raw)
+In-Reply-To: <20200122160800.12560-1-linux@roeck-us.net>
 
- drivers/hwmon/k10temp.c | 79 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 78 insertions(+), 1 deletion(-)
+Zen2 reports reporting temperatures per CPU die (called Core Complex Dies,
+or CCD, by AMD). Add support for it to the k10temp driver.
+
+Tested-by: Brad Campbell <lists2009@fnarfbargle.com>
+Tested-by: Bernhard Gebetsberger <bernhard.gebetsberger@gmx.at>
+Tested-by: Holger Kiehl <holger.kiehl@dwd.de>
+Tested-by: Michael Larabel <michael@phoronix.com>
+Tested-by: Jonathan McDowell <noodles@earth.li>
+Tested-by: Ken Moffat <zarniwhoop73@googlemail.com>
+Tested-by: Darren Salt <devspam@moreofthesa.me.uk>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ drivers/hwmon/k10temp.c | 80 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 79 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
-index c45f6498a59b..944ba8008bc4 100644
+index c45f6498a59b..0af096b061fa 100644
 --- a/drivers/hwmon/k10temp.c
 +++ b/drivers/hwmon/k10temp.c
 @@ -5,6 +5,12 @@
@@ -125,7 +154,7 @@ index c45f6498a59b..944ba8008bc4 100644
  			   HWMON_T_INPUT | HWMON_T_LABEL),
  	NULL
  };
-@@ -326,9 +382,30 @@ static int k10temp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+@@ -326,9 +382,31 @@ static int k10temp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
  		data->read_htcreg = read_htcreg_nb_f15;
  		data->read_tempreg = read_tempreg_nb_f15;
  	} else if (boot_cpu_data.x86 == 0x17 || boot_cpu_data.x86 == 0x18) {
@@ -141,6 +170,7 @@ index c45f6498a59b..944ba8008bc4 100644
 +		case 0x11:	/* Zen APU */
 +		case 0x18:	/* Zen+ APU */
 +			break;
++		case 0x31:	/* Zen2 Threadripper */
 +		case 0x71:	/* Zen2 */
 +			amd_smn_read(amd_pci_dev_to_node_id(pdev),
 +				     F17H_M70H_CCD1_TEMP, &regval);
@@ -158,5 +188,3 @@ index c45f6498a59b..944ba8008bc4 100644
  		data->read_tempreg = read_tempreg_pci;
 -- 
 2.17.1
-
-  
