@@ -4,7 +4,7 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-pkgver=5.17.5
+pkgver=5.18.1
 pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
@@ -18,7 +18,7 @@ source=("https://download.kde.org/stable/plasma/$pkgver/$pkgname-$pkgver.tar.xz"
         'desktopgrid-overlaying-tile-fix.patch'
         'disable-qpa-plugin.patch')
 install=$pkgname.install
-sha256sums=('8517adaf8270d783aea7b3886d86b5abed6a5ec2b5c78b632479597d956baadc'
+sha256sums=('3ab3e497cf231f43e8ee918f8bc666e7d5745c4858d5171f9516bd48783583da'
             'SKIP'
             '0dc655f8fd03daa9def2fa976b9627b2c5dee181461a894c10d97863084452f5'
             'd95bc85cff36a7a7c0440baef244b1f382ae975db44cd9810249bbdb1cebfdd3')
