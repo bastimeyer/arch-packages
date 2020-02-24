@@ -5,7 +5,7 @@
 
 pkgbase=linux-git
 _srcname=linux-mainline
-pkgver=5.5.r0.gd5226fa6dbae
+pkgver=5.6rc3.r0.gf8788d86ab28
 pkgrel=1
 pkgdesc='Linux'
 url="http://www.kernel.org/"
@@ -18,20 +18,13 @@ makedepends=(
 )
 options=('!strip')
 source=(
-  "${_srcname}::git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux#tag=v5.5"
+  "${_srcname}::git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux#tag=v5.6-rc3"
   config         # the main kernel config file
   0007-v5.3-fsync.patch
-  k10temp-ryzen-{1..6}.patch
 )
 sha256sums=('SKIP'
-            'eb95e2f45dc868b097136d75077b8861b85fea109de78bff253fbf98162e5cb6'
+            'a841aa011edf6bae0ffbe8ead8177e5056de5a6d7333bb96e16917903de4d868'
             '2d9260b80b43bbd605cf420d6bd53aa7262103dfd77196ba590ece5600b6dc0d'
-            '5cff9af12a17d994f52916a808fd6cd84865d1e1fb624e5743e88b6aca536676'
-            '3dd60509acb8522a4553fe139bae0ee010d43eb3fb3d817f80c2d76017e14ad3'
-            '2dabde37fa2ec42f97a791264abb302dee32fecf5195d13ef7bbd9f222e5d303'
-            '90be14b6623e8f681fde3c0ee31ac7bbf09680e820742bcb5e60526b2b8c84ce'
-            'daa6561cce2033abf4a7f19f93c340d1d9515755adff784cb6d75e88a9796684'
-            '757b96e466c7dacf6c502c80e1994e48de8cc83c35e5b1ec89ec31f38043f9d0'
 )
 
 export KBUILD_BUILD_HOST=archlinux
@@ -66,12 +59,13 @@ prepare() {
   make olddefconfig
 
   make -s kernelrelease > version
-  echo "Prepared %s version %s" "$pkgbase" "$(<version)"
+  echo "Prepared $pkgbase version $(<version)"
 }
 
 build() {
   cd $_srcname
-  make bzImage modules htmldocs
+  make all
+  make htmldocs
 }
 
 _package() {
