@@ -4,8 +4,8 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-pkgver=5.18.4.1
-pkgrel=4
+pkgver=5.18.5
+pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
 url='https://www.kde.org/workspaces/plasmadesktop/'
@@ -14,11 +14,11 @@ depends=(kscreenlocker xcb-util-cursor plasma-framework kcmutils breeze kinit qt
 makedepends=(extra-cmake-modules qt5-tools kdoctools)
 optdepends=('qt5-virtualkeyboard: virtual keyboard support for kwin-wayland')
 groups=(plasma)
-source=("https://download.kde.org/stable/plasma/${pkgver%.*}/$pkgname-$pkgver.tar.xz"{,.sig}
+source=("https://download.kde.org/stable/plasma/$pkgver/$pkgname-$pkgver.tar.xz"{,.sig}
         'desktopgrid-overlaying-tile-fix.patch'
         'disable-qpa-plugin.patch')
 install=$pkgname.install
-sha256sums=('693a740976b46aa9fbdb68283b5c887aca70f9f96a357a766fab7a942b5a0d2f'
+sha256sums=('ca39c63fd740432e95490031fd9d5ac003da034582014fa41c2be2b89627ddf8'
             'SKIP'
             '0dc655f8fd03daa9def2fa976b9627b2c5dee181461a894c10d97863084452f5'
             'd95bc85cff36a7a7c0440baef244b1f382ae975db44cd9810249bbdb1cebfdd3')
