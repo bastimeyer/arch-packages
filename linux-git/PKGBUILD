@@ -5,7 +5,7 @@
 
 pkgbase=linux-git
 _srcname=linux-mainline
-pkgver=5.7rc2.r0.gae83d0b416db
+pkgver=5.7rc4.r0.g0e698dfa2822
 pkgrel=1
 pkgdesc='Linux'
 url="http://www.kernel.org/"
@@ -17,12 +17,12 @@ makedepends=(
 )
 options=('!strip')
 source=(
-  "${_srcname}::git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux#tag=v5.7-rc2"
+  "${_srcname}::git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux#tag=v5.7-rc4"
   config         # the main kernel config file
   0007-v5.3-fsync.patch
 )
 sha256sums=('SKIP'
-            'dfd3310bc2d3c4adbaba5e4f2260a8a110706993be1c3e02a5ddfe88bf0c63ce'
+            'f392c9ecbb5177ea2573aaf22935322940ea2be0366f3fb9c9f861431f4aed21'
             '2d9260b80b43bbd605cf420d6bd53aa7262103dfd77196ba590ece5600b6dc0d'
 )
 
