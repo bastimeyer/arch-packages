@@ -5,7 +5,7 @@
 
 pkgbase=linux-git
 _srcname=linux-mainline
-pkgver=5.7rc4.r0.g0e698dfa2822
+pkgver=5.7rc5.r0.g2ef96a5bb12b
 pkgrel=1
 pkgdesc='Linux'
 url="http://www.kernel.org/"
@@ -17,7 +17,7 @@ makedepends=(
 )
 options=('!strip')
 source=(
-  "${_srcname}::git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux#tag=v5.7-rc4"
+  "${_srcname}::git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux#tag=v5.7-rc5"
   config         # the main kernel config file
   0007-v5.3-fsync.patch
 )
