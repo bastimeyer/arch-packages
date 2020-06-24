@@ -4,25 +4,32 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-_srcname=linux-mainline
-pkgver=5.7.r0.g3d77e6a8804a
+pkgver=5.7.2.r0.gc58091a3ea4c
 pkgrel=1
 pkgdesc='Linux'
+_srctag=v5.7.2
+_srcname=linux-stable
+_src="git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux"
 url="http://www.kernel.org/"
 arch=(x86_64)
 license=(GPL2)
 makedepends=(
-  bc kmod libelf
+  bc kmod libelf pahole
   git
 )
 options=('!strip')
 source=(
-  "${_srcname}::git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux#tag=v5.7"
+  "${_srcname}::${_src}#tag=${_srctag}"
   config         # the main kernel config file
   0007-v5.3-fsync.patch
 )
+validpgpkeys=(
+  'ABAF11C65A2970B130ABE3C479BE3E4300411886'  # Linus Torvalds
+  '647F28654894E3BD457199BE38DBBDC86092693E'  # Greg Kroah-Hartman
+  'A2FF3A36AAA56654109064AB19802F8B0D70FC30'  # Jan Alexander Steffens (heftig)
+)
 sha256sums=('SKIP'
-            '2a157fdbf3a6396e985db9ae5d11870a786717dca31de78cad09c06eb28761ff'
+            '623601ed9d7879dd9dba1cd50fc8051f9db508b49b4fc0c47c5a9eb9165fc04e'
             '2d9260b80b43bbd605cf420d6bd53aa7262103dfd77196ba590ece5600b6dc0d'
 )
 
@@ -87,7 +94,7 @@ _package() {
   echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
   echo "Installing modules..."
-  make INSTALL_MOD_PATH="$pkgdir/usr" modules_install
+  make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
 
   # remove build and source links
   rm "$modulesdir"/{source,build}
@@ -162,6 +169,9 @@ _package-headers() {
         strip -v $STRIP_SHARED "$file" ;;
     esac
   done < <(find "$builddir" -type f -perm -u+x ! -name vmlinux -print0)
+
+  echo "Stripping vmlinux..."
+  strip -v $STRIP_STATIC "$builddir/vmlinux"
 
   echo "Adding symlink..."
   mkdir -p "$pkgdir/usr/src"
