@@ -2,7 +2,7 @@
 # Contributor: Andrea Scarpino <andrea@archlinux.org>
 
 pkgname=qt5-declarative
-_qtver=5.14.2
+_qtver=5.15.0
 pkgver=${_qtver/-/}
 pkgrel=1
 arch=('x86_64')
@@ -19,7 +19,7 @@ source=(
   40ba29c.patch
 )
 sha256sums=(
-  'a3c4617adc9760347c93d2eb6c25d22f620cd22f44afa0494eb499a805831650'
+  '9c3c93fb7d340b2f7d738d12408c047318c78973cb45bfc5ff6b3a57e1fef699'
   '59fc765dcf74a47b58209c77efbc2c41f352b637bd9db92a8312e816ddb8c72f'
 )
 
