@@ -4,12 +4,12 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=5.7.2.r0.gc58091a3ea4c
+pkgver=5.8rc2.r0.g48778464bb7d
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v5.7.2
-_srcname=linux-stable
-_src="git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux"
+_srctag=v5.8-rc2
+_srcname=linux-mainline
+_src="git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux"
 url="http://www.kernel.org/"
 arch=(x86_64)
 license=(GPL2)
