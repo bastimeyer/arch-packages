@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=5.8rc4.r0.gdcb7fd82c75e
+pkgver=5.8rc6.r0.gba47d845d715
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v5.8-rc4
+_srctag=v5.8-rc6
 _srcname=linux-mainline
 _src="git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux"
 url="http://www.kernel.org/"
@@ -21,7 +21,7 @@ options=('!strip')
 source=(
   "${_srcname}::${_src}#tag=${_srctag}"
   config         # the main kernel config file
-  0007-v5.3-fsync.patch
+  futex-v3.patch
 )
 validpgpkeys=(
   'ABAF11C65A2970B130ABE3C479BE3E4300411886'  # Linus Torvalds
@@ -30,7 +30,7 @@ validpgpkeys=(
 )
 sha256sums=('SKIP'
             'ed60b20ee841e16038da0d145fbf3f53fac94122c4001d6cd03abe64e9e760f6'
-            '2d9260b80b43bbd605cf420d6bd53aa7262103dfd77196ba590ece5600b6dc0d'
+            'e7caec2d6e3d162ba52b32f0638fde2c3d74fc0a51476bbccaa68c67212dd754'
 )
 
 export KBUILD_BUILD_HOST=archlinux
