@@ -10,18 +10,16 @@ pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
 url='https://www.kde.org/workspaces/plasmadesktop/'
 license=(LGPL)
-depends=(kscreenlocker xcb-util-cursor plasma-framework kcmutils breeze kinit qt5-sensors qt5-script)
+depends=(kscreenlocker xcb-util-cursor plasma-framework kcmutils kwayland-server breeze qt5-sensors qt5-script)
 makedepends=(extra-cmake-modules qt5-tools kdoctools)
 optdepends=('qt5-virtualkeyboard: virtual keyboard support for kwin-wayland')
 groups=(plasma)
 source=("https://download.kde.org/stable/plasma/$pkgver/$pkgname-$pkgver.tar.xz"{,.sig}
-        'desktopgrid-overlaying-tile-fix.patch'
-        'disable-qpa-plugin.patch')
+        'desktopgrid-overlaying-tile-fix.patch')
 install=$pkgname.install
 sha256sums=('955e889f6f25a777d1063480c67782788a3665c432e338d37ea7c61cdc02a34a'
             'SKIP'
-            '0dc655f8fd03daa9def2fa976b9627b2c5dee181461a894c10d97863084452f5'
-            'd95bc85cff36a7a7c0440baef244b1f382ae975db44cd9810249bbdb1cebfdd3')
+            '0dc655f8fd03daa9def2fa976b9627b2c5dee181461a894c10d97863084452f5')
 validpgpkeys=('2D1D5B0588357787DE9EE225EC94D18F7F05997E'  # Jonathan Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
               'D07BD8662C56CB291B316EB2F5675605C74E02CF'  # David Edmundson <davidedmundson@kde.org>
@@ -29,21 +27,17 @@ validpgpkeys=('2D1D5B0588357787DE9EE225EC94D18F7F05997E'  # Jonathan Riddell <jr
 
 
 prepare() {
-  mkdir -p build
   cd $pkgname-$pkgver
   patch -p1 < "${srcdir}/desktopgrid-overlaying-tile-fix.patch"
-  patch -p1 < "${srcdir}/disable-qpa-plugin.patch"
 }
 
 build() {
-  cd build
-  cmake ../$pkgname-$pkgver \
+  cmake -B build -S $pkgname-$pkgver \
     -DCMAKE_INSTALL_LIBEXECDIR=lib \
     -DBUILD_TESTING=OFF
-  make
+  cmake --build build
 }
 
 package() {
-  cd build
-  make DESTDIR="$pkgdir" install
+  DESTDIR="$pkgdir" cmake --install build
 }
