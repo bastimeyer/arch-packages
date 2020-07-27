@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=5.8rc6.r0.gba47d845d715
+pkgver=5.8rc7.r0.g92ed30191993
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v5.8-rc6
+_srctag=v5.8-rc7
 _srcname=linux-mainline
 _src="git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux"
 url="http://www.kernel.org/"
