@@ -1,0 +1,28 @@
+# Maintainer: Sebastian Meyer <mail@bastimeyer.de>
+# Contributor: Sefa Eyeoglu <contact@scrumplex.net>
+# Contributor: Wouter Haffmans <wouter@simply-life.net>
+
+pkgname=locale-en_de-iso8601-git
+pkgver=r29.19fa49e
+pkgrel=1
+pkgdesc="English language locale for Germany with ISO8601 dates (en_DE)"
+arch=(any)
+url="https://github.com/bastimeyer/locale-en_de-iso8601"
+license=("GPL")
+depends=(glibc)
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}" "${pkgname%-iso8601-git}")
+install=locale.install
+source=("${pkgname}::git+${url}.git")
+sha256sums=('SKIP')
+
+
+pkgver() {
+    cd "${pkgname}"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+package() {
+    install -Dm 0644 "${pkgname}/en_DE" "${pkgdir}/usr/share/i18n/locales/en_DE"
+}
+
