@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=5.9rc8.r0.g549738f15da0
+pkgver=5.9.r0.gbbf5c979011a
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v5.9-rc8
+_srctag=v5.9
 _srcname=linux-git
 _src="git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux"
 url="http://www.kernel.org/"
@@ -30,7 +30,7 @@ validpgpkeys=(
   'A2FF3A36AAA56654109064AB19802F8B0D70FC30'  # Jan Alexander Steffens (heftig)
 )
 sha256sums=('SKIP'
-            '181330a9cf4517abbbe29b93165bc859ad8ca14a43582f4e1d69aae2b5ecc2c9'
+            '40c80a5e6ef76702021abd10e5a9bf07c68530cb2c4868154c1b5adf4bf3b917'
             '2bed83121d9bf0db1a9c62cd3f058fde1a05a1393e669cb8e3b254ff27a7a0f5'
             # 'e7caec2d6e3d162ba52b32f0638fde2c3d74fc0a51476bbccaa68c67212dd754'
 )
