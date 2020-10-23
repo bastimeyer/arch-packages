@@ -6,7 +6,7 @@
 
 _pkgname=powerdevil
 pkgname=powerdevil-brightness
-pkgver=5.13.5
+pkgver=5.20.1
 pkgrel=1
 provides=("${_pkgname}")
 conflicts=("${_pkgname}")
@@ -14,12 +14,17 @@ pkgdesc='Manages the power consumption settings of a Plasma Shell'
 arch=(x86_64)
 url='https://www.kde.org/workspaces/plasmadesktop/'
 license=(LGPL)
-depends=(plasma-workspace bluez-qt networkmanager-qt libkscreen)
-makedepends=(extra-cmake-modules kdoctools kdesignerplugin)
+depends=(plasma-workspace bluez-qt networkmanager-qt)
+makedepends=(extra-cmake-modules kdoctools)
+optdepends=('kinfocenter: for the Energy Information KCM')
 groups=(plasma)
-source=("https://download.kde.org/stable/plasma/${pkgver}/${_pkgname}-${pkgver}.tar.xz"{,.sig})
-sha256sums=('d69b737df6041fe781200e55f2087aca7895b2920dc8419a367ddb5237a3f1cc'
-            'SKIP')
+source=(
+  "https://download.kde.org/stable/plasma/${pkgver}/${_pkgname}-${pkgver}.tar.xz"{,.sig}
+  0000-finer-brightness-control.patch
+)
+sha256sums=('36273fca26c73520c674e96039a43134254313998a2a7587c3267230530b50ae'
+            'SKIP'
+            '16cc891e4b885325341843f68398721f405f63521b88967856a86979d2c0869c')
 validpgpkeys=('2D1D5B0588357787DE9EE225EC94D18F7F05997E'  # Jonathan Riddell
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
               'D07BD8662C56CB291B316EB2F5675605C74E02CF'  # David Edmundson
@@ -28,20 +33,16 @@ validpgpkeys=('2D1D5B0588357787DE9EE225EC94D18F7F05997E'  # Jonathan Riddell
 prepare() {
   mkdir -p build
   cd "${_pkgname}-${pkgver}"
-  patch -p1 < "${startdir}/0000-finer-brightness-control.patch"
+  patch -p1 < "${srcdir}/0000-finer-brightness-control.patch"
 }
 
 build() {
-  cd build
-  cmake "../${_pkgname}-${pkgver}" \
-    -DCMAKE_INSTALL_PREFIX=/usr \
-    -DCMAKE_INSTALL_LIBDIR=lib \
+  cmake -B build -S "${_pkgname}-${pkgver}" \
     -DCMAKE_INSTALL_LIBEXECDIR=lib \
     -DBUILD_TESTING=OFF
-  make
+  cmake --build build
 }
 
 package() {
-  cd build
-  make DESTDIR="$pkgdir" install
+  DESTDIR="$pkgdir" cmake --install build
 }
