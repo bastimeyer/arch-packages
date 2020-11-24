@@ -1,9 +1,10 @@
-clementine-qt5-git
+clementine-git
 ====
 
-forked from https://aur.archlinux.org/clementine-qt5-git.git
+forked from https://aur.archlinux.org/clementine-git.git
 
 ## Changes
 
 - removed unneeded stuff from clementine, like audio CD support, spotify, etc.
 - changed hardcoded volume adjustment steps from 5 to 1
+- removed album name auto guessing

@@ -1,0 +1,170 @@
+diff --git a/ext/libclementine-tagreader/tagreader.cpp b/ext/libclementine-tagreader/tagreader.cpp
+index 45704408c..2888266f9 100644
+--- a/ext/libclementine-tagreader/tagreader.cpp
++++ b/ext/libclementine-tagreader/tagreader.cpp
+@@ -17,6 +17,15 @@
+ 
+ #include "tagreader.h"
+ 
++#include <memory>
++
++#include <QCoreApplication>
++#include <QDateTime>
++#include <QFileInfo>
++#include <QTextCodec>
++#include <QUrl>
++#include <QVector>
++
+ #include <aifffile.h>
+ #include <apefile.h>
+ #include <asffile.h>
+@@ -30,14 +39,6 @@
+ #include <mpcfile.h>
+ #include <mpegfile.h>
+ #include <oggfile.h>
+-
+-#include <QCoreApplication>
+-#include <QDateTime>
+-#include <QFileInfo>
+-#include <QTextCodec>
+-#include <QUrl>
+-#include <QVector>
+-#include <memory>
+ #ifdef TAGLIB_HAS_OPUS
+ #include <opusfile.h>
+ #endif
+@@ -45,7 +46,6 @@
+ #include <oggflacfile.h>
+ #include <popularimeterframe.h>
+ #include <speexfile.h>
+-#include <sys/stat.h>
+ #include <tag.h>
+ #include <tdebuglistener.h>
+ #include <textidentificationframe.h>
+@@ -56,6 +56,8 @@
+ #include <wavfile.h>
+ #include <wavpackfile.h>
+ 
++#include <sys/stat.h>
++
+ #include "core/logging.h"
+ #include "core/messagehandler.h"
+ #include "core/timeconstants.h"
+@@ -93,8 +95,8 @@ class TagReaderDebugListener : public TagLib::DebugListener {
+     // Install handler.
+     TagLib::setDebugListener(this);
+   }
+-
+-  virtual void printMessage(const TagLib::String& msg) override {
++  
++  virtual void printMessage(const TagLib::String &msg) override {
+     // Remove trailing newline.
+     qLog(Debug).noquote() << TStringToQString(msg).trimmed();
+   }
+@@ -131,11 +133,11 @@ const char* kASF_OriginalYear_ID = "WM/OriginalReleaseYear";
+ QString WithoutExtension(const QString& s) {
+   if (s.isEmpty()) return s;
+   const int i = s.lastIndexOf('.');
+-  if (i < 0) return s;
++  if (i  < 0) return s;
+   return s.left(i);
+ }
+ 
+-QString ReplaceUnderscoresWithSpaces(const QString& s) {
++QString ReplaceUnderscoresWithSpaces(const QString &s) {
+   QString ret(s);
+   ret.replace('_', ' ');
+   return ret;
+@@ -143,7 +145,7 @@ QString ReplaceUnderscoresWithSpaces(const QString& s) {
+ 
+ }  // namespace
+ 
+-void TagReader::GuessArtistAndTitle(pb::tagreader::SongMetadata* song) const {
++void TagReader::GuessArtistAndTitle(pb::tagreader::SongMetadata *song) const {
+   QString artist = QString::fromStdString(song->artist());
+   QString title = QString::fromStdString(song->title());
+   const QString bn = QString::fromStdString(song->basefilename());
+@@ -154,7 +156,8 @@ void TagReader::GuessArtistAndTitle(pb::tagreader::SongMetadata* song) const {
+   if (rx.indexIn(bn) >= 0) {
+     artist = rx.cap(1);
+     title = rx.cap(2);
+-  } else {
++  }
++  else {
+     title = WithoutExtension(bn);
+   }
+ 
+@@ -162,33 +165,13 @@ void TagReader::GuessArtistAndTitle(pb::tagreader::SongMetadata* song) const {
+   title = ReplaceUnderscoresWithSpaces(title);
+   artist = artist.trimmed();
+   title = title.trimmed();
+-  if (!artist.isEmpty()) {
+-    song->set_artist(artist.toUtf8().data());
+-  }
+-  if (!title.isEmpty()) {
+-    song->set_title(title.toUtf8().data());
+-  }
+-}
+-
+-void TagReader::GuessAlbum(const QFileInfo& info,
+-                           pb::tagreader::SongMetadata* song) const {
+-  QString album = QString::fromStdString(song->album());
+-  if (!album.isEmpty()) return;
+-  const QString str_dir = info.absoluteDir().absolutePath();
+-  if (str_dir.isEmpty()) return;
+-  const QFileInfo dir(str_dir);
+-  const QString dir_bn = dir.baseName();
+-  if (dir_bn.isEmpty()) return;
+-  album = ReplaceUnderscoresWithSpaces(dir_bn);
+-  album = album.trimmed();
+-  if (album.isEmpty()) return;
+-  const QString al = album.toLower();
+-  if (al == "various" || al == "downloads" || al == "music") return;
+-  song->set_album(album.toUtf8().data());
++  if (!artist.isEmpty()) { song->set_artist(artist.toUtf8().data()); }
++  if (!title.isEmpty()) { song->set_title(title.toUtf8().data()); }
+ }
+ 
+ TagReader::TagReader()
+-    : factory_(new TagLibFileRefFactory), kEmbeddedCover("(embedded)") {}
++    : factory_(new TagLibFileRefFactory),
++      kEmbeddedCover("(embedded)") {}
+ 
+ void TagReader::ReadFile(const QString& filename,
+                          pb::tagreader::SongMetadata* song) const {
+@@ -234,7 +217,6 @@ void TagReader::ReadFile(const QString& filename,
+     // Try fallback -- GME filetypes
+     GME::ReadFile(info, song);
+     GuessArtistAndTitle(song);
+-    GuessAlbum(info, song);
+     return;
+   }
+ 
+@@ -249,7 +231,6 @@ void TagReader::ReadFile(const QString& filename,
+     song->set_valid(true);
+   }
+   GuessArtistAndTitle(song);
+-  GuessAlbum(info, song);
+ 
+   QString disc;
+   QString compilation;
+diff --git a/ext/libclementine-tagreader/tagreader.h b/ext/libclementine-tagreader/tagreader.h
+index 84a4302d9..b282d4d2a 100644
+--- a/ext/libclementine-tagreader/tagreader.h
++++ b/ext/libclementine-tagreader/tagreader.h
+@@ -19,7 +19,6 @@
+ #define TAGREADER_H
+ 
+ #include <QByteArray>
+-#include <QFileInfo>
+ 
+ #include <taglib/xiphcomment.h>
+ #include <memory>
+@@ -97,7 +96,6 @@ class TagReader {
+       const pb::tagreader::SongMetadata& song) const;
+ 
+   void GuessArtistAndTitle(pb::tagreader::SongMetadata* song) const;
+-  void GuessAlbum(const QFileInfo &info, pb::tagreader::SongMetadata* song) const;
+ 
+   pb::tagreader::SongMetadata_Type GuessFileType(
+       TagLib::FileRef* fileref) const;

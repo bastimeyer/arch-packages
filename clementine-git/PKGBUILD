@@ -1,0 +1,85 @@
+# Maintainer: Sebastian Meyer <mail@bastimeyer.de>
+# Contributor: zan <zan@420blaze.it>
+# Contributor: Jacob Henner <code@ventricle.us>
+# Contributor: Eduardo Sánchez Muñoz
+# Contributor: Maxime Gauduin <alucryd@archlinux.org>
+# Contributor: Stéphane Gaudreault <stephane@archlinux.org>
+# Contributor: BlackEagle <ike.devolder@gmail.com>
+# Contributor: Dany Martineau <dany.luc.martineau@gmail.com>
+
+# Based on clementine-git AUR PKGBUILD
+
+_srcname=clementine
+pkgname=${_srcname}-git
+pkgver=1.4.0rc1.r354.gd970b7400.0.gd970b7400
+pkgrel=1
+pkgdesc='A modern music player and library organizer'
+url='https://www.clementine-player.org/'
+license=(GPL)
+arch=(x86_64)
+depends=(
+    chromaprint
+    glew
+    gst-plugins-base-libs
+    protobuf
+    qt5-x11extras
+)
+makedepends=(
+    boost
+    cmake
+    git
+)
+conflicts=("${_srcname}")
+replaces=("${_srcname}")
+
+source=(
+    "${_srcname}::git+https://github.com/clementine-player/Clementine.git"
+    'volume-up-down-adjustment.patch'
+    'remove-guess-album.patch'
+)
+sha256sums=(
+    'SKIP'
+    'ab9663becb509379c9e05990de00881ed53096e0e77824218564d66b8059d507'
+    'f067bd9d2d8543f65d213d1b6980d8e0153f54c2f6130e955118df9cc3c99c15'
+)
+
+
+pkgver() {
+    cd "${_srcname}"
+    git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+prepare() {
+    cd "${_srcname}"
+    patch -p1 -i ../volume-up-down-adjustment.patch
+    patch -p1 -i ../remove-guess-album.patch
+}
+
+build() {
+    args=(
+        -DCMAKE_INSTALL_PREFIX=/usr
+        -DBUILD_WERROR=off
+        -DENABLE_GOOGLE_DRIVE=off
+        -DENABLE_DROPBOX=off
+        -DENABLE_SKYDRIVE=off
+        -DENABLE_BOX=off
+        -DENABLE_SEAFILE=off
+        -DENABLE_AUDIOCD=off
+        -DENABLE_LIBGPOD=off
+        -DENABLE_GIO=off
+        -DENABLE_LIBMTP=off
+        -DENABLE_LIBLASTFM=off
+        -DENABLE_WIIMOTEDEV=off
+        -DENABLE_DEVICEKIT=off
+        -DENABLE_UDISKS2=off
+        -DENABLE_SPOTIFY_BLOB=off
+        -DENABLE_SPARKLE=off
+        -DENABLE_VISUALISATIONS=off
+    )
+    cmake -B build -S "${_srcname}" "${args[@]}"
+    cmake --build build
+}
+
+package() {
+    DESTDIR="$pkgdir" cmake --install build
+}
