@@ -4,8 +4,8 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-pkgver=5.20.3
-pkgrel=2
+pkgver=5.20.4
+pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
 url='https://www.kde.org/workspaces/plasmadesktop/'
@@ -17,7 +17,7 @@ groups=(plasma)
 source=("https://download.kde.org/stable/plasma/$pkgver/$pkgname-$pkgver.tar.xz"{,.sig}
         'desktopgrid-overlaying-tile-fix.patch')
 install=$pkgname.install
-sha256sums=('3bfe2a3991575328badc960e99812b36c1242c667407c377d23cc064e0bacde8'
+sha256sums=('c59861e9d456974bffaff2cb371cd8d31bdb789f89a60af632089c556111662a'
             'SKIP'
             '0dc655f8fd03daa9def2fa976b9627b2c5dee181461a894c10d97863084452f5')
 validpgpkeys=('2D1D5B0588357787DE9EE225EC94D18F7F05997E'  # Jonathan Riddell <jr@jriddell.org>
