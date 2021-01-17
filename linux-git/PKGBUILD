@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=5.10.7.r0.g659361086d8b
+pkgver=5.10.8.r0.g7a1519a74f3d
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v5.10.7
+_srctag=v5.10.8
 _srcname=linux-stable
 _src="git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux"
 url="http://www.kernel.org/"
@@ -23,7 +23,6 @@ source=(
   config         # the main kernel config file
   disallow-unprivileged-clone-newuser.patch
   futex-v3.patch
-  fix-btrfs-performance-regression.patch
 )
 validpgpkeys=(
   'ABAF11C65A2970B130ABE3C479BE3E4300411886'  # Linus Torvalds
@@ -34,7 +33,6 @@ sha256sums=('SKIP'
             'd3e7adf5fcfc632887058ca84ca7b849a824dda5a03de854c8d3480ef0124ad1'
             '2bed83121d9bf0db1a9c62cd3f058fde1a05a1393e669cb8e3b254ff27a7a0f5'
             'b302ba6c5bbe8ed19b20207505d513208fae1e678cf4d8e7ac0b154e5fe3f456'
-            '109aabb972ae535919c737ee003aede3c551b1038ca2f67a4233703d4f586e9e'
 )
 
 export KBUILD_BUILD_HOST=archlinux
