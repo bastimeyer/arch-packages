@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=5.11rc4.r0.g19c329f68089
-pkgrel=2
+pkgver=5.11rc5.r0.g6ee1d745b7c9
+pkgrel=1
 pkgdesc='Linux'
-_srctag=v5.11-rc4
+_srctag=v5.11-rc5
 _srcname=linux-mainline
 _src="git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux"
 url="http://www.kernel.org/"
@@ -23,8 +23,7 @@ source=(
   config         # the main kernel config file
   disallow-unprivileged-clone-newuser.patch
   futex-v3.patch
-  bpf-allow-empty-module-BTFs.patch
-  libbpf-allow-loading-empty-BTFs.patch
+  0001-futex2-resync-from-gitlab.collabora.com.patch
   x86-sched-on-amd-epyc-set-freq_max-max_boost-in-schedutil-invariant-formula.patch
 )
 validpgpkeys=(
@@ -36,8 +35,7 @@ sha256sums=('SKIP'
             'd3e7adf5fcfc632887058ca84ca7b849a824dda5a03de854c8d3480ef0124ad1'
             '2bed83121d9bf0db1a9c62cd3f058fde1a05a1393e669cb8e3b254ff27a7a0f5'
             'b302ba6c5bbe8ed19b20207505d513208fae1e678cf4d8e7ac0b154e5fe3f456'
-            'bd82a2d165846760d701a9755b1b4149e490fc8ca076b0b776b63eafdd0e005e'
-            '01a3a418d084880a861e1e25c2dd5a4912f881da58e885bfe067a67b381e1bfc'
+            '3df7eefc79c25a92f34d91c0babc31a0bb718713850f52d0b34b68250b0e4311'
             '79ac272e811b2f5d4ee34d76dc540d3a888c6c010d646c65080991709d2d04ce'
 )
 
