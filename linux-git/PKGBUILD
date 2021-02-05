@@ -5,7 +5,7 @@
 
 pkgbase=linux-git
 pkgver=5.11rc6.r0.g1048ba83fb1c
-pkgrel=1
+pkgrel=2
 pkgdesc='Linux'
 _srctag=v5.11-rc6
 _srcname=linux-mainline
@@ -36,7 +36,7 @@ sha256sums=('SKIP'
             '2bed83121d9bf0db1a9c62cd3f058fde1a05a1393e669cb8e3b254ff27a7a0f5'
             'b302ba6c5bbe8ed19b20207505d513208fae1e678cf4d8e7ac0b154e5fe3f456'
             '3df7eefc79c25a92f34d91c0babc31a0bb718713850f52d0b34b68250b0e4311'
-            '79ac272e811b2f5d4ee34d76dc540d3a888c6c010d646c65080991709d2d04ce'
+            '2fc46a8df36350df4e145591b8289e22be71894675aada688daca485471e19da'
 )
 
 export KBUILD_BUILD_HOST=archlinux
