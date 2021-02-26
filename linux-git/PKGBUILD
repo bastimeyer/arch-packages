@@ -4,12 +4,12 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=5.11.r0.gf40ddce88593
-pkgrel=2
+pkgver=5.11.2.r0.g27e543cca13f
+pkgrel=1
 pkgdesc='Linux'
-_srctag=v5.11
-_srcname=linux-mainline
-_src="git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux"
+_srctag=v5.11.2
+_srcname=linux-stable
+_src="git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux"
 url="http://www.kernel.org/"
 arch=(x86_64)
 license=(GPL2)
@@ -108,6 +108,7 @@ _package() {
 
 _package-headers() {
   pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
+  depends=(pahole)
 
   cd $_srcname
   local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
