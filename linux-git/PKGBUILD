@@ -5,7 +5,7 @@
 
 pkgbase=linux-git
 pkgver=5.11.6.r0.g0985dc528812
-pkgrel=1
+pkgrel=2
 pkgdesc='Linux'
 _srctag=v5.11.6
 _srcname=linux-stable
@@ -23,7 +23,7 @@ source=(
   config         # the main kernel config file
   disallow-unprivileged-clone-newuser.patch
   futex-v3.patch
-  0001-futex2-resync-from-gitlab.collabora.com.patch
+  futex2-5.11.patch
 )
 validpgpkeys=(
   'ABAF11C65A2970B130ABE3C479BE3E4300411886'  # Linus Torvalds
@@ -34,7 +34,7 @@ sha256sums=('SKIP'
             '55394d9cee73413c06e332005e1af4d6e22d97cd7d915721f2edb424d61cc3b5'
             '2bed83121d9bf0db1a9c62cd3f058fde1a05a1393e669cb8e3b254ff27a7a0f5'
             'b302ba6c5bbe8ed19b20207505d513208fae1e678cf4d8e7ac0b154e5fe3f456'
-            '3df7eefc79c25a92f34d91c0babc31a0bb718713850f52d0b34b68250b0e4311'
+            '85b65ecf97c777c6dbb539329ddae5bfc5911c3aabf356c29127242c6f7bbc6d'
 )
 
 export KBUILD_BUILD_HOST=archlinux
