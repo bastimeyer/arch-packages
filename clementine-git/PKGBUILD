@@ -11,23 +11,28 @@
 
 _srcname=clementine
 pkgname=${_srcname}-git
-pkgver=1.4.0rc1.r354.gd970b7400.0.gd970b7400
+pkgver=1.4.0rc1.r509.g89e9b20df.0.g89e9b20df
 pkgrel=1
 pkgdesc='A modern music player and library organizer'
 url='https://www.clementine-player.org/'
 license=(GPL)
 arch=(x86_64)
 depends=(
+    alsa-lib
     chromaprint
-    glew
+    crypto++
     gst-plugins-base-libs
+    hicolor-icon-theme
+    libpulse
     protobuf
     qt5-x11extras
+    taglib
 )
 makedepends=(
     boost
     cmake
     git
+    qt5-tools
 )
 conflicts=("${_srcname}")
 replaces=("${_srcname}")
@@ -35,12 +40,10 @@ replaces=("${_srcname}")
 source=(
     "${_srcname}::git+https://github.com/clementine-player/Clementine.git"
     'volume-up-down-adjustment.patch'
-    'remove-guess-album.patch'
 )
 sha256sums=(
     'SKIP'
     'ab9663becb509379c9e05990de00881ed53096e0e77824218564d66b8059d507'
-    'f067bd9d2d8543f65d213d1b6980d8e0153f54c2f6130e955118df9cc3c99c15'
 )
 
 
@@ -51,8 +54,8 @@ pkgver() {
 
 prepare() {
     cd "${_srcname}"
+    sed -e 's|CRYPTOPP cryptopp|CRYPTOPP libcryptopp|' -i CMakeLists.txt # Fix crypto++ detection
     patch -p1 -i ../volume-up-down-adjustment.patch
-    patch -p1 -i ../remove-guess-album.patch
 }
 
 build() {
@@ -75,6 +78,7 @@ build() {
         -DENABLE_SPOTIFY_BLOB=off
         -DENABLE_SPARKLE=off
         -DENABLE_VISUALISATIONS=off
+        -DUSE_SYSTEM_TAGLIB=ON
     )
     cmake -B build -S "${_srcname}" "${args[@]}"
     cmake --build build
