@@ -11,7 +11,7 @@
 
 _srcname=clementine
 pkgname=${_srcname}-git
-pkgver=1.4.0rc1.r509.g89e9b20df.0.g89e9b20df
+pkgver=1.4.0rc1.r514.g05e450c3c.0.g05e450c3c
 pkgrel=1
 pkgdesc='A modern music player and library organizer'
 url='https://www.clementine-player.org/'
@@ -40,10 +40,12 @@ replaces=("${_srcname}")
 source=(
     "${_srcname}::git+https://github.com/clementine-player/Clementine.git"
     'volume-up-down-adjustment.patch'
+    'remove-guess-album.patch'
 )
 sha256sums=(
     'SKIP'
     'ab9663becb509379c9e05990de00881ed53096e0e77824218564d66b8059d507'
+    '97c869d33273be079a49bc51bc1542cd06f15f8be3070e06ac10c55e5f76f8fd'
 )
 
 
@@ -56,6 +58,7 @@ prepare() {
     cd "${_srcname}"
     sed -e 's|CRYPTOPP cryptopp|CRYPTOPP libcryptopp|' -i CMakeLists.txt # Fix crypto++ detection
     patch -p1 -i ../volume-up-down-adjustment.patch
+    patch -p1 -i ../remove-guess-album.patch
 }
 
 build() {
