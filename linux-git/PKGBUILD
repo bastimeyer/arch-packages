@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=5.12rc4.r0.g0d02ec6b3136
+pkgver=5.12rc5.r0.ga5e13c6df0e4
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v5.12-rc4
+_srctag=v5.12-rc5
 _srcname=linux-mainline
 _src="git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux"
 url="http://www.kernel.org/"
@@ -30,7 +30,7 @@ validpgpkeys=(
   'A2FF3A36AAA56654109064AB19802F8B0D70FC30'  # Jan Alexander Steffens (heftig)
 )
 sha256sums=('SKIP'
-            '6ab7490bc2d464fc25140287cf78d80a9d439c0113311b93f47a568d4756cdb6'
+            '569f615ed3cf8c8e8e4c26aca156ae59886c3b91b46967a3ac95a615ca2e8874'
             '2bed83121d9bf0db1a9c62cd3f058fde1a05a1393e669cb8e3b254ff27a7a0f5'
             'b302ba6c5bbe8ed19b20207505d513208fae1e678cf4d8e7ac0b154e5fe3f456'
 )
