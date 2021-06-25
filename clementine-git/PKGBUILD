@@ -11,7 +11,7 @@
 
 _srcname=clementine
 pkgname=${_srcname}-git
-pkgver=1.4.0rc1.r514.g05e450c3c.0.g05e450c3c
+pkgver=1.4.0rc1.r661.g62cb889a3.0.g62cb889a3
 pkgrel=1
 pkgdesc='A modern music player and library organizer'
 url='https://www.clementine-player.org/'
@@ -26,6 +26,7 @@ depends=(
     libpulse
     protobuf
     qt5-x11extras
+    udisks2-qt5
     taglib
 )
 makedepends=(
@@ -40,12 +41,10 @@ replaces=("${_srcname}")
 source=(
     "${_srcname}::git+https://github.com/clementine-player/Clementine.git"
     'volume-up-down-adjustment.patch'
-    'remove-guess-album.patch'
 )
 sha256sums=(
     'SKIP'
     'ab9663becb509379c9e05990de00881ed53096e0e77824218564d66b8059d507'
-    '97c869d33273be079a49bc51bc1542cd06f15f8be3070e06ac10c55e5f76f8fd'
 )
 
 
@@ -58,7 +57,6 @@ prepare() {
     cd "${_srcname}"
     sed -e 's|CRYPTOPP cryptopp|CRYPTOPP libcryptopp|' -i CMakeLists.txt # Fix crypto++ detection
     patch -p1 -i ../volume-up-down-adjustment.patch
-    patch -p1 -i ../remove-guess-album.patch
 }
 
 build() {
@@ -76,8 +74,7 @@ build() {
         -DENABLE_LIBMTP=off
         -DENABLE_LIBLASTFM=off
         -DENABLE_WIIMOTEDEV=off
-        -DENABLE_DEVICEKIT=off
-        -DENABLE_UDISKS2=off
+        -DENABLE_UDISKS2=on
         -DENABLE_SPOTIFY_BLOB=off
         -DENABLE_SPARKLE=off
         -DENABLE_VISUALISATIONS=off
