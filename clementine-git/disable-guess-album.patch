@@ -1,0 +1,25 @@
+diff --git a/src/core/songpathparser.cpp b/src/core/songpathparser.cpp
+index cd2cc775a..b459d321d 100644
+--- a/src/core/songpathparser.cpp
++++ b/src/core/songpathparser.cpp
+@@ -81,20 +81,6 @@ void SongPathParser::GuessArtistAndTitle(Song* song) {
+ 
+ void SongPathParser::GuessAlbum(const QString& path, Song* song) {
+   qLog(Debug) << "Guess album";
+-  QFileInfo info(path);
+-  QString album = song->album();
+-  if (!album.isEmpty()) return;
+-  const QString str_dir = info.absoluteDir().absolutePath();
+-  if (str_dir.isEmpty()) return;
+-  const QFileInfo dir(str_dir);
+-  const QString dir_bn = dir.baseName();
+-  if (dir_bn.isEmpty()) return;
+-  album = ReplaceUnderscoresWithSpaces(dir_bn);
+-  album = album.trimmed();
+-  if (album.isEmpty()) return;
+-  const QString al = album.toLower();
+-  if (al == "various" || al == "downloads" || al == "music") return;
+-  song->set_album(album);
+ }
+ 
+ void SongPathParser::GuessMissingFields(Song* song, QString path) {
