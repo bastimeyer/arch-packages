@@ -4,13 +4,13 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=5.12.13.r0.g1463281b5efd
-pkgrel=2
+pkgver=5.13.r0.g62fb9874f5da
+pkgrel=1
 pkgdesc='Linux'
-_srctag=v5.12.13
-_srcname=linux-stable
-_src="git+https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux"
-url="http://www.kernel.org/"
+_srctag=v5.13
+_srcname=linux
+_src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
+url="https://www.kernel.org/"
 arch=(x86_64)
 license=(GPL2)
 makedepends=(
@@ -22,9 +22,7 @@ source=(
   "${_srcname}::${_src}#tag=${_srctag}"
   config         # the main kernel config file
   disallow-unprivileged-clone-newuser.patch
-  futex-v3.patch
-  futex2.patch   # gitlab.collabora.com/tonyk/linux.git@7af08140..be7e3c5d
-  revert-df6cd610bbe52fc78bd77fec67850f0f3497679d.patch  # broken idle state on navi10
+  futex2.patch   # gitlab.collabora.com/tonyk/linux.git @ f5fab7a3~1..573fd06c, 11543229~1..11543229 (no docs/selftests)
 )
 validpgpkeys=(
   'ABAF11C65A2970B130ABE3C479BE3E4300411886'  # Linus Torvalds
@@ -32,11 +30,9 @@ validpgpkeys=(
   'A2FF3A36AAA56654109064AB19802F8B0D70FC30'  # Jan Alexander Steffens (heftig)
 )
 sha256sums=('SKIP'
-            '5e772eb39e4365d33374922e70253c96b88532ab5837776ada704ccde674c7a8'
+            '828d90d788ad44ba1480486081afb3ec730de5b48dfe344662043940a0b42cdf'
             '2bed83121d9bf0db1a9c62cd3f058fde1a05a1393e669cb8e3b254ff27a7a0f5'
-            'b302ba6c5bbe8ed19b20207505d513208fae1e678cf4d8e7ac0b154e5fe3f456'
-            '1f080c935b6e2afc05f0edd95b6528d66799bb93686edfc8c92d3722aa5bc50a'
-            'df0581b1b6aacd137fb6db61f708225c049bd388a0d54fc0e9da63ad6a0fd943'
+            '36aa80506529682006ed5368bf1cee7a1cbba1a1510e9efe917436056eb1f33a'
 )
 
 export KBUILD_BUILD_HOST=archlinux
@@ -134,13 +130,16 @@ _package-headers() {
   install -Dt "$builddir/drivers/md" -m644 drivers/md/*.h
   install -Dt "$builddir/net/mac80211" -m644 net/mac80211/*.h
 
-  # http://bugs.archlinux.org/task/13146
+  # https://bugs.archlinux.org/task/13146
   install -Dt "$builddir/drivers/media/i2c" -m644 drivers/media/i2c/msp3400-driver.h
 
-  # http://bugs.archlinux.org/task/20402
+  # https://bugs.archlinux.org/task/20402
   install -Dt "$builddir/drivers/media/usb/dvb-usb" -m644 drivers/media/usb/dvb-usb/*.h
   install -Dt "$builddir/drivers/media/dvb-frontends" -m644 drivers/media/dvb-frontends/*.h
   install -Dt "$builddir/drivers/media/tuners" -m644 drivers/media/tuners/*.h
+
+  # https://bugs.archlinux.org/task/71392
+  install -Dt "$builddir/drivers/iio/common/hid-sensors" -m644 drivers/iio/common/hid-sensors/*.h
 
   echo "Installing KConfig files..."
   find . -name 'Kconfig*' -exec install -Dm644 {} "$builddir/{}" \;
