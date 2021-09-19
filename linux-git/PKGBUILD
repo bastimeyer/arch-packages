@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=5.14.5.r0.gd92805b62285
+pkgver=5.14.6.r0.g6a7ababc0268
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v5.14.5
+_srctag=v5.14.6
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -22,7 +22,6 @@ source=(
   "${_srcname}::${_src}#tag=${_srctag}"
   config         # the main kernel config file
   disallow-unprivileged-clone-newuser.patch
-  watchdog-itco_wdt-fix-detection-of-smi-off-case.patch
   # gitlab.collabora.com/tonyk/linux.git, rebased 49624efa65a..f168939d118 onto 7d2a07b7693, fixed conflicts and syscall ID
   futex2.patch
 )
@@ -34,7 +33,6 @@ validpgpkeys=(
 sha256sums=('SKIP'
             'f98065a286a6d2dbb0e226867a6417e344aaa44ef6eac967707e1f09671be445'
             '2bed83121d9bf0db1a9c62cd3f058fde1a05a1393e669cb8e3b254ff27a7a0f5'
-            'f70f8d7d73199d8b003901fbbd095b5a4105fa981aa48dcc59a5df9acc5cb0fe'
             '47ea4128b5c6d41843b2a94035575edcbf5d55a753ea6ead29406787f1ccb2a8'
 )
 
