@@ -1,8 +1,8 @@
 diff --git a/src/effects/desktopgrid/desktopgrid.cpp b/src/effects/desktopgrid/desktopgrid.cpp
-index e454622ec..c5507f884 100644
+index aa3ea2a09..b3808e54b 100644
 --- a/src/effects/desktopgrid/desktopgrid.cpp
 +++ b/src/effects/desktopgrid/desktopgrid.cpp
-@@ -173,8 +173,10 @@ void DesktopGridEffect::prePaintScreen(ScreenPrePaintData& data, std::chrono::mi
+@@ -225,8 +225,10 @@ void DesktopGridEffect::prePaintScreen(ScreenPrePaintData& data, std::chrono::mi
          }
          // PAINT_SCREEN_BACKGROUND_FIRST is needed because screen will be actually painted more than once,
          // so with normal screen painting second screen paint would erase parts of the first paint
@@ -12,6 +12,6 @@ index e454622ec..c5507f884 100644
 +            int paint = activated && timeline.currentValue() == 1 ? PAINT_SCREEN_TRANSFORMED : PAINT_SCREEN_REGION;
 +            data.mask |= paint | PAINT_SCREEN_BACKGROUND_FIRST;
 +        }
-         if (!activated && timeline.currentValue() == 0 && !(isUsingPresentWindows() && isMotionManagerMovingWindows()))
-             finish();
      }
+ 
+     const EffectWindowList windows = effects->stackingOrder();
