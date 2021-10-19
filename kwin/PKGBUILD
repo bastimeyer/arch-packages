@@ -5,7 +5,7 @@
 
 pkgname=kwin
 pkgver=5.23.0
-pkgrel=1
+pkgrel=2
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
 url='https://www.kde.org/workspaces/plasmadesktop/'
@@ -16,11 +16,19 @@ makedepends=(extra-cmake-modules qt5-tools kdoctools krunner)
 optdepends=('maliit-keyboard: virtual keyboard for kwin-wayland')
 groups=(plasma)
 source=("https://download.kde.org/stable/plasma/$pkgver/$pkgname-$pkgver.tar.xz"{,.sig}
+        # fix BUG 443705 (removing window decorations via kwin window rules is still broken)
+        'fix-443705.patch'
+        # revert desktop grid fixes
+        # this fixes the present windows effect animation in the desktop grid
+        'revert-ba163e40-72ebe976-0042d2d8.patch'
+        # fix desktop grid effect zoom-in and zoom-out animation on reverted fixes
         'desktopgrid-overlaying-tile-fix.patch')
 install=$pkgname.install
 sha256sums=('ba74f70648faa3c92c88e1b77916c6abd7fcad1af9e717a39dc9df278f1a551f'
             'SKIP'
-            '3bf333961d2cccf5fbe48446feb17a2d3d23d6bdf0ea6e4194c9879f4c96850b')
+            'a943c73cca72e9c4d0370310d7d39dbb7cc776dd3738ebed45de6b4047293146'
+            '45ccbe070565e4bd4785e80871cca4474aa9b72fa09968405429e282bac95e15'
+            'ed392f7d87b5a1ebe7c0bd8625d5f3d5c47ebd3215b0156a4185c76d5143f300')
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
               'B3CB366552540BE06EE9AD9711968C44928CAEFC'  # Bhushan Shah <bshah@kde.org>
@@ -30,6 +38,8 @@ validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Riddell <jr
 
 prepare() {
   cd $pkgname-$pkgver
+  patch -p1 < "${srcdir}/fix-443705.patch"
+  patch -p1 < "${srcdir}/revert-ba163e40-72ebe976-0042d2d8.patch"
   patch -p1 < "${srcdir}/desktopgrid-overlaying-tile-fix.patch"
 }
 
