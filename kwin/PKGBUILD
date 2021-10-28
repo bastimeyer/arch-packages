@@ -4,14 +4,14 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-pkgver=5.23.1
+pkgver=5.23.2
 pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
 url='https://www.kde.org/workspaces/plasmadesktop/'
 license=(LGPL)
 depends=(kscreenlocker xcb-util-cursor plasma-framework kcmutils kwayland-server breeze
-         pipewire-media-session libqaccessibilityclient lcms2)
+         pipewire-session-manager libqaccessibilityclient lcms2)
 makedepends=(extra-cmake-modules qt5-tools kdoctools krunner)
 optdepends=('maliit-keyboard: virtual keyboard for kwin-wayland')
 groups=(plasma)
@@ -22,7 +22,7 @@ source=("https://download.kde.org/stable/plasma/$pkgver/$pkgname-$pkgver.tar.xz"
         # fix desktop grid effect zoom-in and zoom-out animation on reverted fixes
         'desktopgrid-overlaying-tile-fix.patch')
 install=$pkgname.install
-sha256sums=('5838d7ab84babc5bd3cb3df9f7e38fc01c98ba1bf584b6d43e4528dd03598b31'
+sha256sums=('ffba7dac42cbcab86392a9482f6b39f4bdc61ce153a236d9af1c4c3a521ef8ba'
             'SKIP'
             '45ccbe070565e4bd4785e80871cca4474aa9b72fa09968405429e282bac95e15'
             'ed392f7d87b5a1ebe7c0bd8625d5f3d5c47ebd3215b0156a4185c76d5143f300')
