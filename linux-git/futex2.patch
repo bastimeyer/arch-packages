@@ -1,7 +1,7 @@
-From b4a0ede107961e82592951097b28ef416659aa39 Mon Sep 17 00:00:00 2001
+From 6f9eb8a836b2620327c0d4ded960673dbd761179 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
 Date: Thu, 29 Jul 2021 14:40:08 -0300
-Subject: [PATCH 1/7] futex: Prepare for futex_wait_multiple()
+Subject: [PATCH 1/6] futex: Prepare for futex_wait_multiple()
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -12,7 +12,7 @@ futex_wait_multiple() function in next commit.
 Signed-off-by: André Almeida <andrealmeid@collabora.com>
 
 diff --git a/kernel/futex.c b/kernel/futex.c
-index 2ecb0757505..7b1f75655c7 100644
+index c15ad276fd1..32c91f9d738 100644
 --- a/kernel/futex.c
 +++ b/kernel/futex.c
 @@ -34,14 +34,11 @@
@@ -54,7 +54,7 @@ index 2ecb0757505..7b1f75655c7 100644
  /*
   * Priority Inheritance state:
   */
-@@ -187,46 +168,6 @@ struct futex_pi_state {
+@@ -187,103 +168,6 @@ struct futex_pi_state {
  	union futex_key key;
  } __randomize_layout;
  
@@ -68,6 +68,8 @@ index 2ecb0757505..7b1f75655c7 100644
 - * @rt_waiter:		rt_waiter storage for use with requeue_pi
 - * @requeue_pi_key:	the requeue_pi target futex key
 - * @bitset:		bitset for the optional bitmasked wakeup
+- * @requeue_state:	State field for futex_requeue_pi()
+- * @requeue_wait:	RCU wait for futex_requeue_pi() (RT only)
 - *
 - * We use this hashed waitqueue, instead of a normal wait_queue_entry_t, so
 - * we can wake only the relevant ones (hashed queues may be shared).
@@ -90,18 +92,73 @@ index 2ecb0757505..7b1f75655c7 100644
 -	struct rt_mutex_waiter *rt_waiter;
 -	union futex_key *requeue_pi_key;
 -	u32 bitset;
+-	atomic_t requeue_state;
+-#ifdef CONFIG_PREEMPT_RT
+-	struct rcuwait requeue_wait;
+-#endif
 -} __randomize_layout;
+-
+-/*
+- * On PREEMPT_RT, the hash bucket lock is a 'sleeping' spinlock with an
+- * underlying rtmutex. The task which is about to be requeued could have
+- * just woken up (timeout, signal). After the wake up the task has to
+- * acquire hash bucket lock, which is held by the requeue code.  As a task
+- * can only be blocked on _ONE_ rtmutex at a time, the proxy lock blocking
+- * and the hash bucket lock blocking would collide and corrupt state.
+- *
+- * On !PREEMPT_RT this is not a problem and everything could be serialized
+- * on hash bucket lock, but aside of having the benefit of common code,
+- * this allows to avoid doing the requeue when the task is already on the
+- * way out and taking the hash bucket lock of the original uaddr1 when the
+- * requeue has been completed.
+- *
+- * The following state transitions are valid:
+- *
+- * On the waiter side:
+- *   Q_REQUEUE_PI_NONE		-> Q_REQUEUE_PI_IGNORE
+- *   Q_REQUEUE_PI_IN_PROGRESS	-> Q_REQUEUE_PI_WAIT
+- *
+- * On the requeue side:
+- *   Q_REQUEUE_PI_NONE		-> Q_REQUEUE_PI_INPROGRESS
+- *   Q_REQUEUE_PI_IN_PROGRESS	-> Q_REQUEUE_PI_DONE/LOCKED
+- *   Q_REQUEUE_PI_IN_PROGRESS	-> Q_REQUEUE_PI_NONE (requeue failed)
+- *   Q_REQUEUE_PI_WAIT		-> Q_REQUEUE_PI_DONE/LOCKED
+- *   Q_REQUEUE_PI_WAIT		-> Q_REQUEUE_PI_IGNORE (requeue failed)
+- *
+- * The requeue side ignores a waiter with state Q_REQUEUE_PI_IGNORE as this
+- * signals that the waiter is already on the way out. It also means that
+- * the waiter is still on the 'wait' futex, i.e. uaddr1.
+- *
+- * The waiter side signals early wakeup to the requeue side either through
+- * setting state to Q_REQUEUE_PI_IGNORE or to Q_REQUEUE_PI_WAIT depending
+- * on the current state. In case of Q_REQUEUE_PI_IGNORE it can immediately
+- * proceed to take the hash bucket lock of uaddr1. If it set state to WAIT,
+- * which means the wakeup is interleaving with a requeue in progress it has
+- * to wait for the requeue side to change the state. Either to DONE/LOCKED
+- * or to IGNORE. DONE/LOCKED means the waiter q is now on the uaddr2 futex
+- * and either blocked (DONE) or has acquired it (LOCKED). IGNORE is set by
+- * the requeue side when the requeue attempt failed via deadlock detection
+- * and therefore the waiter q is still on the uaddr1 futex.
+- */
+-enum {
+-	Q_REQUEUE_PI_NONE		=  0,
+-	Q_REQUEUE_PI_IGNORE,
+-	Q_REQUEUE_PI_IN_PROGRESS,
+-	Q_REQUEUE_PI_WAIT,
+-	Q_REQUEUE_PI_DONE,
+-	Q_REQUEUE_PI_LOCKED,
+-};
 -
 -static const struct futex_q futex_q_init = {
 -	/* list gets initialized in queue_me()*/
--	.key = FUTEX_KEY_INIT,
--	.bitset = FUTEX_BITSET_MATCH_ANY
+-	.key		= FUTEX_KEY_INIT,
+-	.bitset		= FUTEX_BITSET_MATCH_ANY,
+-	.requeue_state	= ATOMIC_INIT(Q_REQUEUE_PI_NONE),
 -};
--
+ 
  /*
   * Hash buckets are shared by all the futex_keys that hash to the same
-  * location.  Each key may have multiple futex_q structures, one for each task
-@@ -395,7 +336,7 @@ enum futex_access {
+@@ -453,7 +337,7 @@ enum futex_access {
   * Return: Initialized hrtimer_sleeper structure or NULL if no timeout
   *	   value given
   */
@@ -110,7 +167,7 @@ index 2ecb0757505..7b1f75655c7 100644
  futex_setup_timer(ktime_t *time, struct hrtimer_sleeper *timeout,
  		  int flags, u64 range_ns)
  {
-@@ -3771,20 +3712,6 @@ static __always_inline bool futex_cmd_has_timeout(u32 cmd)
+@@ -4005,20 +3889,6 @@ static __always_inline bool futex_cmd_has_timeout(u32 cmd)
  	return false;
  }
  
@@ -278,13 +335,13 @@ index 00000000000..c914e0080cf
 +
 +#endif
 -- 
-2.33.0
+2.33.1
 
 
-From 386640edea3d61c76892ff7d362d08417efb891a Mon Sep 17 00:00:00 2001
+From b6382cdf6ec279fe61e9242a6a89d6146c870404 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
 Date: Thu, 24 Jun 2021 10:43:51 -0300
-Subject: [PATCH 2/7] futex2: Implement vectorized wait
+Subject: [PATCH 2/6] futex2: Implement vectorized wait
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -322,10 +379,10 @@ information of how many were awakened, or any particular attribute of it
 Signed-off-by: André Almeida <andrealmeid@collabora.com>
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index d7b4f32875a..2303965b641 100644
+index eeb4c70b3d5..7b756d96f09 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -7653,6 +7653,7 @@ M:	Ingo Molnar <mingo@redhat.com>
+@@ -7718,6 +7718,7 @@ M:	Ingo Molnar <mingo@redhat.com>
  R:	Peter Zijlstra <peterz@infradead.org>
  R:	Darren Hart <dvhart@infradead.org>
  R:	Davidlohr Bueso <dave@stgolabs.net>
@@ -333,7 +390,7 @@ index d7b4f32875a..2303965b641 100644
  L:	linux-kernel@vger.kernel.org
  S:	Maintained
  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
-@@ -7660,7 +7661,7 @@ F:	Documentation/locking/*futex*
+@@ -7725,7 +7726,7 @@ F:	Documentation/locking/*futex*
  F:	include/asm-generic/futex.h
  F:	include/linux/futex.h
  F:	include/uapi/linux/futex.h
@@ -342,34 +399,47 @@ index d7b4f32875a..2303965b641 100644
  F:	tools/perf/bench/futex*
  F:	tools/testing/selftests/futex/
  
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index c270124e440..2419a5dd7df 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -690,6 +690,9 @@ asmlinkage long
- compat_sys_get_robust_list(int pid, compat_uptr_t __user *head_ptr,
- 			   compat_size_t __user *len_ptr);
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 252243c7783..a30083ec4bd 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -58,6 +58,7 @@ struct mq_attr;
+ struct compat_stat;
+ struct old_timeval32;
+ struct robust_list_head;
++struct futex_waitv;
+ struct getcpu_cache;
+ struct old_linux_dirent;
+ struct perf_event_attr;
+@@ -623,6 +624,11 @@ asmlinkage long sys_get_robust_list(int pid,
+ asmlinkage long sys_set_robust_list(struct robust_list_head __user *head,
+ 				    size_t len);
  
++/* kernel/futex2.c */
 +asmlinkage long sys_futex_waitv(struct futex_waitv *waiters,
-+				compat_uint_t nr_futexes, compat_uint_t flags,
++				unsigned int nr_futexes, unsigned int flags,
 +				struct __kernel_timespec __user *timo);
- /* kernel/itimer.c */
- asmlinkage long compat_sys_getitimer(int which,
- 				     struct old_itimerval32 __user *it);
++
+ /* kernel/hrtimer.c */
+ asmlinkage long sys_nanosleep(struct __kernel_timespec __user *rqtp,
+ 			      struct __kernel_timespec __user *rmtp);
 diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index a9d6fcd95f4..3e7f90ca9ed 100644
+index 1c5fb86d455..ebafbb27cc4 100644
 --- a/include/uapi/asm-generic/unistd.h
 +++ b/include/uapi/asm-generic/unistd.h
-@@ -878,6 +878,9 @@ __SYSCALL(__NR_landlock_restrict_self, sys_landlock_restrict_self)
- __SYSCALL(__NR_memfd_secret, sys_memfd_secret)
- #endif
+@@ -880,8 +880,11 @@ __SYSCALL(__NR_memfd_secret, sys_memfd_secret)
+ #define __NR_process_mrelease 448
+ __SYSCALL(__NR_process_mrelease, sys_process_mrelease)
  
-+#define __NR_futex_waitv 448
-+__SC_COMP(__NR_futex_waitv, sys_futex_waitv, compat_sys_futex_waitv)
++#define __NR_futex_waitv 449
++__SC_COMP(__NR_futex_waitv, sys_futex_waitv)
 +
  #undef __NR_syscalls
- #define __NR_syscalls 448
+-#define __NR_syscalls 449
++#define __NR_syscalls 450
  
+ /*
+  * 32 bit systems traditionally used different
 diff --git a/include/uapi/linux/futex.h b/include/uapi/linux/futex.h
 index 235e5b2faca..71a5df8d268 100644
 --- a/include/uapi/linux/futex.h
@@ -407,10 +477,10 @@ index 235e5b2faca..71a5df8d268 100644
   * Support for robust futexes: the kernel cleans up held futexes at
   * thread exit time.
 diff --git a/init/Kconfig b/init/Kconfig
-index 55f9f7738eb..4cfc315182a 100644
+index 11f8a845f25..a5c9300f900 100644
 --- a/init/Kconfig
 +++ b/init/Kconfig
-@@ -1558,6 +1558,13 @@ config FUTEX
+@@ -1581,6 +1581,13 @@ config FUTEX
  	  support for "fast userspace mutexes".  The resulting kernel may not
  	  run glibc-based applications correctly.
  
@@ -437,10 +507,10 @@ index 4df609be42d..1eaf2af5028 100644
  obj-$(CONFIG_SMP) += smp.o
  ifneq ($(CONFIG_SMP),y)
 diff --git a/kernel/futex.c b/kernel/futex.c
-index 7b1f75655c7..ce4a14462bf 100644
+index 32c91f9d738..858465f97d9 100644
 --- a/kernel/futex.c
 +++ b/kernel/futex.c
-@@ -2545,6 +2545,207 @@ static void futex_wait_queue_me(struct futex_hash_bucket *hb, struct futex_q *q,
+@@ -2739,6 +2739,207 @@ static void futex_wait_queue_me(struct futex_hash_bucket *hb, struct futex_q *q,
  	__set_current_state(TASK_RUNNING);
  }
  
@@ -674,10 +744,10 @@ index c914e0080cf..bcd0142c3f6 100644
  #endif
 diff --git a/kernel/futex2.c b/kernel/futex2.c
 new file mode 100644
-index 00000000000..34e4b1b8538
+index 00000000000..f724ecf40f3
 --- /dev/null
 +++ b/kernel/futex2.c
-@@ -0,0 +1,131 @@
+@@ -0,0 +1,117 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
 + * futex2 interface system calls
@@ -727,7 +797,7 @@ index 00000000000..34e4b1b8538
 +}
 +
 +/**
-+ * futex_waitv - Wait on a list of futexes
++ * sys_futex_waitv - Wait on a list of futexes
 + * @waiters:    List of futexes to wait on
 + * @nr_futexes: Length of futexv
 + * @flags:      Flag for timeout (monotonic/realtime)
@@ -745,8 +815,10 @@ index 00000000000..34e4b1b8538
 + * information of how many were awakened, or any particular attribute of it (if
 + * it's the first awakened, if it is of the smaller index...).
 + */
-+static long futex_waitv(struct futex_waitv __user *waiters, unsigned int nr_futexes,
-+			unsigned int flags, struct __kernel_timespec __user *timo)
++
++SYSCALL_DEFINE4(futex_waitv, struct futex_waitv __user *, waiters,
++		unsigned int, nr_futexes, unsigned int, flags,
++		struct __kernel_timespec __user *, timo)
 +{
 +	struct hrtimer_sleeper to;
 +	struct futex_vector *futexv;
@@ -793,45 +865,28 @@ index 00000000000..34e4b1b8538
 +	kfree(futexv);
 +	return ret;
 +}
-+
-+#ifdef CONFIG_COMPAT
-+COMPAT_SYSCALL_DEFINE4(futex_waitv, struct futex_waitv __user *, waiters,
-+		       unsigned int, nr_futexes, unsigned int, flags,
-+		       struct __kernel_timespec __user *, timo)
-+{
-+	return futex_waitv(waiters, nr_futexes, flags, timo);
-+}
-+#endif
-+
-+SYSCALL_DEFINE4(futex_waitv, struct futex_waitv __user *, waiters,
-+		unsigned int, nr_futexes, unsigned int, flags,
-+		struct __kernel_timespec __user *, timo)
-+{
-+	return futex_waitv(waiters, nr_futexes, flags, timo);
-+}
 diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index 30971b1dd4a..03062eb0366 100644
+index f43d89d9286..3d0b94f6b88 100644
 --- a/kernel/sys_ni.c
 +++ b/kernel/sys_ni.c
-@@ -151,6 +151,10 @@ COND_SYSCALL_COMPAT(set_robust_list);
+@@ -151,6 +151,9 @@ COND_SYSCALL_COMPAT(set_robust_list);
  COND_SYSCALL(get_robust_list);
  COND_SYSCALL_COMPAT(get_robust_list);
  
 +/* kernel/futex2.c */
 +COND_SYSCALL(futex_waitv);
-+COND_SYSCALL_COMPAT(futex_waitv);
 +
  /* kernel/hrtimer.c */
  
  /* kernel/itimer.c */
 -- 
-2.33.0
+2.33.1
 
 
-From cb0200cf122b623a900b2e2a850a73e58690d611 Mon Sep 17 00:00:00 2001
+From f5c1ee46eeb68a59e3a6781959d0d1c25f40f5df Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
 Date: Tue, 24 Aug 2021 15:10:29 -0300
-Subject: [PATCH 3/7] futex2: wire up syscall for x86
+Subject: [PATCH 3/6] futex2: wire up syscall for x86
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -841,34 +896,85 @@ Wire up syscall entry point for x86 arch, for both i386 and x86_64.
 Signed-off-by: André Almeida <andrealmeid@collabora.com>
 
 diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index ce763a12311..de4053104ff 100644
+index 960a021d543..7e25543693d 100644
 --- a/arch/x86/entry/syscalls/syscall_32.tbl
 +++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -452,3 +452,4 @@
- 445	i386	landlock_add_rule	sys_landlock_add_rule
+@@ -453,3 +453,4 @@
  446	i386	landlock_restrict_self	sys_landlock_restrict_self
  447	i386	memfd_secret		sys_memfd_secret
-+448	i386	futex_waitv		sys_futex_waitv			compat_sys_futex_waitv
+ 448	i386	process_mrelease	sys_process_mrelease
++449	i386	futex_waitv		sys_futex_waitv
 diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index f6b57799c1e..ec8659eba1f 100644
+index 18b5500ea8b..fe8f8dd157b 100644
 --- a/arch/x86/entry/syscalls/syscall_64.tbl
 +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -369,6 +369,7 @@
- 445	common	landlock_add_rule	sys_landlock_add_rule
+@@ -370,6 +370,7 @@
  446	common	landlock_restrict_self	sys_landlock_restrict_self
  447	common	memfd_secret		sys_memfd_secret
-+448	common	futex_waitv		sys_futex_waitv
+ 448	common	process_mrelease	sys_process_mrelease
++449	common	futex_waitv		sys_futex_waitv
  
  #
  # Due to a historical design error, certain syscalls are numbered differently
 -- 
-2.33.0
+2.33.1
 
 
-From 848ec6f2276af81c384c2ab0c1430876d7c05de1 Mon Sep 17 00:00:00 2001
+From 4f9c741df0a35f9bbfb6f2fea653ecd3e583d663 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
+Date: Mon, 13 Sep 2021 14:34:53 -0300
+Subject: [PATCH 4/6] futex2: wire up syscall for ARM
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Wire up syscall entry point for ARM architectures, for both 32 and 64-bit.
+
+Signed-off-by: André Almeida <andrealmeid@collabora.com>
+
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index e842209e135..543100151f2 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -462,3 +462,4 @@
+ 446	common	landlock_restrict_self		sys_landlock_restrict_self
+ # 447 reserved for memfd_secret
+ 448	common	process_mrelease		sys_process_mrelease
++449	common	futex_waitv			sys_futex_waitv
+diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+index 3cb206aea3d..6bdb5f5db43 100644
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -38,7 +38,7 @@
+ #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
+ #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
+ 
+-#define __NR_compat_syscalls		449
++#define __NR_compat_syscalls		450
+ #endif
+ 
+ #define __ARCH_WANT_SYS_CLONE
+diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+index 844f6ae5866..41ea1195e44 100644
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -903,6 +903,8 @@ __SYSCALL(__NR_landlock_add_rule, sys_landlock_add_rule)
+ __SYSCALL(__NR_landlock_restrict_self, sys_landlock_restrict_self)
+ #define __NR_process_mrelease 448
+ __SYSCALL(__NR_process_mrelease, sys_process_mrelease)
++#define __NR_futex_waitv 449
++__SYSCALL(__NR_futex_waitv, sys_futex_waitv)
+ 
+ /*
+  * Please add new compat syscalls above this comment and update
+-- 
+2.33.1
+
+
+From 2b0c72de17e96323ea9c71610364a1b44e0f10dc Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
 Date: Thu, 15 Jul 2021 19:21:25 -0300
-Subject: [PATCH 4/7] selftests: futex2: Add waitv test
+Subject: [PATCH 5/6] selftests: futex2: Add waitv test
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -1115,13 +1221,13 @@ index 00000000000..51a3b9356c9
 +	return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, timo);
 +}
 -- 
-2.33.0
+2.33.1
 
 
-From 18f89dbd945c82b2ce7f212a091dab431ae83815 Mon Sep 17 00:00:00 2001
+From 8067fd6dc22722b36915718603cb4dd513d64962 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
 Date: Thu, 2 Sep 2021 15:23:01 -0300
-Subject: [PATCH 5/7] selftests: futex2: Test futex_waitv timeout
+Subject: [PATCH 6/6] selftests: futex2: Test futex_waitv timeout
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -1185,150 +1291,12 @@ index 1f8f6daaf1e..4cdada0fcb8 100644
  	return ret;
  }
 -- 
-2.33.0
+2.33.1
 
-
-From 24881cc0a17c023e0c6fa01db8a4e16a2ab820af Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
-Date: Tue, 3 Aug 2021 22:01:54 -0300
-Subject: [PATCH 6/7] futex2: Documentation: Document futex_waitv() uAPI
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-Create userspace documentation for futex_waitv() syscall, detailing how
-the arguments are used.
-
-Signed-off-by: André Almeida <andrealmeid@collabora.com>
-
-diff --git a/Documentation/userspace-api/futex2.rst b/Documentation/userspace-api/futex2.rst
-new file mode 100644
-index 00000000000..dc3131b3df7
---- /dev/null
-+++ b/Documentation/userspace-api/futex2.rst
-@@ -0,0 +1,90 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+======
-+futex2
-+======
-+
-+:Author: André Almeida <andrealmeid@collabora.com>
-+
-+futex, or fast user mutex, is a set of syscalls to allow userspace to create
-+performant synchronization mechanisms, such as mutexes, semaphores and
-+conditional variables in userspace. C standard libraries, like glibc, uses it
-+as a means to implement more high level interfaces like pthreads.
-+
-+futex2 is a followup version of the initial futex syscall, designed to overcome
-+limitations of the original interface.
-+
-+User API
-+========
-+
-+``futex_waitv()``
-+-----------------
-+
-+Wait on an array of futexes, wake on any::
-+
-+  futex_waitv(struct futex_waitv *waiters, unsigned int nr_futexes, unsigned int flags, struct timespec *timo)
-+
-+  struct futex_waitv {
-+        __u64 val;
-+        __u64 uaddr;
-+        __u32 flags;
-+        __u32 __reserved;
-+  };
-+
-+Userspace set an array of struct futex_waitv (up to a max of 128 entries),
-+using ``uaddr`` for the address to wait for, ``val`` for the expected value
-+and ``flags`` to specify the type (shared, private) and size of futex.
-+``__reserved`` is here for explicit padding in 32 and 64-bit platforms. It can
-+be used for future extensions, but currently it should be always 0.
-+
-+``uaddr`` uses a 64-bit unsigned integer to store the userspace address. Given
-+signal extension and promotion rules, platforms that uses 32-bit pointers should
-+explicit cast the address value. Casting using ``(uintptr_t)`` solves the
-+problem and make the code work on both 64 and 32-bit platforms without further
-+tweaks::
-+
-+  waitv[i].uaddr = (uintptr_t) uaddr;
-+
-+The pointer for the first item of the array is passed as ``waiters``. An invalid
-+address for ``waiters`` or for any ``uaddr`` returns ``-EFAULT``.
-+
-+``nr_futexes`` specifies the size of the array. Numbers out of [1, 128]
-+interval will make the syscall return ``-EINVAL``.
-+
-+``flags`` can be used to set the timeout clock.
-+
-+For each entry in ``waiters`` array, the current value at ``uaddr`` is compared
-+to ``val``. If it's different, the syscall undo all the work done so far and
-+return ``-EAGAIN``. If all tests and verifications succeeds, syscall waits until
-+one of the following happens:
-+
-+- The timeout expires, returning ``-ETIMEOUT``.
-+- A signal was sent to the sleeping task, returning ``-ERESTARTSYS``.
-+- Some futex at the list was awaken, returning the index of some waked futex.
-+
-+An example of how to use the interface can be found at ``tools/testing/selftests/futex/futenctional/futex_waitv.c``.
-+
-+Timeout
-+-------
-+
-+For every operation that has a ``struct timespec timo`` argument, it is an
-+optional argument that points to an absolute timeout. By default, it's measured
-+against ``CLOCK_MONOTONIC``, but the flag ``FUTEX_CLOCK_REALTIME`` can be used
-+to measure it against ``CLOCK_REALTIME``. This syscall accepts only 64bit
-+timespec structs.
-+
-+Types of futex
-+--------------
-+
-+A futex can be either private or shared. Private is used for processes that
-+shares the same memory space and the virtual address of the futex will be the
-+same for all processes. This allows for optimizations in the kernel and is the
-+default type of a futex. To use private futexes, set the flag
-+``FUTEX_PRIVATE_FLAG``. For processes that doesn't share the same memory space
-+and therefore can have different virtual addresses for the same futex (using,
-+for instance, a file-backed shared memory) requires different internal
-+mechanisms to be get properly enqueued in the kernel. This is the default mode.
-+
-+Futexes can be of different sizes: 8, 16, 32 or 64 bits. Currently, the only
-+supported one is 32 bit sized futex, and it need to be specified using
-+``FUTEX_32`` flag.
-diff --git a/Documentation/userspace-api/index.rst b/Documentation/userspace-api/index.rst
-index 0b5eefed027..dac7189d975 100644
---- a/Documentation/userspace-api/index.rst
-+++ b/Documentation/userspace-api/index.rst
-@@ -27,6 +27,7 @@ place where this information is gathered.
-    iommu
-    media/index
-    sysfs-platform_profile
-+   futex2
- 
- .. only::  subproject and html
- 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2303965b641..e885295c590 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7658,6 +7658,7 @@ L:	linux-kernel@vger.kernel.org
- S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
- F:	Documentation/locking/*futex*
-+F:	Documentation/userspace-api/futex2.rst
- F:	include/asm-generic/futex.h
- F:	include/linux/futex.h
- F:	include/uapi/linux/futex.h
--- 
-2.33.0
-
-
-From 7d0b8b037c17d613c681df999ad9f9605b5bbfca Mon Sep 17 00:00:00 2001
+From d810c70ed7b8228349af3c277f8c3cc0d5fa0f7b Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
 Date: Fri, 5 Feb 2021 10:34:02 -0300
-Subject: [PATCH 7/7] futex2: Add sysfs entry for syscall numbers
+Subject: [PATCH] futex2: Add sysfs entry for syscall numbers
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -1342,12 +1310,12 @@ syscall number at runtime, rather than setting it at compilation time.
 Signed-off-by: André Almeida <andrealmeid@collabora.com>
 
 diff --git a/kernel/futex2.c b/kernel/futex2.c
-index 34e4b1b8538..389ae897ef2 100644
+index f724ecf40f3..1ccd933b502 100644
 --- a/kernel/futex2.c
 +++ b/kernel/futex2.c
-@@ -129,3 +129,27 @@ SYSCALL_DEFINE4(futex_waitv, struct futex_waitv __user *, waiters,
- {
- 	return futex_waitv(waiters, nr_futexes, flags, timo);
+@@ -115,3 +115,27 @@ SYSCALL_DEFINE4(futex_waitv, struct futex_waitv __user *, waiters,
+ 	kfree(futexv);
+ 	return ret;
  }
 +
 +static ssize_t waitv_show(struct kobject *kobj, struct kobj_attribute *attr,
@@ -1374,5 +1342,5 @@ index 34e4b1b8538..389ae897ef2 100644
 +}
 +subsys_initcall(futex2_sysfs_init);
 -- 
-2.33.0
+2.33.1
 
