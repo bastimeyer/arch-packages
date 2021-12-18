@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=5.15.9.r0.g14655b6d4204
+pkgver=5.15.10.r0.g57dcae4a8b93
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v5.15.9
+_srctag=v5.15.10
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
