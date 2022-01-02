@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=5.15.11.r0.gfb6ad5cb3b67
+pkgver=5.15.12.r0.g25960cafa06e
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v5.15.11
+_srctag=v5.15.12
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -31,7 +31,7 @@ validpgpkeys=(
   'A2FF3A36AAA56654109064AB19802F8B0D70FC30'  # Jan Alexander Steffens (heftig)
 )
 sha256sums=('SKIP'
-            '3f09ded23b9b1aab359ce2cfdc1d783be8193bf97694b43a8ba79ea80215f1e7'
+            '6ab7a66895804f832f1b9594b682be0e2e6982455a8fc3f7e87111e1c7dff866'
             '2bed83121d9bf0db1a9c62cd3f058fde1a05a1393e669cb8e3b254ff27a7a0f5'
             'df701913bb14e1f479322cda2b19d67ce7d10387537f84bba8a71c6b4b8b87e5'
 )
