@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=5.15.13.r0.g734eb1fd2073
+pkgver=5.16.r0.gdf0cc57e057f
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v5.15.13
+_srctag=v5.16
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -22,8 +22,6 @@ source=(
   "${_srcname}::${_src}#tag=${_srctag}"
   config         # the main kernel config file
   disallow-unprivileged-clone-newuser.patch
-  # gitlab.collabora.com/tonyk/linux.git, 6880fa6c..8067fd6d + d810c70e~1..d810c70e
-  futex2.patch
 )
 validpgpkeys=(
   'ABAF11C65A2970B130ABE3C479BE3E4300411886'  # Linus Torvalds
@@ -33,7 +31,6 @@ validpgpkeys=(
 sha256sums=('SKIP'
             '6ab7a66895804f832f1b9594b682be0e2e6982455a8fc3f7e87111e1c7dff866'
             '2bed83121d9bf0db1a9c62cd3f058fde1a05a1393e669cb8e3b254ff27a7a0f5'
-            'df701913bb14e1f479322cda2b19d67ce7d10387537f84bba8a71c6b4b8b87e5'
 )
 
 export KBUILD_BUILD_HOST=archlinux
