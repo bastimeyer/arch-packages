@@ -5,7 +5,7 @@
 
 pkgbase=linux-git
 pkgver=5.16.r0.gdf0cc57e057f
-pkgrel=1
+pkgrel=2
 pkgdesc='Linux'
 _srctag=v5.16
 _srcname=linux
@@ -29,7 +29,7 @@ validpgpkeys=(
   'A2FF3A36AAA56654109064AB19802F8B0D70FC30'  # Jan Alexander Steffens (heftig)
 )
 sha256sums=('SKIP'
-            '6ab7a66895804f832f1b9594b682be0e2e6982455a8fc3f7e87111e1c7dff866'
+            '7cbba374356a189faac71001c5344ce8f02434684b1ce1accefc0cc4bd6718e5'
             '2bed83121d9bf0db1a9c62cd3f058fde1a05a1393e669cb8e3b254ff27a7a0f5'
 )
 
@@ -115,11 +115,11 @@ _package-headers() {
   install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
   cp -t "$builddir" -a scripts
 
-  # add objtool for external module building and enabled VALIDATION_STACK option
+  # required when STACK_VALIDATION is enabled
   install -Dt "$builddir/tools/objtool" tools/objtool/objtool
 
-  # add xfs and shmem for aufs building
-  mkdir -p "$builddir"/{fs/xfs,mm}
+  # required when DEBUG_INFO_BTF_MODULES is enabled
+  install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
 
   echo "Installing headers..."
   cp -t "$builddir" -a include
