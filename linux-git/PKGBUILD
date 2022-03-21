@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=5.16.16.r0.g9aed64834040
-pkgrel=1
+pkgver=5.17.r0.gf443e374ae13
+pkgrel=2
 pkgdesc='Linux'
-_srctag=v5.16.16
+_srctag=v5.17
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -22,6 +22,7 @@ source=(
   "${_srcname}::${_src}#tag=${_srctag}"
   config         # the main kernel config file
   disallow-unprivileged-clone-newuser.patch
+  hwmon-next_asus-ec-sensors.patch
 )
 validpgpkeys=(
   'ABAF11C65A2970B130ABE3C479BE3E4300411886'  # Linus Torvalds
@@ -29,8 +30,9 @@ validpgpkeys=(
   'A2FF3A36AAA56654109064AB19802F8B0D70FC30'  # Jan Alexander Steffens (heftig)
 )
 sha256sums=('SKIP'
-            '937b8c12653d7b18be9b5673e9fa7fba9512c2b5c947e5d489a5e0749a0a8253'
+            '2d76412b2233da4a066cd91215cc507090bd469f00b4d3ba483e94614d11af57'
             '2bed83121d9bf0db1a9c62cd3f058fde1a05a1393e669cb8e3b254ff27a7a0f5'
+            'd7e39f09b9889fceea557c32f6d7ce7321f150922cc64768c8ee2b79e4dc674e'
 )
 
 export KBUILD_BUILD_HOST=archlinux
