@@ -1,0 +1,108 @@
+Currently the arguments passed to `cpufreq_unregister_driver` are matched
+against the currently registered driver.
+
+This means that the only way for a driver to be unregistered is if it's
+module is unloaded.  Loosen that restriction to allow other kernel modules
+to unregister a registered driver.
+
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+ drivers/cpufreq/cpufreq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 80f535cc8a75..4711c17a89bb 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -2885,10 +2885,10 @@ int cpufreq_unregister_driver(struct cpufreq_driver *driver)
+ {
+ 	unsigned long flags;
+ 
+-	if (!cpufreq_driver || (driver != cpufreq_driver))
++	if (!cpufreq_driver)
+ 		return -EINVAL;
+ 
+-	pr_debug("unregistering driver %s\n", driver->name);
++	pr_debug("unregistering driver %s\n", cpufreq_driver->name);
+ 
+ 	/* Protect against concurrent cpu hotplug */
+ 	cpus_read_lock();
+-- 
+2.34.1
+
+`amd-pstate` can be compiled as a module.  This however can be a
+deficiency because `acpi-cpufreq` will be loaded earlier when compiled
+into the kernel meaning `amd-pstate` doesn't get a chance.
+`acpi-cpufreq` is also unable to be unloaded in this circumstance.
+
+To better improve the usability of `amd-pstate` when compiled as a module,
+add an optional module parameter that will force it to replace other
+cpufreq drivers at startup.
+
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+ drivers/cpufreq/amd-pstate.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index 9ce75ed11f8e..31a04e818195 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -63,6 +63,11 @@ module_param(shared_mem, bool, 0444);
+ MODULE_PARM_DESC(shared_mem,
+ 		 "enable amd-pstate on processors with shared memory solution (false = disabled (default), true = enabled)");
+ 
++static bool replace = false;
++module_param(replace, bool, 0444);
++MODULE_PARM_DESC(replace,
++		  "replace other cpufreq drivers upon init if necessary");
++
+ static struct cpufreq_driver amd_pstate_driver;
+ 
+ /**
+@@ -598,9 +603,11 @@ static int __init amd_pstate_init(void)
+ 		return -ENODEV;
+ 	}
+ 
+-	/* don't keep reloading if cpufreq_driver exists */
+-	if (cpufreq_get_current_driver())
+-		return -EEXIST;
++	if (cpufreq_get_current_driver()) {
++		ret = replace ? cpufreq_unregister_driver(NULL) : -EEXIST;
++		if (ret)
++			return ret;
++	}
+ 
+ 	/* capability check */
+ 	if (boot_cpu_has(X86_FEATURE_CPPC)) {
+-- 
+2.34.1
+
+`amd-pstate` currently only loads automatically if compiled into the
+kernel.  To improve the usability, add a module device table that
+will load when AMD CPUs that support CPPC are detected.
+
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+ drivers/cpufreq/amd-pstate.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index 31a04e818195..44490292fa72 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -644,6 +644,12 @@ static void __exit amd_pstate_exit(void)
+ 	amd_pstate_enable(false);
+ }
+ 
++static const struct x86_cpu_id __maybe_unused amd_pstate_ids[] = {
++	X86_MATCH_VENDOR_FEATURE(AMD, X86_FEATURE_CPPC, NULL),
++	{}
++};
++MODULE_DEVICE_TABLE(x86cpu, amd_pstate_ids);
++
+ module_init(amd_pstate_init);
+ module_exit(amd_pstate_exit);
+ 
+-- 
+2.34.1
