@@ -11,7 +11,7 @@
 
 _srcname=clementine
 pkgname=${_srcname}-git
-pkgver=1.4.0rc1.r770.g63eb7aa74.0.g63eb7aa74
+pkgver=1.4.0rc1.r814.g2b340da79.3.gc0b42ace6
 pkgrel=1
 pkgdesc='A modern music player and library organizer'
 url='https://www.clementine-player.org/'
@@ -66,6 +66,7 @@ build() {
     args=(
         -DCMAKE_INSTALL_PREFIX=/usr
         -DBUILD_WERROR=off
+        -DCMAKE_BUILD_TYPE=Release
         -DENABLE_GOOGLE_DRIVE=off
         -DENABLE_DROPBOX=off
         -DENABLE_SKYDRIVE=off
