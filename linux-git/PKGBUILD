@@ -4,17 +4,17 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=5.17.1.r0.g59db887d13b3
+pkgver=5.17.2.r0.g70a10e90d47f
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v5.17.1
+_srctag=v5.17.2
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
 arch=(x86_64)
 license=(GPL2)
 makedepends=(
-  bc kmod libelf pahole cpio perl tar xz
+  bc libelf pahole cpio perl tar xz
   git
 )
 options=('!strip')
@@ -23,7 +23,6 @@ source=(
   config         # the main kernel config file
   disallow-unprivileged-clone-newuser.patch
   amd-pstate.patch
-  hwmon-next_asus-ec-sensors.patch
 )
 validpgpkeys=(
   'ABAF11C65A2970B130ABE3C479BE3E4300411886'  # Linus Torvalds
@@ -31,10 +30,9 @@ validpgpkeys=(
   'A2FF3A36AAA56654109064AB19802F8B0D70FC30'  # Jan Alexander Steffens (heftig)
 )
 sha256sums=('SKIP'
-            'bd1e57c15d4eb62024d2ee935b54d36e74e73b22c3800b45ecf9233521a9f74b'
+            'c0ef360e34fd21c23509224abae894b0d6d37256cccf82575062a05986ee5dba'
             '2bed83121d9bf0db1a9c62cd3f058fde1a05a1393e669cb8e3b254ff27a7a0f5'
             '4ace630e4c20a7024ebe7f7d4fdb4527e6ff4d8da7593292f03865712c5c6b99'
-            '287729322be5990b464d7318aa899482370722e4589b8786777fb0ac08e2dafa'
 )
 
 export KBUILD_BUILD_HOST=archlinux
@@ -81,7 +79,7 @@ build() {
 _package() {
   pkgdesc="The $pkgdesc kernel and modules"
   depends=(coreutils kmod initramfs)
-  optdepends=('crda: to set the correct wireless channels of your country'
+  optdepends=('wireless-regdb: to set the correct wireless channels of your country'
               'linux-firmware: firmware images needed for some devices')
   provides=(VIRTUALBOX-GUEST-MODULES WIREGUARD-MODULE)
   replaces=(virtualbox-guest-modules-arch wireguard-arch)
@@ -99,7 +97,8 @@ _package() {
   echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
 
   echo "Installing modules..."
-  make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
+  make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
+    DEPMOD=/doesnt/exist modules_install  # Suppress depmod
 
   # remove build and source links
   rm "$modulesdir"/{source,build}
