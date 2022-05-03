@@ -1,0 +1,410 @@
+From 8ab2469571bc4c84c3a2b9343b9f4126a1a0b3bd Mon Sep 17 00:00:00 2001
+From: Ahmad Samir <a.samirh78@gmail.com>
+Date: Sun, 1 May 2022 17:27:41 +0200
+Subject: [PATCH 1/6] Base UrlFilter::FullUrlRegExp on rfc3986
+
+Add unittest.
+
+https://datatracker.ietf.org/doc/html/rfc3986
+
+BUG: 452978
+FIXED-IN: 22.08
+---
+ src/autotests/CMakeLists.txt        |  5 +++
+ src/autotests/HotSpotFilterTest.cpp | 40 ++++++++++++++++++++++++
+ src/autotests/HotSpotFilterTest.h   | 21 +++++++++++++
+ src/filterHotSpots/UrlFilter.cpp    | 48 +++++++++++++++++++++++++++--
+ src/filterHotSpots/UrlFilter.h      |  5 ++-
+ 5 files changed, 115 insertions(+), 4 deletions(-)
+ create mode 100644 src/autotests/HotSpotFilterTest.cpp
+ create mode 100644 src/autotests/HotSpotFilterTest.h
+
+diff --git a/src/autotests/CMakeLists.txt b/src/autotests/CMakeLists.txt
+index 0a381f85a..f1ac634be 100644
+--- a/src/autotests/CMakeLists.txt
++++ b/src/autotests/CMakeLists.txt
+@@ -129,3 +129,8 @@ ecm_mark_nongui_executable(Vt102EmulationTest)
+ add_test(NAME Vt102EmulationTest COMMAND Vt102EmulationTest)
+ target_link_libraries(Vt102EmulationTest ${KONSOLE_TEST_LIBS})
+ 
++include(ECMAddTests)
++ecm_add_test(
++    HotSpotFilterTest.cpp
++    LINK_LIBRARIES ${KONSOLE_TEST_LIBS}
++)
+diff --git a/src/autotests/HotSpotFilterTest.cpp b/src/autotests/HotSpotFilterTest.cpp
+new file mode 100644
+index 000000000..590c88207
+--- /dev/null
++++ b/src/autotests/HotSpotFilterTest.cpp
+@@ -0,0 +1,40 @@
++/*
++    SPDX-FileCopyrightText: 2022 Ahmad Samir <a.samirh78@gmail.com>
++
++    SPDX-License-Identifier: GPL-2.0-or-later
++*/
++
++#include "HotSpotFilterTest.h"
++#include <QTest>
++
++QTEST_GUILESS_MAIN(HotSpotFilterTest)
++
++void HotSpotFilterTest::testUrlFilterRegex_data()
++{
++    QTest::addColumn<QString>("url");
++    QTest::addColumn<bool>("matchResult");
++
++    QTest::newRow("url_simple") << " https://api.kde.org" << true;
++    QTest::newRow("url_with_port") << "\nhttps://api.kde.org:2098" << true;
++    QTest::newRow("url_with_path") << " https://api.kde.org/path/to/somewhere" << true;
++    QTest::newRow("url_with_query") << " https://user:pass@api.kde.org?somequery=foo" << true;
++    QTest::newRow("url_with_port_path") << " https://api.kde.org:2098/path/to/somewhere" << true;
++    QTest::newRow("url_with_user_password") << "\thttps://user:blah@api.kde.org" << true;
++    QTest::newRow("url_with_user_password_port_fragment") << " https://user:blah@api.kde.org:2098#fragment" << true;
++    QTest::newRow("url_all_bells") << " https://user:pass@api.kde.org:2098/path/to/somewhere?somequery=foo#fragment" << true;
++
++    QTest::newRow("bad_url_no_scheme") << QStringLiteral(" www.kde.org") << false;
++}
++
++void HotSpotFilterTest::testUrlFilterRegex()
++{
++    QFETCH(QString, url);
++    QFETCH(bool, matchResult);
++
++    const QRegularExpression &regex = Konsole::UrlFilter::FullUrlRegExp;
++    const QRegularExpressionMatch match = regex.match(url);
++    QCOMPARE(match.hasMatch(), matchResult);
++    if (matchResult) {
++        QCOMPARE(match.capturedView(0), url.trimmed());
++    }
++}
+diff --git a/src/autotests/HotSpotFilterTest.h b/src/autotests/HotSpotFilterTest.h
+new file mode 100644
+index 000000000..728ebbe40
+--- /dev/null
++++ b/src/autotests/HotSpotFilterTest.h
+@@ -0,0 +1,21 @@
++/*
++    SPDX-FileCopyrightText: 2022 Ahmad Samir <a.samirh78@gmail.com>
++
++    SPDX-License-Identifier: GPL-2.0-or-later
++*/
++
++#ifndef HOTSPOTFILTERTEST_H
++#define HOTSPOTFILTERTEST_H
++
++#include "filterHotSpots/UrlFilter.h"
++
++class HotSpotFilterTest : public QObject
++{
++    Q_OBJECT
++
++private Q_SLOTS:
++    void testUrlFilterRegex_data();
++    void testUrlFilterRegex();
++};
++
++#endif // HOTSPOTFILTERTEST_H
+diff --git a/src/filterHotSpots/UrlFilter.cpp b/src/filterHotSpots/UrlFilter.cpp
+index 475182200..2a081eaee 100644
+--- a/src/filterHotSpots/UrlFilter.cpp
++++ b/src/filterHotSpots/UrlFilter.cpp
+@@ -15,9 +15,51 @@ using namespace Konsole;
+ // used for finding URLs in the text, especially if they are very general and could match very long
+ // pieces of text.
+ // Please be careful when altering them.
+-// protocolname:// or www. followed by anything other than whitespaces, <, >, ', ", ], !, ), : and comma, and ends before whitespaces, <, >, ', ", ], !, ), :, comma and dot
+-// I. e. it can end with anything as a part of the URL except .
+-const QRegularExpression UrlFilter::FullUrlRegExp(QStringLiteral("(www\\.(?!\\.)|[a-z][a-z0-9+.-]*://)[^!,\\s<>'\"\\]\\)\\:]+[^!,\\.\\s<>'\"\\]\\)\\:]"));
++
++// FullUrlRegExp is implemented based on:
++// https://datatracker.ietf.org/doc/html/rfc3986
++// See above URL for what "unreserved", "pct-encoded" ...etc mean, also
++// for the regex used for each part of the url being matched against
++
++// unreserved / pct-encoded / sub-delims
++// [a-z0-9\\-._~%!$&'()*+,;=]
++// The above string is used in various char[] below
++
++// All () groups are non-capturing (by using "(?:)" notation)
++// less bookkeeping on the PCRE engine side
++
++// scheme://
++// - Must start with an ASCII letter, preceeded by whitespace so "http"
++//   but not "mhttp"
++static const char scheme[] = "(?<=\\s)(?:[a-z][a-z0-9+\\-.]*://)";
++
++// user:password@
++static const char userInfo[] =
++    "(?:"
++    "[a-z0-9\\-._~%!$&'()*+,;=]+?:?"
++    "[a-z0-9\\-._~%!$&'()*+,;=]+@"
++    ")?";
++static const char host[] = "(?:[a-z0-9\\-._~%!$&'()*+,;=]+)"; // www.foo.bar
++static const char port[] = "(?::[0-9]+)?"; // :1234
++static const char path[] = "(?:[a-z0-9\\-._~%!$&'()*+,;=:@/]+)?"; // /path/to/some/place
++static const char query[] = "(?:\\?[a-z0-9\\-._~%!$&'()*+,;=:@/]+)?"; // "?somequery=bar"
++static const char fragment[] = "(?:#[a-z0-9/?]+)?";
++
++using LS1 = QLatin1String;
++
++/* clang-format off */
++const QRegularExpression UrlFilter::FullUrlRegExp(
++    LS1(scheme)
++    + LS1(userInfo)
++    + LS1(host)
++    + LS1(port)
++    + LS1(path)
++    + LS1(query)
++    + LS1(fragment)
++    );
++/* clang-format on */
++
++/////////////////////////////////////////////
+ 
+ // email address:
+ // [word chars, dots or dashes]@[word chars, dots or dashes].[word chars]
+diff --git a/src/filterHotSpots/UrlFilter.h b/src/filterHotSpots/UrlFilter.h
+index 3779740cd..75a2fe65e 100644
+--- a/src/filterHotSpots/UrlFilter.h
++++ b/src/filterHotSpots/UrlFilter.h
+@@ -9,11 +9,14 @@
+ #define URLFILTER_H
+ 
+ #include "RegExpFilter.h"
++#include "konsoleprivate_export.h"
+ 
+ namespace Konsole
+ {
+ /** A filter which matches URLs in blocks of text */
+-class UrlFilter : public RegExpFilter
++
++// Exported for unittests
++class KONSOLEPRIVATE_EXPORT UrlFilter : public RegExpFilter
+ {
+ public:
+     UrlFilter();
+-- 
+GitLab
+
+
+From 675252fc40932fc42ecc05323d5c5f97a077e34f Mon Sep 17 00:00:00 2001
+From: Ahmad Samir <a.samirh78@gmail.com>
+Date: Sun, 1 May 2022 20:24:42 +0200
+Subject: [PATCH 2/6] Match letters case-insensitively in the path part of
+ FullUrlRegExp
+
+And extend unit test.
+
+Not enabling case-insensitive matching for the other parts of the URL
+because typically it's all lower case, e.g. "http", "api.kde.org"...etc.
+---
+ src/autotests/HotSpotFilterTest.cpp | 3 +++
+ src/filterHotSpots/UrlFilter.cpp    | 2 +-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/autotests/HotSpotFilterTest.cpp b/src/autotests/HotSpotFilterTest.cpp
+index 590c88207..9c6b738c8 100644
+--- a/src/autotests/HotSpotFilterTest.cpp
++++ b/src/autotests/HotSpotFilterTest.cpp
+@@ -14,6 +14,8 @@ void HotSpotFilterTest::testUrlFilterRegex_data()
+     QTest::addColumn<QString>("url");
+     QTest::addColumn<bool>("matchResult");
+ 
++    // A space, \n, or \t before the url to match what happens at runtime,
++    // i.e. to match "http" but not "foohttp"
+     QTest::newRow("url_simple") << " https://api.kde.org" << true;
+     QTest::newRow("url_with_port") << "\nhttps://api.kde.org:2098" << true;
+     QTest::newRow("url_with_path") << " https://api.kde.org/path/to/somewhere" << true;
+@@ -22,6 +24,7 @@ void HotSpotFilterTest::testUrlFilterRegex_data()
+     QTest::newRow("url_with_user_password") << "\thttps://user:blah@api.kde.org" << true;
+     QTest::newRow("url_with_user_password_port_fragment") << " https://user:blah@api.kde.org:2098#fragment" << true;
+     QTest::newRow("url_all_bells") << " https://user:pass@api.kde.org:2098/path/to/somewhere?somequery=foo#fragment" << true;
++    QTest::newRow("uppercase") << " https://invent.kde.org/frameworks/ktexteditor/-/blob/master/README.md" << true;
+ 
+     QTest::newRow("bad_url_no_scheme") << QStringLiteral(" www.kde.org") << false;
+ }
+diff --git a/src/filterHotSpots/UrlFilter.cpp b/src/filterHotSpots/UrlFilter.cpp
+index 2a081eaee..0b375e520 100644
+--- a/src/filterHotSpots/UrlFilter.cpp
++++ b/src/filterHotSpots/UrlFilter.cpp
+@@ -41,7 +41,7 @@ static const char userInfo[] =
+     ")?";
+ static const char host[] = "(?:[a-z0-9\\-._~%!$&'()*+,;=]+)"; // www.foo.bar
+ static const char port[] = "(?::[0-9]+)?"; // :1234
+-static const char path[] = "(?:[a-z0-9\\-._~%!$&'()*+,;=:@/]+)?"; // /path/to/some/place
++static const char path[] = "(?:[a-zA-Z0-9\\-._~%!$&'()*+,;=:@/]+)?"; // /path/to/some/place
+ static const char query[] = "(?:\\?[a-z0-9\\-._~%!$&'()*+,;=:@/]+)?"; // "?somequery=bar"
+ static const char fragment[] = "(?:#[a-z0-9/?]+)?";
+ 
+-- 
+GitLab
+
+
+From 1d070c255801337deaaf3737a1826bcf61a00a5e Mon Sep 17 00:00:00 2001
+From: Ahmad Samir <a.samirh78@gmail.com>
+Date: Sun, 1 May 2022 22:09:57 +0200
+Subject: [PATCH 3/6] Also match markup urls
+
+E.g. [https://foobar](https://foobar).
+---
+ src/autotests/HotSpotFilterTest.cpp | 9 ++++++---
+ src/filterHotSpots/UrlFilter.cpp    | 6 +++---
+ 2 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/src/autotests/HotSpotFilterTest.cpp b/src/autotests/HotSpotFilterTest.cpp
+index 9c6b738c8..43ae68d31 100644
+--- a/src/autotests/HotSpotFilterTest.cpp
++++ b/src/autotests/HotSpotFilterTest.cpp
+@@ -18,13 +18,14 @@ void HotSpotFilterTest::testUrlFilterRegex_data()
+     // i.e. to match "http" but not "foohttp"
+     QTest::newRow("url_simple") << " https://api.kde.org" << true;
+     QTest::newRow("url_with_port") << "\nhttps://api.kde.org:2098" << true;
+-    QTest::newRow("url_with_path") << " https://api.kde.org/path/to/somewhere" << true;
+-    QTest::newRow("url_with_query") << " https://user:pass@api.kde.org?somequery=foo" << true;
++    QTest::newRow("url_with_path") << "https://api.kde.org/path/to/somewhere" << true;
++    QTest::newRow("url_with_query") << "https://user:pass@api.kde.org?somequery=foo" << true;
+     QTest::newRow("url_with_port_path") << " https://api.kde.org:2098/path/to/somewhere" << true;
+     QTest::newRow("url_with_user_password") << "\thttps://user:blah@api.kde.org" << true;
+     QTest::newRow("url_with_user_password_port_fragment") << " https://user:blah@api.kde.org:2098#fragment" << true;
+     QTest::newRow("url_all_bells") << " https://user:pass@api.kde.org:2098/path/to/somewhere?somequery=foo#fragment" << true;
+     QTest::newRow("uppercase") << " https://invent.kde.org/frameworks/ktexteditor/-/blob/master/README.md" << true;
++    QTest::newRow("markup") << " [https://foobar](https://foobar)" << true;
+ 
+     QTest::newRow("bad_url_no_scheme") << QStringLiteral(" www.kde.org") << false;
+ }
+@@ -37,7 +38,9 @@ void HotSpotFilterTest::testUrlFilterRegex()
+     const QRegularExpression &regex = Konsole::UrlFilter::FullUrlRegExp;
+     const QRegularExpressionMatch match = regex.match(url);
+     QCOMPARE(match.hasMatch(), matchResult);
+-    if (matchResult) {
++    if (strcmp(QTest::currentDataTag(), "markup") == 0) {
++        QCOMPARE(match.capturedView(0), u"https://foobar");
++    } else if (matchResult) {
+         QCOMPARE(match.capturedView(0), url.trimmed());
+     }
+ }
+diff --git a/src/filterHotSpots/UrlFilter.cpp b/src/filterHotSpots/UrlFilter.cpp
+index 0b375e520..c3a1c0396 100644
+--- a/src/filterHotSpots/UrlFilter.cpp
++++ b/src/filterHotSpots/UrlFilter.cpp
+@@ -29,9 +29,9 @@ using namespace Konsole;
+ // less bookkeeping on the PCRE engine side
+ 
+ // scheme://
+-// - Must start with an ASCII letter, preceeded by whitespace so "http"
+-//   but not "mhttp"
+-static const char scheme[] = "(?<=\\s)(?:[a-z][a-z0-9+\\-.]*://)";
++// - Must start with an ASCII letter, preceeded by any non-word character,
++//   so "http" but not "mhttp"
++static const char scheme[] = "(?<=^|\\s|\\W)(?:[a-z][a-z0-9+\\-.]*://)";
+ 
+ // user:password@
+ static const char userInfo[] =
+-- 
+GitLab
+
+
+From be0d83ba87e6eafab20e916301b197f7ae85db21 Mon Sep 17 00:00:00 2001
+From: Ahmad Samir <a.samirh78@gmail.com>
+Date: Mon, 2 May 2022 17:49:26 +0200
+Subject: [PATCH 4/6] Use possessive quantifiers to optimise regex matching
+ performance
+
+See 'ATOMIC GROUPING AND POSSESSIVE QUANTIFIERS' section at:
+https://pcre.org/pcre.txt
+
+Thanks to Giuseppe D'Angelo for pointing that out.
+---
+ src/filterHotSpots/UrlFilter.cpp | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/src/filterHotSpots/UrlFilter.cpp b/src/filterHotSpots/UrlFilter.cpp
+index c3a1c0396..ae0de9b29 100644
+--- a/src/filterHotSpots/UrlFilter.cpp
++++ b/src/filterHotSpots/UrlFilter.cpp
+@@ -31,19 +31,19 @@ using namespace Konsole;
+ // scheme://
+ // - Must start with an ASCII letter, preceeded by any non-word character,
+ //   so "http" but not "mhttp"
+-static const char scheme[] = "(?<=^|\\s|\\W)(?:[a-z][a-z0-9+\\-.]*://)";
++static const char scheme[] = "(?<=^|\\s|\\W)(?:[a-z][a-z0-9+\\-.]*+://)";
+ 
+ // user:password@
+ static const char userInfo[] =
+     "(?:"
+     "[a-z0-9\\-._~%!$&'()*+,;=]+?:?"
+-    "[a-z0-9\\-._~%!$&'()*+,;=]+@"
+-    ")?";
+-static const char host[] = "(?:[a-z0-9\\-._~%!$&'()*+,;=]+)"; // www.foo.bar
+-static const char port[] = "(?::[0-9]+)?"; // :1234
+-static const char path[] = "(?:[a-zA-Z0-9\\-._~%!$&'()*+,;=:@/]+)?"; // /path/to/some/place
+-static const char query[] = "(?:\\?[a-z0-9\\-._~%!$&'()*+,;=:@/]+)?"; // "?somequery=bar"
+-static const char fragment[] = "(?:#[a-z0-9/?]+)?";
++    "[a-z0-9\\-._~%!$&'()*+,;=]++@"
++    ")?+";
++static const char host[] = "(?:[a-z0-9\\-._~%!$&'()*+,;=]++)"; // www.foo.bar
++static const char port[] = "(?::[0-9]+)?+"; // :1234
++static const char path[] = "(?:[a-zA-Z0-9\\-._~%!$&'()*+,;=:@/]+)?+"; // /path/to/some/place
++static const char query[] = "(?:\\?[a-z0-9\\-._~%!$&'()*+,;=:@/]+)?+"; // "?somequery=bar"
++static const char fragment[] = "(?:#[a-z0-9/?]+)?+";
+ 
+ using LS1 = QLatin1String;
+ 
+-- 
+GitLab
+
+
+From b76b7e08b6cbb66ac44434cae5899a92a56661ab Mon Sep 17 00:00:00 2001
+From: Ahmad Samir <a.samirh78@gmail.com>
+Date: Mon, 2 May 2022 22:40:55 +0200
+Subject: [PATCH 5/6] Extend UrlFilter regex unittest
+
+---
+ src/autotests/HotSpotFilterTest.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/autotests/HotSpotFilterTest.cpp b/src/autotests/HotSpotFilterTest.cpp
+index 43ae68d31..c4fe66eac 100644
+--- a/src/autotests/HotSpotFilterTest.cpp
++++ b/src/autotests/HotSpotFilterTest.cpp
+@@ -28,6 +28,8 @@ void HotSpotFilterTest::testUrlFilterRegex_data()
+     QTest::newRow("markup") << " [https://foobar](https://foobar)" << true;
+ 
+     QTest::newRow("bad_url_no_scheme") << QStringLiteral(" www.kde.org") << false;
++    QTest::newRow("url_with_at_no_userinfo") << "https://@api.kde.org?somequery=foo" << false;
++    QTest::newRow("url_with_colon_no_userinfo") << "https://:api.kde.org?somequery=foo" << false;
+ }
+ 
+ void HotSpotFilterTest::testUrlFilterRegex()
+-- 
+GitLab
+
+
+From 27850316b7ddd22b97ccd5448e05d2393dcaf33b Mon Sep 17 00:00:00 2001
+From: Ahmad Samir <a.samirh78@gmail.com>
+Date: Tue, 3 May 2022 12:56:20 +0200
+Subject: [PATCH 6/6] Tweak UrlFilter regex
+
+Instead of \\W, which is a bit too much, match [), which would be used in
+markdown URLs, e.g. E.g. [https://foo.bar](https://foo.bar).
+---
+ src/filterHotSpots/UrlFilter.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/filterHotSpots/UrlFilter.cpp b/src/filterHotSpots/UrlFilter.cpp
+index ae0de9b29..085c3a374 100644
+--- a/src/filterHotSpots/UrlFilter.cpp
++++ b/src/filterHotSpots/UrlFilter.cpp
+@@ -31,7 +31,7 @@ using namespace Konsole;
+ // scheme://
+ // - Must start with an ASCII letter, preceeded by any non-word character,
+ //   so "http" but not "mhttp"
+-static const char scheme[] = "(?<=^|\\s|\\W)(?:[a-z][a-z0-9+\\-.]*+://)";
++static const char scheme[] = "(?<=^|[\\s\\[(])(?:[a-z][a-z0-9+\\-.]*+://)";
+ 
+ // user:password@
+ static const char userInfo[] =
+-- 
+GitLab
+
