@@ -4,7 +4,7 @@
 
 pkgname=konsole
 pkgver=22.04.0
-pkgrel=1
+pkgrel=2
 arch=(x86_64)
 url='https://apps.kde.org/konsole/'
 pkgdesc='KDE terminal emulator'
@@ -15,12 +15,12 @@ makedepends=(extra-cmake-modules kdoctools)
 optdepends=('keditbookmarks: to manage bookmarks')
 source=(
   https://download.kde.org/stable/release-service/$pkgver/src/$pkgname-$pkgver.tar.xz{,.sig}
-  url-parsing.patch::"https://invent.kde.org/utilities/konsole/-/merge_requests/646/diffs.patch?diff_id=322724"
+  url-parsing.patch::"https://invent.kde.org/utilities/konsole/-/merge_requests/646/diffs.patch?diff_id=323259"
 )
 sha256sums=(
   'bf9b69a0d86ae3c94f01132b9fa8361cee95ff72ddad0002f3b95ce42777dbf3'
   'SKIP'
-  '2f194d7006990abfd1a95575f64ff8e3a725c875822724f4e1295a0db5ebe5b9'
+  'd0a38484d10cdc24a478ef809ad4508407981f5f6e163022ff99aaaaef7b3bb2'
 )
 validpgpkeys=(CA262C6C83DE4D2FB28A332A3A6A4DB839EAA6D7  # Albert Astals Cid <aacid@kde.org>
               F23275E4BF10AFC1DF6914A6DBD2CE893E2D1C87  # Christoph Feck <cfeck@kde.org>
