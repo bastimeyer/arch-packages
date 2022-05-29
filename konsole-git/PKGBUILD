@@ -2,37 +2,35 @@
 # Maintainer: Antonio Rojas <arojas@archlinux.org>
 # Contributor: Andrea Scarpino <andrea@archlinux.org>
 
-pkgname=konsole
-pkgver=22.04.0
-pkgrel=2
+_pkgname=konsole
+pkgname="${_pkgname}-git"
+pkgver=22.07.70.8429.g7360503f0
+pkgrel=1
 arch=(x86_64)
 url='https://apps.kde.org/konsole/'
 pkgdesc='KDE terminal emulator'
 license=(GPL LGPL FDL)
 groups=(kde-applications kde-utilities)
+provides=("${_pkgname}")
+conflicts=("${_pkgname}")
 depends=(knotifyconfig kpty kparts knewstuff)
 makedepends=(extra-cmake-modules kdoctools)
 optdepends=('keditbookmarks: to manage bookmarks')
-source=(
-  https://download.kde.org/stable/release-service/$pkgver/src/$pkgname-$pkgver.tar.xz{,.sig}
-  url-parsing.patch::"https://invent.kde.org/utilities/konsole/-/merge_requests/646/diffs.patch?diff_id=323259"
-)
-sha256sums=(
-  'bf9b69a0d86ae3c94f01132b9fa8361cee95ff72ddad0002f3b95ce42777dbf3'
-  'SKIP'
-  'd0a38484d10cdc24a478ef809ad4508407981f5f6e163022ff99aaaaef7b3bb2'
-)
+source=("${_pkgname}::git+https://invent.kde.org/utilities/konsole.git#branch=master")
+sha256sums=('SKIP')
 validpgpkeys=(CA262C6C83DE4D2FB28A332A3A6A4DB839EAA6D7  # Albert Astals Cid <aacid@kde.org>
               F23275E4BF10AFC1DF6914A6DBD2CE893E2D1C87  # Christoph Feck <cfeck@kde.org>
               D81C0CB38EB725EF6691C385BB463350D6EF31EF) # Heiko Becker <heiko.becker@kde.org>
 
-prepare() {
-  cd "$pkgname-$pkgver"
-  patch -p1 -i ../url-parsing.patch
+pkgver() {
+  cd "${_pkgname}"
+  local _ver
+  _ver="$(awk -F\" '/set \(RELEASE_SERVICE_VERSION_M/{print $2}' CMakeLists.txt | paste -sd. -)"
+  echo "${_ver}.$(git rev-list --count HEAD).g$(git rev-parse --short HEAD)"
 }
 
 build() {
-  cmake -B build -S $pkgname-$pkgver \
+  cmake -B build -S "${_pkgname}" \
     -DBUILD_TESTING=OFF
   cmake --build build
 }
