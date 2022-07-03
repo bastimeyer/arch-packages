@@ -4,30 +4,43 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-pkgver=5.24.5
+pkgver=5.25.2_r22615.gff120a2715
 pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
 url='https://www.kde.org/workspaces/plasmadesktop/'
 license=(LGPL)
-depends=(kscreenlocker xcb-util-cursor plasma-framework kcmutils kwayland-server breeze
-         pipewire-session-manager libqaccessibilityclient lcms2)
-makedepends=(extra-cmake-modules qt5-tools kdoctools krunner)
+depends=(kscreenlocker xcb-util-cursor plasma-framework kcmutils breeze
+         pipewire-session-manager libqaccessibilityclient lcms2 libxcvt)
+makedepends=(extra-cmake-modules qt5-tools kdoctools krunner wayland-protocols plasma-wayland-protocols python)
 optdepends=('maliit-keyboard: virtual keyboard for kwin-wayland')
 groups=(plasma)
-source=("https://download.kde.org/stable/plasma/$pkgver/$pkgname-$pkgver.tar.xz"{,.sig})
+source=(
+  "$pkgname::git+https://invent.kde.org/plasma/kwin.git#branch=Plasma/5.25"
+  grid-spacing.patch
+  "https://invent.kde.org/plasma/kwin/-/commit/524e65813b78e59115a2345fd8b438171d9b0aac.patch"
+)
 install=$pkgname.install
-sha256sums=('f35e15254cebeb8afc5eae1c694a603e04097fe3e7e0033a5f5fc255835eaf82'
-            'SKIP')
+sha256sums=(
+  SKIP
+  cea4fde7fc63cbeade82edbf673a85a0d188af9cf6683a98b1eec8648c8e5196
+  44fdc53ea26be9449c9d3d2e93e9b746b244c08694fa53ea816fa5fe13b6f7ea
+)
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
               'B3CB366552540BE06EE9AD9711968C44928CAEFC'  # Bhushan Shah <bshah@kde.org>
               'D07BD8662C56CB291B316EB2F5675605C74E02CF'  # David Edmundson <davidedmundson@kde.org>
               '1FA881591C26B276D7A5518EEAAF29B42A678C20') # Marco Martin <notmart@gmail.com>
 
+pkgver() {
+  cd "$pkgname"
+  local _ver
+  _ver="$(grep -m1 'set(PROJECT_VERSION' CMakeLists.txt | cut -d\" -f2 | tr - .)"
+  echo "${_ver}_r$(git rev-list --count HEAD).g$(git rev-parse --short HEAD)"
+}
 
 prepare() {
-  cd $pkgname-$pkgver
+  cd "$pkgname"
 
   local src
   for src in "${source[@]}"; do
@@ -40,7 +53,7 @@ prepare() {
 }
 
 build() {
-  cmake -B build -S $pkgname-$pkgver \
+  cmake -B build -S "$pkgname" \
     -DCMAKE_INSTALL_LIBEXECDIR=lib \
     -DBUILD_TESTING=OFF
   cmake --build build

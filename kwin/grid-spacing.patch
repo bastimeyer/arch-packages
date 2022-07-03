@@ -1,0 +1,15 @@
+diff --git a/src/effects/desktopgrid/qml/main.qml b/src/effects/desktopgrid/qml/main.qml
+index 9e00ea40d..72df033c3 100644
+--- a/src/effects/desktopgrid/qml/main.qml
++++ b/src/effects/desktopgrid/qml/main.qml
+@@ -94,8 +94,8 @@ Rectangle {
+ 
+         width: parent.width * columns
+         height: parent.height * rows
+-        rowSpacing: PlasmaCore.Units.largeSpacing
+-        columnSpacing: PlasmaCore.Units.largeSpacing
++        rowSpacing: 0
++        columnSpacing: 0
+         rows: container.effect.gridRows
+         columns: container.effect.gridColumns
+         transformOrigin: Item.TopLeft
