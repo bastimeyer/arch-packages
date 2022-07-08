@@ -5,7 +5,7 @@
 
 pkgname=kwin
 pkgver=5.24.80_r22385.gd548f4bce4
-pkgrel=1
+pkgrel=2
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
 url='https://www.kde.org/workspaces/plasmadesktop/'
@@ -17,10 +17,14 @@ optdepends=('maliit-keyboard: virtual keyboard for kwin-wayland')
 groups=(plasma)
 source=(
   "$pkgname::git+https://invent.kde.org/plasma/kwin.git#commit=7a4cabf32~1"
+  revert-activity-switch-focus.patch
+  revert-slide-springmotion.patch
 )
 install=$pkgname.install
 sha256sums=(
   SKIP
+  c2640d4b25d62af3c2e535c5274ac7639f79e72c0cbd0653e1801cd5f106632d
+  7db2f329030afd8b611f54e6989db5d396415e59ab474bf989294bb97aa616c9
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
