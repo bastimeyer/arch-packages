@@ -7,7 +7,7 @@ pkgbase=linux-git
 pkgver=5.18.13.r0.g0283cbd14733
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v5.18.13
+_srctag=v5.18.14
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -22,7 +22,6 @@ source=(
   "${_srcname}::${_src}#tag=${_srctag}"
   config         # the main kernel config file
   disallow-unprivileged-clone-newuser.patch
-  amd-pstate.patch
 )
 validpgpkeys=(
   'ABAF11C65A2970B130ABE3C479BE3E4300411886'  # Linus Torvalds
@@ -30,9 +29,8 @@ validpgpkeys=(
   'A2FF3A36AAA56654109064AB19802F8B0D70FC30'  # Jan Alexander Steffens (heftig)
 )
 sha256sums=('SKIP'
-            '382aa201a6a6939210dd8668ab052724547b4bd489b38e97502bbd0848061b35'
+            '6f0fd44dd87dd0ad23f782a26752bb7200d0d163e3a50df6ad3cf5cec7fe948e'
             '2bed83121d9bf0db1a9c62cd3f058fde1a05a1393e669cb8e3b254ff27a7a0f5'
-            '4ace630e4c20a7024ebe7f7d4fdb4527e6ff4d8da7593292f03865712c5c6b99'
 )
 
 export KBUILD_BUILD_HOST=archlinux
