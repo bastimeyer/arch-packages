@@ -1,8 +1,8 @@
 diff --git a/src/workspace.cpp b/src/workspace.cpp
-index 1c0516e2b..44622ac61 100644
+index 8169fcb10..735b4a1a2 100644
 --- a/src/workspace.cpp
 +++ b/src/workspace.cpp
-@@ -1160,13 +1160,16 @@ void Workspace::updateCurrentActivity(const QString &new_activity)
+@@ -1360,13 +1360,16 @@ void Workspace::updateCurrentActivity(const QString &new_activity)
      Window *window = nullptr;
  
      // FIXME below here is a lot of focuschain stuff, probably all wrong now
@@ -12,7 +12,7 @@ index 1c0516e2b..44622ac61 100644
 -    } else if (options->focusPolicyIsReasonable()) {
 +    if (options->focusPolicyIsReasonable()) {
          // Search in focus chain
-         window = FocusChain::self()->getForActivation(VirtualDesktopManager::self()->currentDesktop());
+         window = m_focusChain->getForActivation(VirtualDesktopManager::self()->currentDesktop());
      }
 +    // If "unreasonable focus policy" and active_client is on_all_desktops and
 +    // under mouse (Hence == old_active_client), conserve focus.

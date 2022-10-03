@@ -4,8 +4,8 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-pkgver=5.24.80_r22385.gd548f4bce4
-pkgrel=2
+pkgver=5.26.80_r23248.gae4dd73e99
+pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
 url='https://www.kde.org/workspaces/plasmadesktop/'
@@ -16,15 +16,17 @@ makedepends=(extra-cmake-modules qt5-tools kdoctools krunner wayland-protocols p
 optdepends=('maliit-keyboard: virtual keyboard for kwin-wayland')
 groups=(plasma)
 source=(
-  "$pkgname::git+https://invent.kde.org/plasma/kwin.git#commit=7a4cabf32~1"
+  "$pkgname::git+https://invent.kde.org/plasma/kwin.git"
   revert-activity-switch-focus.patch
-  revert-slide-springmotion.patch
+  effects-grid-no-spacing.patch
+  effects-slide-springconstants.patch
 )
 install=$pkgname.install
 sha256sums=(
   SKIP
-  c2640d4b25d62af3c2e535c5274ac7639f79e72c0cbd0653e1801cd5f106632d
-  7db2f329030afd8b611f54e6989db5d396415e59ab474bf989294bb97aa616c9
+  cfb3c3c5797d6a4b43af1327e61c61f438a7f958204c94360746c43c2ca7842c
+  ecaac1f3964b78f5f6fd53ff5b20601f1159cab753d8985427ff4d749abd21e6
+  9f04bc5c92d2c6ab0765f16346d5f41497ea5523812eb4d3eab65a4b19b69551
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>

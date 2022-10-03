@@ -1,0 +1,15 @@
+diff --git a/src/effects/slide/slide.cpp b/src/effects/slide/slide.cpp
+index 1290c2ad0..10a788c4a 100644
+--- a/src/effects/slide/slide.cpp
++++ b/src/effects/slide/slide.cpp
+@@ -59,8 +59,8 @@ void SlideEffect::reconfigure(ReconfigureFlags)
+ {
+     SlideConfig::self()->read();
+ 
+-    const qreal springConstant = 300.0 / effects->animationTimeFactor();
+-    const qreal dampingRatio = 1.1;
++    const qreal springConstant = 500.0 / effects->animationTimeFactor();
++    const qreal dampingRatio = 1.05;
+ 
+     m_motionX = SpringMotion(springConstant, dampingRatio);
+     m_motionY = SpringMotion(springConstant, dampingRatio);
