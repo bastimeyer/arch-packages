@@ -1,0 +1,67 @@
+# Maintainer: Felix Yan <felixonmars@archlinux.org>
+# Maintainer: Antonio Rojas <arojas@archlinux.org>
+# Contributor: Andrea Scarpino <andrea@archlinux.org>
+# Contributor: Sebastian Meyer <mail@bastimeyer.de>
+
+pkgname=kwin
+pkgver=5.24.80_r22385.gd548f4bce4
+pkgrel=3
+pkgdesc='An easy to use, but flexible, composited Window Manager'
+arch=(x86_64)
+url='https://www.kde.org/workspaces/plasmadesktop/'
+license=(LGPL)
+depends=(kscreenlocker xcb-util-cursor plasma-framework kcmutils breeze
+         pipewire-session-manager libqaccessibilityclient lcms2 libxcvt)
+makedepends=(extra-cmake-modules qt5-tools kdoctools krunner wayland-protocols plasma-wayland-protocols python)
+optdepends=('maliit-keyboard: virtual keyboard for kwin-wayland')
+groups=(plasma)
+source=(
+  "$pkgname::git+https://invent.kde.org/plasma/kwin.git#commit=7a4cabf32~1"
+  revert-activity-switch-focus.patch
+  revert-slide-springmotion.patch
+  # https://invent.kde.org/plasma/kwin/-/commit/ad95b495acb93549632422791a41940c65e5e61e
+  backport-sync-activities-after-kwin-restart.patch
+)
+install=$pkgname.install
+sha256sums=(
+  SKIP
+  c2640d4b25d62af3c2e535c5274ac7639f79e72c0cbd0653e1801cd5f106632d
+  7db2f329030afd8b611f54e6989db5d396415e59ab474bf989294bb97aa616c9
+  1167a6d6f7d701fe81a97c9ca8ec38e31fc202407a761df8c81977bb64daee83
+)
+validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Riddell <jr@jriddell.org>
+              '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
+              'B3CB366552540BE06EE9AD9711968C44928CAEFC'  # Bhushan Shah <bshah@kde.org>
+              'D07BD8662C56CB291B316EB2F5675605C74E02CF'  # David Edmundson <davidedmundson@kde.org>
+              '1FA881591C26B276D7A5518EEAAF29B42A678C20') # Marco Martin <notmart@gmail.com>
+
+pkgver() {
+  cd "$pkgname"
+  local _ver
+  _ver="$(grep -m1 'set(PROJECT_VERSION' CMakeLists.txt | cut -d\" -f2 | tr - .)"
+  echo "${_ver}_r$(git rev-list --count HEAD).g$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "$pkgname"
+
+  local src
+  for src in "${source[@]}"; do
+    src="${src%%::*}"
+    src="${src##*/}"
+    [[ $src = *.patch ]] || continue
+    echo "Applying patch $src..."
+    patch -Np1 < "$srcdir/$src"
+  done
+}
+
+build() {
+  cmake -B build -S "$pkgname" \
+    -DCMAKE_INSTALL_LIBEXECDIR=lib \
+    -DBUILD_TESTING=OFF
+  cmake --build build
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+}

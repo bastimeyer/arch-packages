@@ -1,0 +1,483 @@
+diff --git a/src/effects/slide/CMakeLists.txt b/src/effects/slide/CMakeLists.txt
+index 57e77b657..8a3656e82 100644
+--- a/src/effects/slide/CMakeLists.txt
++++ b/src/effects/slide/CMakeLists.txt
+@@ -4,7 +4,6 @@
+ set(slide_SOURCES
+     main.cpp
+     slide.cpp
+-    springmotion.cpp
+ )
+ 
+ kconfig_add_kcfg_files(slide_SOURCES
+diff --git a/src/effects/slide/slide.cpp b/src/effects/slide/slide.cpp
+index 07448081f..c797ff5ea 100644
+--- a/src/effects/slide/slide.cpp
++++ b/src/effects/slide/slide.cpp
+@@ -25,6 +25,8 @@ SlideEffect::SlideEffect()
+     initConfig<SlideConfig>();
+     reconfigure(ReconfigureAll);
+ 
++    m_timeLine.setEasingCurve(QEasingCurve::OutCubic);
++
+     connect(effects, QOverload<int, int, EffectWindow *>::of(&EffectsHandler::desktopChanged),
+             this, &SlideEffect::desktopChanged);
+     connect(effects, QOverload<uint, QPointF, EffectWindow *>::of(&EffectsHandler::desktopChanging),
+@@ -59,11 +61,8 @@ void SlideEffect::reconfigure(ReconfigureFlags)
+ {
+     SlideConfig::self()->read();
+ 
+-    const qreal springConstant = 200.0 / effects->animationTimeFactor();
+-    const qreal dampingRatio = 1.1;
+-
+-    m_motionX = SpringMotion(springConstant, dampingRatio);
+-    m_motionY = SpringMotion(springConstant, dampingRatio);
++    m_fullAnimationDuration = animationTime<SlideConfig>(500);
++    m_timeLine.setDuration(std::chrono::milliseconds(m_fullAnimationDuration));
+ 
+     m_hGap = SlideConfig::horizontalGap();
+     m_vGap = SlideConfig::verticalGap();
+@@ -97,13 +96,10 @@ void SlideEffect::prePaintScreen(ScreenPrePaintData &data, std::chrono::millisec
+         timeDelta = presentTime - m_lastPresentTime;
+     }
+     m_lastPresentTime = presentTime;
++    m_timeLine.update(timeDelta);
+ 
+     if (m_state == State::ActiveAnimation) {
+-        m_motionX.advance(timeDelta);
+-        m_motionY.advance(timeDelta);
+-        const QSize virtualSpaceSize = effects->virtualScreenSize();
+-        m_currentPosition.setX(m_motionX.position() / virtualSpaceSize.width());
+-        m_currentPosition.setY(m_motionY.position() / virtualSpaceSize.height());
++        m_currentPosition = m_startPos + (m_endPos - m_startPos) * m_timeLine.value();
+     }
+ 
+     const int w = effects->desktopGridWidth();
+@@ -310,7 +306,7 @@ void SlideEffect::paintWindow(EffectWindow *w, int mask, QRegion region, WindowP
+ 
+ void SlideEffect::postPaintScreen()
+ {
+-    if (m_state == State::ActiveAnimation && !m_motionX.isMoving() && !m_motionY.isMoving()) {
++    if (m_state == State::ActiveAnimation && m_timeLine.done()) {
+         finishedSwitching();
+     }
+ 
+@@ -355,6 +351,7 @@ void SlideEffect::startAnimation(int old, int current, EffectWindow *movingWindo
+ 
+     m_state = State::ActiveAnimation;
+     m_movingWindow = movingWindow;
++    m_timeLine.reset();
+ 
+     m_startPos = m_currentPosition;
+     m_endPos = effects->desktopGridCoords(current);
+@@ -362,11 +359,19 @@ void SlideEffect::startAnimation(int old, int current, EffectWindow *movingWindo
+         optimizePath();
+     }
+ 
+-    const QSize virtualSpaceSize = effects->virtualScreenSize();
+-    m_motionX.setAnchor(m_endPos.x() * virtualSpaceSize.width());
+-    m_motionX.setPosition(m_startPos.x() * virtualSpaceSize.width());
+-    m_motionY.setAnchor(m_endPos.y() * virtualSpaceSize.height());
+-    m_motionY.setPosition(m_startPos.y() * virtualSpaceSize.height());
++    // Find an apropriate duration
++    QPointF distance = m_startPos - m_endPos;
++    distance.setX(std::abs(distance.x()));
++    distance.setY(std::abs(distance.y()));
++    if (distance.x() < 1 && distance.y() < 1) {
++        if (distance.x() > distance.y()) {
++            m_timeLine.setDuration(std::chrono::milliseconds(std::max(1, (int)(m_fullAnimationDuration * distance.x()))));
++        } else {
++            m_timeLine.setDuration(std::chrono::milliseconds(std::max(1, (int)(m_fullAnimationDuration * distance.y()))));
++        }
++    } else {
++        m_timeLine.setDuration(std::chrono::milliseconds(m_fullAnimationDuration));
++    }
+ 
+     effects->setActiveFullScreenEffect(this);
+     effects->addRepaintFull();
+diff --git a/src/effects/slide/slide.h b/src/effects/slide/slide.h
+index ea81fefb7..71831d2a9 100644
+--- a/src/effects/slide/slide.h
++++ b/src/effects/slide/slide.h
+@@ -15,8 +15,6 @@
+ // kwineffects
+ #include <kwineffects.h>
+ 
+-#include "springmotion.h"
+-
+ namespace KWin
+ {
+ 
+@@ -47,6 +45,7 @@ namespace KWin
+ class SlideEffect : public Effect
+ {
+     Q_OBJECT
++    Q_PROPERTY(int duration READ duration)
+     Q_PROPERTY(int horizontalGap READ horizontalGap)
+     Q_PROPERTY(int verticalGap READ verticalGap)
+     Q_PROPERTY(bool slideDocks READ slideDocks)
+@@ -70,6 +69,7 @@ public:
+ 
+     static bool supported();
+ 
++    int duration() const;
+     int horizontalGap() const;
+     int verticalGap() const;
+     bool slideDocks() const;
+@@ -101,6 +101,7 @@ private:
+     int m_vGap;
+     bool m_slideDocks;
+     bool m_slideBackground;
++    int m_fullAnimationDuration; // Miliseconds for 1 complete desktop switch
+ 
+     enum class State {
+         Inactive,
+@@ -109,8 +110,7 @@ private:
+     };
+ 
+     State m_state = State::Inactive;
+-    SpringMotion m_motionX;
+-    SpringMotion m_motionY;
++    TimeLine m_timeLine;
+ 
+     // When the desktop isn't desktopChanging(), these two variables are used to control the animation path.
+     // They use desktops as a unit.
+@@ -136,6 +136,11 @@ private:
+     EffectWindowList m_elevatedWindows;
+ };
+ 
++inline int SlideEffect::duration() const
++{
++    return m_fullAnimationDuration;
++}
++
+ inline int SlideEffect::horizontalGap() const
+ {
+     return m_hGap;
+diff --git a/src/effects/slide/slide.kcfg b/src/effects/slide/slide.kcfg
+index 42de60a30..183c7930f 100644
+--- a/src/effects/slide/slide.kcfg
++++ b/src/effects/slide/slide.kcfg
+@@ -6,6 +6,9 @@
+     http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+     <kcfgfile arg="true"/>
+     <group name="Effect-slide">
++        <entry name="Duration" type="UInt">
++            <default>0</default>
++        </entry>
+         <entry name="HorizontalGap" type="UInt">
+             <default>45</default>
+         </entry>
+diff --git a/src/effects/slide/slide_config.ui b/src/effects/slide/slide_config.ui
+index 1fc7b6310..4c9cb31ed 100644
+--- a/src/effects/slide/slide_config.ui
++++ b/src/effects/slide/slide_config.ui
+@@ -11,6 +11,39 @@
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
++   <item>
++    <layout class="QFormLayout" name="layout_Duration">
++     <item row="0" column="0">
++      <widget class="QLabel" name="label_Duration">
++       <property name="text">
++        <string>Duration:</string>
++       </property>
++      </widget>
++     </item>
++     <item row="0" column="1">
++      <widget class="QSpinBox" name="kcfg_Duration">
++       <property name="sizePolicy">
++        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
++         <horstretch>0</horstretch>
++         <verstretch>0</verstretch>
++        </sizepolicy>
++       </property>
++       <property name="specialValueText">
++        <string extracomment="Duration of the slide animation.">Default</string>
++       </property>
++       <property name="suffix">
++        <string> milliseconds</string>
++       </property>
++       <property name="maximum">
++        <number>9999</number>
++       </property>
++       <property name="singleStep">
++        <number>10</number>
++       </property>
++      </widget>
++     </item>
++    </layout>
++   </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox_Gaps">
+      <property name="title">
+diff --git a/src/effects/slide/springmotion.cpp b/src/effects/slide/springmotion.cpp
+deleted file mode 100644
+index 5007d29ff..000000000
+--- a/src/effects/slide/springmotion.cpp
++++ /dev/null
+@@ -1,154 +0,0 @@
+-/*
+-    SPDX-FileCopyrightText: 2022 Vlad Zahorodnii <vlad.zahorodnii@kde.org>
+-
+-    SPDX-License-Identifier: GPL-2.0-or-later
+-*/
+-
+-#include "springmotion.h"
+-
+-#include <cmath>
+-
+-namespace KWin
+-{
+-
+-static qreal lerp(qreal a, qreal b, qreal t)
+-{
+-    return a * (1 - t) + b * t;
+-}
+-
+-SpringMotion::SpringMotion()
+-    : SpringMotion(200.0, 1.1)
+-{
+-}
+-
+-SpringMotion::SpringMotion(qreal springConstant, qreal dampingRatio)
+-    : m_prev({0, 0})
+-    , m_next({0, 0})
+-    , m_t(1.0)
+-    , m_timestep(1.0 / 100.0)
+-    , m_anchor(0)
+-    , m_springConstant(springConstant)
+-    , m_dampingRatio(dampingRatio)
+-    , m_dampingCoefficient(2 * std::sqrt(m_springConstant) * m_dampingRatio)
+-    , m_epsilon(1.0)
+-{
+-}
+-
+-bool SpringMotion::isMoving() const
+-{
+-    return std::fabs(position() - anchor()) > m_epsilon || std::fabs(velocity()) > m_epsilon;
+-}
+-
+-qreal SpringMotion::springConstant() const
+-{
+-    return m_springConstant;
+-}
+-
+-qreal SpringMotion::dampingRatio() const
+-{
+-    return m_dampingRatio;
+-}
+-
+-qreal SpringMotion::velocity() const
+-{
+-    return lerp(m_prev.velocity, m_next.velocity, m_t);
+-}
+-
+-void SpringMotion::setVelocity(qreal velocity)
+-{
+-    m_next = State{
+-        .position = position(),
+-        .velocity = velocity,
+-    };
+-    m_t = 1.0;
+-}
+-
+-qreal SpringMotion::position() const
+-{
+-    return lerp(m_prev.position, m_next.position, m_t);
+-}
+-
+-void SpringMotion::setPosition(qreal position)
+-{
+-    m_next = State{
+-        .position = position,
+-        .velocity = velocity(),
+-    };
+-    m_t = 1.0;
+-}
+-
+-qreal SpringMotion::epsilon() const
+-{
+-    return m_epsilon;
+-}
+-
+-void SpringMotion::setEpsilon(qreal epsilon)
+-{
+-    m_epsilon = epsilon;
+-}
+-
+-qreal SpringMotion::anchor() const
+-{
+-    return m_anchor;
+-}
+-
+-void SpringMotion::setAnchor(qreal anchor)
+-{
+-    m_anchor = anchor;
+-}
+-
+-SpringMotion::Slope SpringMotion::evaluate(const State &state, qreal dt, const Slope &slope)
+-{
+-    const State next{
+-        .position = state.position + slope.dp * dt,
+-        .velocity = state.velocity + slope.dv * dt,
+-    };
+-
+-    // The math here follows from the mass-spring-damper model equation.
+-    const qreal springForce = (m_anchor - next.position) * m_springConstant;
+-    const qreal dampingForce = -next.velocity * m_dampingCoefficient;
+-    const qreal acceleration = springForce + dampingForce;
+-
+-    return Slope{
+-        .dp = state.velocity,
+-        .dv = acceleration,
+-    };
+-}
+-
+-SpringMotion::State SpringMotion::integrate(const State &state, qreal dt)
+-{
+-    // Use Runge-Kutta method (RK4) to integrate the mass-spring-damper equation.
+-    const Slope initial{
+-        .dp = 0,
+-        .dv = 0,
+-    };
+-    const Slope k1 = evaluate(state, 0.0, initial);
+-    const Slope k2 = evaluate(state, 0.5 * dt, k1);
+-    const Slope k3 = evaluate(state, 0.5 * dt, k2);
+-    const Slope k4 = evaluate(state, dt, k3);
+-
+-    const qreal dpdt = 1.0 / 6.0 * (k1.dp + 2 * k2.dp + 2 * k3.dp + k4.dp);
+-    const qreal dvdt = 1.0 / 6.0 * (k1.dv + 2 * k2.dv + 2 * k3.dv + k4.dv);
+-
+-    return State{
+-        .position = state.position + dpdt * dt,
+-        .velocity = state.velocity + dvdt * dt,
+-    };
+-}
+-
+-void SpringMotion::advance(std::chrono::milliseconds delta)
+-{
+-    if (!isMoving()) {
+-        return;
+-    }
+-
+-    // If the delta interval is not multiple of m_timestep precisely, the previous and
+-    // the next samples will be linearly interpolated to get current position and velocity.
+-    const qreal steps = (delta.count() / 1000.0) / m_timestep;
+-    for (m_t += steps; m_t > 1.0; m_t -= 1.0) {
+-        m_prev = m_next;
+-        m_next = integrate(m_next, m_timestep);
+-    }
+-}
+-
+-} // namespace KWin
+diff --git a/src/effects/slide/springmotion.h b/src/effects/slide/springmotion.h
+deleted file mode 100644
+index cd580a6fd..000000000
+--- a/src/effects/slide/springmotion.h
++++ /dev/null
+@@ -1,103 +0,0 @@
+-/*
+-    SPDX-FileCopyrightText: 2022 Vlad Zahorodnii <vlad.zahorodnii@kde.org>
+-
+-    SPDX-License-Identifier: GPL-2.0-or-later
+-*/
+-
+-#pragma once
+-
+-#include <QtGlobal>
+-
+-#include <chrono>
+-
+-namespace KWin
+-{
+-
+-/**
+- * The SpringMotion class simulates the motion of a spring along one dimension using the
+- * mass-spring-damper model. The sping constant parameter controls the acceleration of the
+- * spring. The damping ratio controls the oscillation of the spring.
+- */
+-class SpringMotion
+-{
+-public:
+-    SpringMotion();
+-    SpringMotion(qreal springConstant, qreal dampingRatio);
+-
+-    /**
+-     * Advance the simulation by the given @a delta milliseconds.
+-     */
+-    void advance(std::chrono::milliseconds delta);
+-    bool isMoving() const;
+-
+-    /**
+-     * Returns the current velocity.
+-     */
+-    qreal velocity() const;
+-    void setVelocity(qreal velocity);
+-
+-    /**
+-     * Returns the current position.
+-     */
+-    qreal position() const;
+-    void setPosition(qreal position);
+-
+-    /**
+-     * Returns the anchor position. It's the position that the spring is pulled towards.
+-     */
+-    qreal anchor() const;
+-    void setAnchor(qreal anchor);
+-
+-    /**
+-     * Returns the spring constant. It controls the acceleration of the spring.
+-     */
+-    qreal springConstant() const;
+-
+-    /**
+-     * Returns the damping ratio. It controls the oscillation of the spring. Potential values:
+-     *
+-     * - 0 or undamped: the spring will oscillate indefinitely
+-     * - less than 1 or underdamped: the mass tends to overshoot its starting position, but with
+-     *   every oscillation some energy is dissipated and the oscillation dies away
+-     * - 1 or critically damped: the mass will fail to overshoot and make a single oscillation
+-     * - greater than 1 or overdamped: the mass slowly returns to the anchor position without
+-     *   overshooting
+-     */
+-    qreal dampingRatio() const;
+-
+-    /**
+-     * If the distance of the mass between two consecutive simulations is smaller than the epsilon
+-     * value, consider that the mass has stopped moving.
+-     */
+-    qreal epsilon() const;
+-    void setEpsilon(qreal epsilon);
+-
+-private:
+-    struct State
+-    {
+-        qreal position;
+-        qreal velocity;
+-    };
+-
+-    struct Slope
+-    {
+-        qreal dp;
+-        qreal dv;
+-    };
+-
+-    State integrate(const State &state, qreal dt);
+-    Slope evaluate(const State &state, qreal dt, const Slope &slope);
+-
+-    State m_prev;
+-    State m_next;
+-    qreal m_t;
+-    qreal m_timestep;
+-
+-    qreal m_anchor;
+-    qreal m_springConstant;
+-    qreal m_dampingRatio;
+-    qreal m_dampingCoefficient;
+-    qreal m_epsilon;
+-};
+-
+-} // namespace KWin
