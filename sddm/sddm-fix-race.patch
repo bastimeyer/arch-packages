@@ -15,7 +15,7 @@ Fixes #1316
  3 files changed, 27 insertions(+), 10 deletions(-)
 
 diff --git a/src/daemon/Seat.cpp b/src/daemon/Seat.cpp
-index eef26da4..838c2221 100644
+index eef26da45..838c2221d 100644
 --- a/src/daemon/Seat.cpp
 +++ b/src/daemon/Seat.cpp
 @@ -28,6 +28,7 @@
@@ -65,7 +65,7 @@ index eef26da4..838c2221 100644
  
      void Seat::removeDisplay(Display* display) {
 diff --git a/src/daemon/Seat.h b/src/daemon/Seat.h
-index bf22566b..f9fe7331 100644
+index bf22566b7..f9fe7331f 100644
 --- a/src/daemon/Seat.h
 +++ b/src/daemon/Seat.h
 @@ -35,13 +35,15 @@ namespace SDDM {
@@ -86,7 +86,7 @@ index bf22566b..f9fe7331 100644
  
          QVector<Display *> m_displays;
 diff --git a/src/daemon/XorgDisplayServer.cpp b/src/daemon/XorgDisplayServer.cpp
-index e60c0221..5f40fe8c 100644
+index e60c02210..5f40fe8c3 100644
 --- a/src/daemon/XorgDisplayServer.cpp
 +++ b/src/daemon/XorgDisplayServer.cpp
 @@ -248,6 +248,12 @@ namespace SDDM {
@@ -128,7 +128,7 @@ restarted too early (shouldn't happen).
  1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/src/daemon/XorgDisplayServer.cpp b/src/daemon/XorgDisplayServer.cpp
-index 5f40fe8c..3a7bee0d 100644
+index 5f40fe8c3..3a7bee0d8 100644
 --- a/src/daemon/XorgDisplayServer.cpp
 +++ b/src/daemon/XorgDisplayServer.cpp
 @@ -118,6 +118,11 @@ namespace SDDM {
@@ -189,7 +189,7 @@ Subject: [PATCH 3/3] Emit XorgDisplayServer::started only when the auth file
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/daemon/XorgDisplayServer.cpp b/src/daemon/XorgDisplayServer.cpp
-index 3a7bee0d..331adcda 100644
+index 3a7bee0d8..331adcda7 100644
 --- a/src/daemon/XorgDisplayServer.cpp
 +++ b/src/daemon/XorgDisplayServer.cpp
 @@ -219,8 +219,6 @@ namespace SDDM {

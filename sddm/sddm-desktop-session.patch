@@ -11,7 +11,7 @@ Fixes #852
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/common/Session.cpp b/src/common/Session.cpp
-index 2d7b04f1..3de28ef1 100644
+index 2d7b04f19..3de28ef13 100644
 --- a/src/common/Session.cpp
 +++ b/src/common/Session.cpp
 @@ -89,7 +89,7 @@ namespace SDDM {

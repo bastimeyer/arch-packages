@@ -10,7 +10,7 @@ of -displayfd now.
  1 file changed, 60 insertions(+), 72 deletions(-)
 
 diff --git a/src/daemon/XorgDisplayServer.cpp b/src/daemon/XorgDisplayServer.cpp
-index d5f29a94..e60c0221 100644
+index d5f29a94a..e60c02210 100644
 --- a/src/daemon/XorgDisplayServer.cpp
 +++ b/src/daemon/XorgDisplayServer.cpp
 @@ -136,95 +136,83 @@ namespace SDDM {
