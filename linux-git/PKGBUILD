@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=5.19.14.r0.g30c780ac0f9f
+pkgver=6.0.7.r0.g3a2fa3c01fc7
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v5.19.14
+_srctag=v6.0.7
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -22,7 +22,8 @@ source=(
   "${_srcname}::${_src}#tag=${_srctag}"
   config         # the main kernel config file
   disallow-unprivileged-clone-newuser.patch
-  'e400ad8b7e6a1b9102123c6240289a811501f7d9.patch::https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=e400ad8b7e6a1b9102123c6240289a811501f7d9'
+  'https://gitlab.freedesktop.org/agd5f/linux/-/commit/7259d1c92f03d27d913f2c35968e70117e6fc98f.patch'
+  'https://gitlab.freedesktop.org/agd5f/linux/-/commit/8a1a7d7445c925acc6aec4de163ff91616653aaa.patch'
 )
 validpgpkeys=(
   'ABAF11C65A2970B130ABE3C479BE3E4300411886'  # Linus Torvalds
@@ -30,9 +31,10 @@ validpgpkeys=(
   'A2FF3A36AAA56654109064AB19802F8B0D70FC30'  # Jan Alexander Steffens (heftig)
 )
 sha256sums=('SKIP'
-            '1e07bdd94abe73ac2074b151729cd9b73c7fa7a615a3a331a89dcb0da42649f8'
+            '05168cbbeb6378eec6c84fe3300cede4fa5cf6130c39fb8af95040529bd390a6'
             '2bed83121d9bf0db1a9c62cd3f058fde1a05a1393e669cb8e3b254ff27a7a0f5'
-            'c8c1b3281f834bf49677577003e1d6ced958eb3900e7a10164510d13d30a66e6'
+            '183bc91ef6852a1bea81366f0e97a041e14bac07f6665f09c35dbab24af18791'
+            'fbbd87ddcc28eb9115f1fd81f4395a8552dd221c0dc41c1a80b201256352b24a'
 )
 
 export KBUILD_BUILD_HOST=archlinux
