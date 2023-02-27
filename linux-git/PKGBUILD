@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.2.r0.gc9c3395d5e3d
+pkgver=6.2.1.r0.g8c20eb7e6a27
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.2
+_srctag=v6.2.1
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -29,7 +29,7 @@ validpgpkeys=(
   'A2FF3A36AAA56654109064AB19802F8B0D70FC30'  # Jan Alexander Steffens (heftig)
 )
 sha256sums=('SKIP'
-            'a80dfd64eca60673422052ac4d1444b0f9495a588c2595d413fd0687f3786586'
+            'f35bb39db7324a45e78e6c75c1a60f117fea3f7d0df9f4a32bed411751d6ffea'
             '2bed83121d9bf0db1a9c62cd3f058fde1a05a1393e669cb8e3b254ff27a7a0f5'
 )
 
