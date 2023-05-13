@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.3.1.r0.ga83b81b7392d
-pkgrel=2
+pkgver=6.3.2.r0.g5729a900a07b
+pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.3.1
+_srctag=v6.3.2
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -29,7 +29,6 @@ source=(
   "${_srcname}::${_src}#tag=${_srctag}"
   config
   disallow-unprivileged-clone-newuser.patch
-  c1592a89942e9678f7d9c8030efa777c0d57edab.patch::https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=c1592a89942e9678f7d9c8030efa777c0d57edab
 )
 validpgpkeys=(
   ABAF11C65A2970B130ABE3C479BE3E4300411886  # Linus Torvalds
@@ -39,7 +38,6 @@ b2sums=(
   'SKIP'
   'e4998c4a144843cb6072ffc706baae3cf7530fc245fbf9cc4264aad119304944bdbb5aed9e5cfcefc87ab3e694067759e400dda669d5d734c439db288ad467c1'
   '67fa35ac67be3ccf167bd6e721bd4837c59a4eae52c098df423e63cd17a2c1b93039757fa790eecc6db0ac0bc8c78d56e87c785777b96d475be8943fbbefbd83'
-  '023594055374753f1de5c0fc1fa2906165348175e6ea44ef4d68ad35ed20ffa484b9e09a6fad1d73eb4c09b2c258a2dd8509da35093203c06671d7dacfd868ab'
 )
 
 export KBUILD_BUILD_HOST=archlinux
