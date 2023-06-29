@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.3.9.r0.g00d3ac724541
+pkgver=6.3.10.r0.g28ae0a748c16
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.3.9
+_srctag=v6.3.10
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
