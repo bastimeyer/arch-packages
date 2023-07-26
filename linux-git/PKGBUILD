@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.4.5.r0.gbcecfeef53d4
+pkgver=6.4.6.r0.g79562f63d621
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.4.5
+_srctag=v6.4.6
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -21,6 +21,7 @@ makedepends=(
   libelf
   pahole
   perl
+  python
   tar
   xz
 )
