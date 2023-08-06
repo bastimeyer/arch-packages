@@ -4,7 +4,7 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-pkgver=5.27.6_r24254.g21d1935068
+pkgver=5.27.7_r24293.g59307e2678
 pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
