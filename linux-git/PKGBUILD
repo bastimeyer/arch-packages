@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.5.2.r0.g3766ec12cf89
+pkgver=6.5.3.r0.g238589d0f7b4
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.5.2
+_srctag=v6.5.3
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -37,7 +37,7 @@ validpgpkeys=(
 )
 b2sums=(
   'SKIP'
-  '283922a4b029a53921b2e2f68e34c45d8594dfdd3e9b0318d7cd7a6cd1c7ef5efd4eb6393d4b4695569966307aae4d3856fe1637d3eb2bfd4ec25a522ad5c6e7'
+  '9a1770eed7e306ddd532b1df9d62c52b4f6c938d147473bed6ba92a4139654f313d7033bb6bc509f4054fa757acf33a8d73b6f36fed2a134f72d1724bf2db717'
   '67fa35ac67be3ccf167bd6e721bd4837c59a4eae52c098df423e63cd17a2c1b93039757fa790eecc6db0ac0bc8c78d56e87c785777b96d475be8943fbbefbd83'
 )
 
