@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.5.9.r0.gd0e42510ae83
+pkgver=6.6.r0.gffc253263a13
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.5.9
+_srctag=v6.6
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -29,7 +29,7 @@ options=('!strip')
 source=(
   "${_srcname}::${_src}#tag=${_srctag}"
   config
-  'https://github.com/archlinux/linux/compare/d0e42510ae8347e27d416356291b7546fb7681f5...32a424ecac04fc4adc10c82cd1f30841d3fd468f~1.patch'
+  'https://github.com/archlinux/linux/compare/ffc253263a1375a65fa6c9f62a893e9767fbebfa...4e2942412ede63aa9f408fcf15f3f3f8252f8ee9~1.patch'
 )
 validpgpkeys=(
   ABAF11C65A2970B130ABE3C479BE3E4300411886  # Linus Torvalds
@@ -37,8 +37,8 @@ validpgpkeys=(
 )
 b2sums=(
   'SKIP'
-  '1445dc90cf8bd3f2b9493e9e48eb76247bd37de412bdb247b132694e047ec260c25203836888ce6c1c864f46dab80b453b3f47d8b3a92f1f9dffc5589d7bc320'
-  'e0ca28864030063ce95fa7b86b9cc0b169c582a9afed88cd82ed416611cd158433348f487f5810c05db334bd9c97e71e1d98b86b112ea010be34f9a583d79acc'
+  '926cb673701fdf939d70307506683b590a441ac82d8d768ad360798602fbc6157eb4dfdabe3950887e4383b92032d82bbdea00419582cfa47075a57f58ac4376'
+  '9b5d78184520558e489a9edfe948b63a5a47f7e53bc8c93a54ee2cf5c8959123550d5d9735c38cc4e98e73917f4780af63b2104a578b8e4513ceae796a492a42'
 )
 
 export KBUILD_BUILD_HOST=archlinux
@@ -124,8 +124,8 @@ _package() {
   ZSTD_CLEVEL=19 _make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
     DEPMOD=/doesnt/exist modules_install  # Suppress depmod
 
-  # remove build and source links
-  rm "$modulesdir"/{source,build}
+  # remove build links
+  rm "$modulesdir"/build
 }
 
 _package-headers() {
