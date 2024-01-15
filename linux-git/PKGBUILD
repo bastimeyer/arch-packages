@@ -5,7 +5,7 @@
 
 pkgbase=linux-git
 pkgver=6.7.r0.g0dd3ee311255
-pkgrel=1
+pkgrel=2
 pkgdesc='Linux'
 _srctag=v6.7
 _srcname=linux
@@ -29,7 +29,7 @@ options=('!strip')
 source=(
   "${_srcname}::${_src}#tag=${_srctag}"
   config
-  'https://github.com/archlinux/linux/compare/0dd3ee31125508cd67f7e7172247f05b7fd1753a...e333a543f2c556693afd5dd2e30ae80d9eed2ed5~1.patch'
+  'https://github.com/archlinux/linux/compare/0dd3ee31125508cd67f7e7172247f05b7fd1753a...d5f2e3b2f77a3826f1da8750b1fd42108f9ded61~1.patch'
 )
 validpgpkeys=(
   ABAF11C65A2970B130ABE3C479BE3E4300411886  # Linus Torvalds
@@ -37,8 +37,8 @@ validpgpkeys=(
 )
 b2sums=(
   'SKIP'
-  'f67cb3d077708b6eeac2e33a8e5bf21988b3fdd024ccaf9258597ce9c2764998cf886b7354115524f9fce3b4aa7ea3bb69e6b2dde63bec1d5e76ba3deaad4636'
-  '823f11e072c8cf244247107b002d04ee09f4387a1e099742a9801173bb6cf2ab32dccef89280a89d6c7f76c7cbf636101c1376af7c3323ae7e469247cee108db'
+  '341802515628e7c43a1cd5294df19ab8811bdbc75fd7f454dec159022aa35a3a90706f57495868be65f8841507064bc855fc2bebc4b99df6bf4af1111932387c'
+  'd54c199cb996ed38e28348e2a5bded5a160bbbc9725067380f65baaed4ce04743e42a33d383ff6b5acbb93f0bcfc3b863dfc561b2d6f13705605437a48368d1a'
 )
 
 export KBUILD_BUILD_HOST=archlinux
