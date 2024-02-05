@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 806d7ff8a..1bd4dcba0 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -74,7 +74,7 @@ pkg_check_modules(LIBMTP libmtp>=1.0)
+ pkg_check_modules(LIBMYGPO_QT5 libmygpo-qt5>=1.0.9)
+ pkg_check_modules(LIBPULSE libpulse)
+ pkg_check_modules(LIBXML libxml-2.0)
+-pkg_check_modules(TAGLIB taglib)
++pkg_check_modules(TAGLIB taglib1)
+ 
+ find_package(ZLIB REQUIRED)
+ 
