@@ -1,0 +1,29 @@
+diff --git a/wallpapers/image/plugin/imagebackend.cpp b/wallpapers/image/plugin/imagebackend.cpp
+index ce5b5aac5c..a3c1a531c8 100644
+--- a/wallpapers/image/plugin/imagebackend.cpp
++++ b/wallpapers/image/plugin/imagebackend.cpp
+@@ -14,6 +14,7 @@
+ 
+ #include <math.h>
+ 
++#include <QDateTime>
+ #include <QFileDialog>
+ #include <QGuiApplication>
+ #include <QImageReader>
+@@ -446,8 +447,15 @@ void ImageBackend::nextSlide()
+         m_currentSlide += 1;
+         next = m_slideFilterModel->index(m_currentSlide, 0).data(ImageRoles::PackageNameRole).toString();
+     }
++
++    QDateTime dtnow = QDateTime::currentDateTimeUtc();
++    qint64 now = dtnow.toMSecsSinceEpoch();
++    int delay_ms = m_delay * 1000;
++    int offset_ms = now % delay_ms;
++    int duration_ms = delay_ms - offset_ms;
++
+     m_timer.stop();
+-    m_timer.start(m_delay * 1000);
++    m_timer.start(duration_ms);
+     if (next.isEmpty()) {
+         m_image = QUrl::fromLocalFile(previousPath);
+     } else {
