@@ -1,5 +1,5 @@
 diff --git a/wallpapers/image/plugin/imagebackend.cpp b/wallpapers/image/plugin/imagebackend.cpp
-index ce5b5aac5c..a3c1a531c8 100644
+index e8d51ba2bf..edeb0983e5 100644
 --- a/wallpapers/image/plugin/imagebackend.cpp
 +++ b/wallpapers/image/plugin/imagebackend.cpp
 @@ -14,6 +14,7 @@
@@ -7,10 +7,10 @@ index ce5b5aac5c..a3c1a531c8 100644
  #include <math.h>
  
 +#include <QDateTime>
- #include <QFileDialog>
+ #include <QDir>
+ #include <QFileInfo>
  #include <QGuiApplication>
- #include <QImageReader>
-@@ -446,8 +447,15 @@ void ImageBackend::nextSlide()
+@@ -411,8 +412,15 @@ void ImageBackend::nextSlide()
          m_currentSlide += 1;
          next = m_slideFilterModel->index(m_currentSlide, 0).data(ImageRoles::PackageNameRole).toString();
      }
