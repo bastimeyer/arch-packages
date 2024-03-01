@@ -1,0 +1,42 @@
+diff --git a/src/plugins/overview/qml/main.qml b/src/plugins/overview/qml/main.qml
+index 5ba591958b..bb10d05c8e 100644
+--- a/src/plugins/overview/qml/main.qml
++++ b/src/plugins/overview/qml/main.qml
+@@ -475,7 +475,7 @@ FocusScope {
+                     Scale {
+                         origin.x: width / 2
+                         origin.y: height / 2
+-                        xScale: 1 - 0.02 * gridVal
++                        xScale: 1
+                         yScale: xScale
+                     },
+                     // Scales down the desktops so that they do not overlap in the grid
+@@ -506,7 +506,7 @@ FocusScope {
+ 
+                 Item {
+                     id: backgroundArea
+-                    property real sizeAdjust: Math.min(maxWidth / parent.width, maxHeight / parent.height)
++                    property real sizeAdjust: 1
+                     width: parent.width * (1 + (sizeAdjust - 1) * overviewVal)
+                     height: parent.height * (1 + (sizeAdjust - 1) * overviewVal)
+                     x: parent.width / 2 - width / 2
+@@ -527,18 +527,7 @@ FocusScope {
+                         color: "transparent"
+                         source: desktopElement
+ 
+-                        radius: Kirigami.Units.largeSpacing * 2 * (overviewVal + gridVal * 2)
+-
+-                        shadow {
+-                            size: Kirigami.Units.gridUnit * 2
+-                            color: Qt.rgba(0, 0, 0, 0.3)
+-                            yOffset: 3
+-                        }
+-
+-                        property var borderWidth: desktopHover.hovered ? Kirigami.Units.largeSpacing : (mainBackground.current ? Kirigami.Units.smallSpacing : 0);
+-                        property var borderColor: desktopHover.hovered ? Kirigami.Theme.focusColor : (mainBackground.current ? Kirigami.Theme.highlightColor : "transparent")
+-                        border.width: gridVal == 1 ? borderWidth : 0
+-                        border.color: gridVal == 1 ? borderColor : "transparent"
++                        radius: 0
+                     }
+ 
+                     DropArea {

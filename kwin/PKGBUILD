@@ -4,33 +4,98 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-pkgver=5.27.10_r24455.ga4bd8a7fd5
+pkgver=6.0.0_r26198.g565faf1713
 pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
-url='https://www.kde.org/workspaces/plasmadesktop/'
-license=(LGPL)
-depends=(kscreenlocker xcb-util-cursor plasma-framework5 kcmutils5 breeze
-         pipewire-session-manager libqaccessibilityclient lcms2 libxcvt)
-makedepends=(extra-cmake-modules qt5-tools kdoctools5 krunner5 wayland-protocols plasma-wayland-protocols python)
+url='https://kde.org/plasma-desktop/'
+license=(LGPL-2.0-or-later)
+depends=(breeze
+         gcc-libs
+         glibc
+         plasma-activities
+         kauth
+         kcmutils
+         kcolorscheme
+         kconfig
+         kconfigwidgets
+         kcoreaddons
+         kcrash
+         kdbusaddons
+         kdeclarative
+         kdecoration
+         kglobalaccel
+         kglobalacceld
+         kguiaddons
+         ki18n
+         kidletime
+         kirigami
+         kitemmodels
+         knewstuff
+         knotifications
+         kpackage
+         kquickcharts
+         kscreenlocker
+         kservice
+         ksvg
+         kwayland
+         kwidgetsaddons
+         kwindowsystem
+         kxmlgui
+         lcms2
+         libdisplay-info
+         libdrm
+         libepoxy
+         libinput
+         libpipewire
+         libqaccessibilityclient-qt6
+         libx11
+         libxcb
+         libxcvt
+         libxi
+         libxkbcommon
+         libxkbcommon-x11
+         mesa
+         pipewire-session-manager
+         python
+         libplasma
+         qt6-5compat
+         qt6-base
+         qt6-declarative
+         qt6-multimedia
+         qt6-sensors
+         qt6-tools
+         qt6-wayland
+         systemd-libs
+         wayland
+         xcb-util-cursor
+         xcb-util-keysyms
+         xcb-util-wm)
+makedepends=(extra-cmake-modules
+             kdoctools
+             krunner
+             plasma-wayland-protocols
+             python
+             wayland-protocols)
 optdepends=('maliit-keyboard: virtual keyboard for kwin-wayland')
 groups=(plasma)
 source=(
-  "$pkgname::git+https://invent.kde.org/plasma/kwin.git#branch=Plasma/5.27"
+  "$pkgname::git+https://invent.kde.org/plasma/kwin.git#branch=Plasma/6.0"
   revert-activity-switch-focus.patch
-  effects-grid-no-spacing.patch
   effects-slide-springconstants.patch
+  effects-overview-no-gaps-no-shadow-no-border.patch
+  effects-overview-no-add-remove-hotkeys.patch
 )
 install=$pkgname.install
 sha256sums=(
   SKIP
   cfb3c3c5797d6a4b43af1327e61c61f438a7f958204c94360746c43c2ca7842c
-  ecaac1f3964b78f5f6fd53ff5b20601f1159cab753d8985427ff4d749abd21e6
-  9f04bc5c92d2c6ab0765f16346d5f41497ea5523812eb4d3eab65a4b19b69551
+  3c8a202a172ff08a8dc21da5456c1aab4bf44e1e4645636ddf53fb092ff3211b
+  dc1af4bee0914842e72ba76e7d5934fd7046f84ea58bc79c10a9e0995d6b7a17
+  72d7cd67d6fb1d06f8966b2f0ed550f96785dcc716a26e419d1086f23a8068e0
 )
-validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Riddell <jr@jriddell.org>
+validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
-              'B3CB366552540BE06EE9AD9711968C44928CAEFC'  # Bhushan Shah <bshah@kde.org>
               'D07BD8662C56CB291B316EB2F5675605C74E02CF'  # David Edmundson <davidedmundson@kde.org>
               '1FA881591C26B276D7A5518EEAAF29B42A678C20') # Marco Martin <notmart@gmail.com>
 

@@ -1,8 +1,8 @@
-diff --git a/src/effects/slide/slide.cpp b/src/effects/slide/slide.cpp
-index 1290c2ad0..10a788c4a 100644
---- a/src/effects/slide/slide.cpp
-+++ b/src/effects/slide/slide.cpp
-@@ -59,8 +59,8 @@ void SlideEffect::reconfigure(ReconfigureFlags)
+diff --git a/src/plugins/slide/slide.cpp b/src/plugins/slide/slide.cpp
+index 6808116f78..1a9d7d8fc4 100644
+--- a/src/plugins/slide/slide.cpp
++++ b/src/plugins/slide/slide.cpp
+@@ -63,8 +63,8 @@ void SlideEffect::reconfigure(ReconfigureFlags)
  {
      SlideConfig::self()->read();
  
