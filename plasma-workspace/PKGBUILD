@@ -5,7 +5,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=plasma-workspace
-pkgver=6.0.0_r15461.gd9a2dc413c
+#_revision='branch=Plasma/6.0'
+_revision='commit=585ebeb9969640179528c5dd0c0c3bcc554126c5'
+pkgver=6.0.1_r15474.g585ebeb996
 pkgrel=1
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
@@ -130,7 +132,7 @@ conflicts=(plasma-wayland-session)
 replaces=(plasma-wayland-session)
 groups=(plasma)
 source=(
-  "$pkgname::git+https://invent.kde.org/plasma/$pkgname.git#branch=Plasma/6.0"
+  "$pkgname::git+https://invent.kde.org/plasma/$pkgname.git#${_revision}"
   'wallpaper-slideshow-timer.patch'
 )
 sha256sums=(
