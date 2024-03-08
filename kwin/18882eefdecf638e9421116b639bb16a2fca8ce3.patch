@@ -1,0 +1,35 @@
+From 18882eefdecf638e9421116b639bb16a2fca8ce3 Mon Sep 17 00:00:00 2001
+From: Vlad Zahorodnii <vlad.zahorodnii@kde.org>
+Date: Fri, 8 Mar 2024 11:09:42 +0200
+Subject: [PATCH] Add timeout assert in IdleDetector
+
+CCBUG: 482077
+(cherry picked from commit 18e414443e500e39bb1ecc3244fceeebb63ceadd)
+---
+ src/idledetector.cpp | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/idledetector.cpp b/src/idledetector.cpp
+index ab6949f0645..f02eb4974a7 100644
+--- a/src/idledetector.cpp
++++ b/src/idledetector.cpp
+@@ -7,6 +7,8 @@
+ #include "idledetector.h"
+ #include "input.h"
+ 
++using namespace std::chrono_literals;
++
+ namespace KWin
+ {
+ 
+@@ -14,6 +16,7 @@ IdleDetector::IdleDetector(std::chrono::milliseconds timeout, QObject *parent)
+     : QObject(parent)
+     , m_timer(new QTimer(this))
+ {
++    Q_ASSERT(timeout >= 0ms);
+     m_timer->setSingleShot(true);
+     m_timer->setInterval(timeout);
+     connect(m_timer, &QTimer::timeout, this, &IdleDetector::markAsIdle);
+-- 
+GitLab
+

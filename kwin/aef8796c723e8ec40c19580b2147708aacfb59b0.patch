@@ -1,0 +1,104 @@
+From aef8796c723e8ec40c19580b2147708aacfb59b0 Mon Sep 17 00:00:00 2001
+From: Vlad Zahorodnii <vlad.zahorodnii@kde.org>
+Date: Fri, 8 Mar 2024 12:51:05 +0200
+Subject: [PATCH] Port IdleDetector to QBasicTimer
+
+QBasicTimer is lighter and it properly handles timeout values bigger
+than INT32_MAX.
+
+CCBUG: 482077
+(cherry picked from commit e2cbed70609d6505e8c8a89d70373d9fc5f0c2f4)
+---
+ src/idledetector.cpp | 21 +++++++++++++--------
+ src/idledetector.h   |  9 +++++++--
+ 2 files changed, 20 insertions(+), 10 deletions(-)
+
+diff --git a/src/idledetector.cpp b/src/idledetector.cpp
+index f02eb4974a7..e3cb8b748d4 100644
+--- a/src/idledetector.cpp
++++ b/src/idledetector.cpp
+@@ -14,13 +14,10 @@ namespace KWin
+ 
+ IdleDetector::IdleDetector(std::chrono::milliseconds timeout, QObject *parent)
+     : QObject(parent)
+-    , m_timer(new QTimer(this))
++    , m_timeout(timeout)
+ {
+     Q_ASSERT(timeout >= 0ms);
+-    m_timer->setSingleShot(true);
+-    m_timer->setInterval(timeout);
+-    connect(m_timer, &QTimer::timeout, this, &IdleDetector::markAsIdle);
+-    m_timer->start();
++    m_timer.start(timeout, this);
+ 
+     input()->addIdleDetector(this);
+ }
+@@ -32,6 +29,14 @@ IdleDetector::~IdleDetector()
+     }
+ }
+ 
++void IdleDetector::timerEvent(QTimerEvent *event)
++{
++    if (event->timerId() == m_timer.timerId()) {
++        m_timer.stop();
++        markAsIdle();
++    }
++}
++
+ bool IdleDetector::isInhibited() const
+ {
+     return m_isInhibited;
+@@ -44,16 +49,16 @@ void IdleDetector::setInhibited(bool inhibited)
+     }
+     m_isInhibited = inhibited;
+     if (inhibited) {
+-        m_timer->stop();
++        m_timer.stop();
+     } else {
+-        m_timer->start();
++        m_timer.start(m_timeout, this);
+     }
+ }
+ 
+ void IdleDetector::activity()
+ {
+     if (!m_isInhibited) {
+-        m_timer->start();
++        m_timer.start(m_timeout, this);
+         markAsResumed();
+     }
+ }
+diff --git a/src/idledetector.h b/src/idledetector.h
+index 035463efbb7..853513b87eb 100644
+--- a/src/idledetector.h
++++ b/src/idledetector.h
+@@ -8,7 +8,8 @@
+ 
+ #include <kwin_export.h>
+ 
+-#include <QTimer>
++#include <QBasicTimer>
++#include <QObject>
+ 
+ namespace KWin
+ {
+@@ -30,11 +31,15 @@ Q_SIGNALS:
+     void idle();
+     void resumed();
+ 
++protected:
++    void timerEvent(QTimerEvent *event) override;
++
+ private:
+     void markAsIdle();
+     void markAsResumed();
+ 
+-    QTimer *m_timer;
++    QBasicTimer m_timer;
++    std::chrono::milliseconds m_timeout;
+     bool m_isIdle = false;
+     bool m_isInhibited = false;
+ };
+-- 
+GitLab
+
