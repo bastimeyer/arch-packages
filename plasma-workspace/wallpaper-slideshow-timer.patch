@@ -1,5 +1,5 @@
 diff --git a/wallpapers/image/plugin/imagebackend.cpp b/wallpapers/image/plugin/imagebackend.cpp
-index e8d51ba2bf..edeb0983e5 100644
+index e8d51ba2bf..87f787f1c8 100644
 --- a/wallpapers/image/plugin/imagebackend.cpp
 +++ b/wallpapers/image/plugin/imagebackend.cpp
 @@ -14,6 +14,7 @@
@@ -10,10 +10,29 @@ index e8d51ba2bf..edeb0983e5 100644
  #include <QDir>
  #include <QFileInfo>
  #include <QGuiApplication>
-@@ -411,8 +412,15 @@ void ImageBackend::nextSlide()
+@@ -391,6 +392,9 @@ void ImageBackend::nextSlide()
+     if (!m_ready || m_usedInConfig || rowCount == 0) {
+         return;
+     }
++
++    m_timer.stop();
++
+     int previousSlide = m_currentSlide;
+     QString previousPath;
+     if (previousSlide >= 0) {
+@@ -411,8 +415,6 @@ void ImageBackend::nextSlide()
          m_currentSlide += 1;
          next = m_slideFilterModel->index(m_currentSlide, 0).data(ImageRoles::PackageNameRole).toString();
      }
+-    m_timer.stop();
+-    m_timer.start(m_delay * 1000);
+     if (next.isEmpty()) {
+         m_image = QUrl::fromLocalFile(previousPath);
+     } else {
+@@ -421,6 +423,14 @@ void ImageBackend::nextSlide()
+     }
+ 
+     saveCurrentWallpaper();
 +
 +    QDateTime dtnow = QDateTime::currentDateTimeUtc();
 +    qint64 now = dtnow.toMSecsSinceEpoch();
@@ -21,9 +40,19 @@ index e8d51ba2bf..edeb0983e5 100644
 +    int offset_ms = now % delay_ms;
 +    int duration_ms = delay_ms - offset_ms;
 +
-     m_timer.stop();
--    m_timer.start(m_delay * 1000);
-+    m_timer.start(duration_ms);
-     if (next.isEmpty()) {
-         m_image = QUrl::fromLocalFile(previousPath);
-     } else {
++    m_timer.start(duration_ms + m_timer_offset);
+ }
+ 
+ void ImageBackend::slotSlideModelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QList<int> &roles)
+diff --git a/wallpapers/image/plugin/imagebackend.h b/wallpapers/image/plugin/imagebackend.h
+index 57f65da94b..2354c570cc 100644
+--- a/wallpapers/image/plugin/imagebackend.h
++++ b/wallpapers/image/plugin/imagebackend.h
+@@ -183,6 +183,7 @@ private:
+     Q_OBJECT_BINDABLE_PROPERTY_WITH_ARGS(ImageBackend, bool, m_slideshowFoldersFirst, false, &ImageBackend::slideshowFoldersFirstChanged)
+ 
+     QTimer m_timer;
++    const int m_timer_offset = 100;
+     bool m_pauseSlideshow = false;
+     std::optional<decltype(std::declval<QTimer>().remainingTimeAsDuration())> m_remainingTime;
+ 
