@@ -5,9 +5,9 @@
 
 pkgname=kwin
 #_revision='branch=Plasma/6.0'
-_revision='commit=26cacb79c8236dbc6a7824e1bcbada557465796d'
-pkgver=6.0.1_r26211.g26cacb79c8
-pkgrel=2
+_revision='commit=be43a33002ce826f46b4efe3a53f4c5c8d8747d1'
+pkgver=6.0.2_r26236.gbe43a33002
+pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
 url='https://kde.org/plasma-desktop/'
@@ -78,7 +78,8 @@ makedepends=(extra-cmake-modules
              krunner
              plasma-wayland-protocols
              python
-             wayland-protocols)
+             wayland-protocols
+             xorg-xwayland)
 optdepends=('maliit-keyboard: virtual keyboard for kwin-wayland')
 groups=(plasma)
 source=(
@@ -87,8 +88,6 @@ source=(
   effects-slide-springconstants.patch
   effects-overview-no-gaps-no-shadow-no-border.patch
   effects-overview-no-add-remove-hotkeys.patch
-  https://invent.kde.org/plasma/kwin/-/commit/18882eefdecf638e9421116b639bb16a2fca8ce3.patch
-  https://invent.kde.org/plasma/kwin/-/commit/aef8796c723e8ec40c19580b2147708aacfb59b0.patch
 )
 install=$pkgname.install
 sha256sums=(
@@ -97,8 +96,6 @@ sha256sums=(
   3c8a202a172ff08a8dc21da5456c1aab4bf44e1e4645636ddf53fb092ff3211b
   dc1af4bee0914842e72ba76e7d5934fd7046f84ea58bc79c10a9e0995d6b7a17
   72d7cd67d6fb1d06f8966b2f0ed550f96785dcc716a26e419d1086f23a8068e0
-  15ad284098aea254e319ef4f327c176aae4a1c62ebba361d171bd40c83b23cbd
-  fb7ea7b30d9888fac9fa90d0960d2467c1620344b8facc779840da972874a006
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
