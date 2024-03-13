@@ -1,5 +1,5 @@
 diff --git a/wallpapers/image/plugin/imagebackend.cpp b/wallpapers/image/plugin/imagebackend.cpp
-index e8d51ba2bf..328486610b 100644
+index e8d51ba2bf..09e15a4764 100644
 --- a/wallpapers/image/plugin/imagebackend.cpp
 +++ b/wallpapers/image/plugin/imagebackend.cpp
 @@ -14,6 +14,7 @@
@@ -18,40 +18,17 @@ index e8d51ba2bf..328486610b 100644
      connect(&m_timer, &QTimer::timeout, this, &ImageBackend::nextSlide);
  }
  
-@@ -391,6 +393,32 @@ void ImageBackend::nextSlide()
+@@ -391,6 +393,9 @@ void ImageBackend::nextSlide()
      if (!m_ready || m_usedInConfig || rowCount == 0) {
          return;
      }
 +
 +    m_timer.stop();
 +
-+    // Update the wallpaper in strict time intervals defined by `m_delay`, aligned to the UNIX epoch.
-+    // This synchronizes wallpaper transitions accross desktops on all screens and activities.
-+    QDateTime dtnow = QDateTime::currentDateTimeUtc();
-+    qint64 now = dtnow.toMSecsSinceEpoch();
-+    int delay_ms = m_delay * 1000;
-+    int offset_ms = now % delay_ms;
-+    int duration_ms = delay_ms - offset_ms;
-+
-+    // `m_timer` is a `Qt::PreciseTimer`, but even this kind of timer isn't precise enough,
-+    // sometimes causing an unintended double `nextSlide()` call during the wallpaper transition
-+    // if the timer triggered too early in the strict `delay_ms` intervals.
-+    // If `duration_ms` is less than or equal to `m_timer_duration_min`, then this means that
-+    //  1. we're in an unintended double `nextSlide()` call
-+    //  2. or the slideshow was started right before the end of an interval
-+    // In this case, skip the wallpaper transition and wait for the next interval.
-+    if (duration_ms <= m_timer_duration_min) {
-+        // Adjust the timer duration: this will be corrected by the offset calculation in the following `nextSlide()`
-+        m_timer.start(duration_ms + delay_ms + m_timer_duration_min);
-+        return;
-+    }
-+
-+    m_timer.start(duration_ms);
-+
      int previousSlide = m_currentSlide;
      QString previousPath;
      if (previousSlide >= 0) {
-@@ -411,8 +439,6 @@ void ImageBackend::nextSlide()
+@@ -411,8 +416,6 @@ void ImageBackend::nextSlide()
          m_currentSlide += 1;
          next = m_slideFilterModel->index(m_currentSlide, 0).data(ImageRoles::PackageNameRole).toString();
      }
@@ -60,15 +37,42 @@ index e8d51ba2bf..328486610b 100644
      if (next.isEmpty()) {
          m_image = QUrl::fromLocalFile(previousPath);
      } else {
+@@ -421,6 +424,25 @@ void ImageBackend::nextSlide()
+     }
+ 
+     saveCurrentWallpaper();
++
++    // Update the wallpaper in strict time intervals since UNIX epoch, defined by `m_delay`.
++    // This synchronizes wallpaper transitions across desktops on all screens and activities.
++    QDateTime dtnow = QDateTime::currentDateTimeUtc();
++    qint64 now = dtnow.toMSecsSinceEpoch();
++    int interval_ms = m_delay * 1000;
++    int offset_ms = now % interval_ms;
++    int duration_ms = interval_ms - offset_ms;
++
++    // Despite `m_timer` being a `Qt::PreciseTimer`, it can still sometimes trigger a bit too early,
++    // causing `duration_ms` to be a couple of milliseconds. Starting the slideshow right before the end
++    // of an interval is also a problem, as we don't want to trigger two wallpaper transitions at the same time.
++    // Therefore check the min-duration threshold and extend the `duration_ms` by a whole interval.
++    if (duration_ms < m_timer_duration_min) {
++        duration_ms += interval_ms;
++    }
++
++    // Always add a tiny offset, as `Qt::PreciseTimer` timers are actually not precise.
++    m_timer.start(duration_ms + m_timer_duration_offset);
+ }
+ 
+ void ImageBackend::slotSlideModelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QList<int> &roles)
 diff --git a/wallpapers/image/plugin/imagebackend.h b/wallpapers/image/plugin/imagebackend.h
-index 57f65da94b..ad42631d2f 100644
+index 57f65da94b..5292c2ba0b 100644
 --- a/wallpapers/image/plugin/imagebackend.h
 +++ b/wallpapers/image/plugin/imagebackend.h
-@@ -183,6 +183,7 @@ private:
+@@ -183,6 +183,8 @@ private:
      Q_OBJECT_BINDABLE_PROPERTY_WITH_ARGS(ImageBackend, bool, m_slideshowFoldersFirst, false, &ImageBackend::slideshowFoldersFirstChanged)
  
      QTimer m_timer;
 +    const int m_timer_duration_min = 1000;
++    const int m_timer_duration_offset = 10;
      bool m_pauseSlideshow = false;
      std::optional<decltype(std::declval<QTimer>().remainingTimeAsDuration())> m_remainingTime;
  
