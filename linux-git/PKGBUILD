@@ -4,15 +4,15 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.8.r0.ge8f897f4afef
+pkgver=6.8.1.r0.g8a8b2a057ed9
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.8
+_srctag=v6.8.1
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
 arch=(x86_64)
-license=(GPL2)
+license=(GPL-2.0-only)
 makedepends=(
   bc
   cpio
@@ -26,7 +26,10 @@ makedepends=(
   tar
   xz
 )
-options=('!strip')
+options=(
+  !debug
+  !strip
+)
 source=(
   "${_srcname}::${_src}#tag=${_srctag}"
   config
@@ -38,7 +41,7 @@ validpgpkeys=(
 )
 b2sums=(
   'SKIP'
-  '167299818c921749eafeb83327eeddbfe4db9f5659e297d86cfd8ceb6006c504d8dd772f32b0fe13935cb2ed8937324fca122510bf07f107db0b270e2f26906a'
+  '7bcda4c4c80af28160dae20dac00eaffff41b1e4f1a053893b2394d99b2a0f7ec694fbe8a2b7a3c293f541ec17098f1cbffc11c1557e3a628239b1c7a62a00e2'
   'fc9a21a71ba201e3b2712da65f189932692547258328c7d3434f06195f1b36ad72ecfc684ed95d2821ce7f0da233d405a907b4ee9cff6d25cf85157f36b1acd4'
 )
 
