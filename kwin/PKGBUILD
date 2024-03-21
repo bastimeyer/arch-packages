@@ -4,9 +4,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-#_revision='branch=Plasma/6.0'
-_revision='commit=be43a33002ce826f46b4efe3a53f4c5c8d8747d1'
-pkgver=6.0.2_r26236.gbe43a33002
+_revision='branch=Plasma/6.0'
+#_revision='commit=be43a33002ce826f46b4efe3a53f4c5c8d8747d1'
+pkgver=6.0.2_r26264.g3bb54d629f
 pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
