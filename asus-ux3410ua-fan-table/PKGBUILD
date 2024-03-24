@@ -2,13 +2,13 @@
 
 pkgname=asus-ux3410ua-fan-table
 pkgver=1.0.0
-pkgrel=1
+pkgrel=2
 pkgdesc='Shifts the fan threshold of the Asus UX3410UA for more quieter or silent usage'
 arch=('any')
 license=('GPL3')
 install=asus-ux3410ua-fan-table.install
 depends=(
-  'acpi_call-dkms'
+  'acpi_call'
   'python'
 )
 source=(
@@ -17,7 +17,7 @@ source=(
 )
 sha256sums=(
   'b9d1e090c46ad763296ee498477de8eb577dce91326deacce39d871bc3a76c69'
-  '999da4bf439f07333dea297e25af2dd2fc72748742f69749563dc88ec87582db'
+  '0e32705588c1887c1fdec1596737dcecc9b316e930920f63810df803ac6e0c4e'
 )
 
 package() {

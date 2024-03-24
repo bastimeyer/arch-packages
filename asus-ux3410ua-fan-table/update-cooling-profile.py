@@ -18,7 +18,7 @@ log.basicConfig(format='%(asctime)s %(levelname)s %(process)d %(processName)s %(
 class ThermalTable:
     offset = 0x537
     default_tipping_points = [35, 40, 45, 50, 55, 60, 65, 80]
-    quiet_tipping_points = [52, 54, 56, 58, 60, 65, 70, 80]
+    quiet_tipping_points = [60, 62, 64, 66, 68, 70, 75, 80]
 
     def call_acpi(self, command):
         with open('/proc/acpi/call', 'w') as acpi_call:
