@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.8.6.r0.g1f7d392571df
+pkgver=6.8.7.r0.g12dadc409c2b
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.8.6
+_srctag=v6.8.7
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -33,7 +33,7 @@ options=(
 source=(
   "${_srcname}::${_src}#tag=${_srctag}"
   config
-  'https://github.com/archlinux/linux/compare/1f7d392571dfec1c47b306a32bbe60be05a51160...63ffcab329687f8436adee4121e5571318456acf~1.patch'
+  'https://github.com/archlinux/linux/compare/12dadc409c2bd8538c6ee0e56e191efde6d92007...4525fefa9955edeaa96e6d91e08f4d2802523b1c~1.patch'
 )
 validpgpkeys=(
   ABAF11C65A2970B130ABE3C479BE3E4300411886  # Linus Torvalds
@@ -41,8 +41,8 @@ validpgpkeys=(
 )
 b2sums=(
   'SKIP'
-  '09628a4dbe1b5cd34fe5e53394c7e44558a7f2c133530f52ae2b6e022f3303d6f8f28f939b13e175a2b4532f7511de26240d26d7dca0543ceaae905d6decb768'
-  '81e1f04ccaf96f005cc2c71970efe0caceba42a8e5dbeeb7ac7c473ad4333244aba3262fcb6ee0958f39a3bc1c2c2be722a1e58c83641ae1c2772a5cae1ad831'
+  'ea1e6753e019bcb944c5eeba37837e3f460e3214dd9c0a3454258b3f9a2e53bf90575f3e7c1ea7648c1f0c4dcf6d9ef2bb7baa5434b04e55383ad6809114d373'
+  'ea4caae7068adc5ca6d2546dbc0e38d1335aeafcf32ffcaf489e4f0329e44f7116bb113f0251a833932c134756921cd60f512d49572313ba9bc7cc4b8a809fbb'
 )
 
 export KBUILD_BUILD_HOST=archlinux
