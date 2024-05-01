@@ -7,7 +7,7 @@
 pkgname=plasma-workspace
 _revision='branch=Plasma/6.0'
 #_revision='commit=d98b425cf7b6fe371172c3d4d792e14f03a73db1'
-pkgver=6.0.4_r15643.ga5083339e1
+pkgver=6.0.4.r15.ge78810e
 pkgrel=1
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
@@ -147,9 +147,7 @@ validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell
 
 pkgver() {
   cd "$pkgname"
-  local _ver
-  _ver="$(grep -m1 'set(PROJECT_VERSION' CMakeLists.txt | cut -d\" -f2 | tr - .)"
-  echo "${_ver}_r$(git rev-list --count HEAD).g$(git rev-parse --short HEAD)"
+  git describe --long --abbrev=7 | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 prepare() {
