@@ -6,7 +6,7 @@
 pkgname=kwin
 _revision='branch=Plasma/6.0'
 #_revision='commit=166988cef75e6142b72f9bc3f9d58a8cfce1e26e'
-pkgver=6.0.4_r26329.g5d9a0aa892
+pkgver=6.0.4.1.r18.g3f5543e
 pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
@@ -104,9 +104,7 @@ validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell
 
 pkgver() {
   cd "$pkgname"
-  local _ver
-  _ver="$(grep -m1 'set(PROJECT_VERSION' CMakeLists.txt | cut -d\" -f2 | tr - .)"
-  echo "${_ver}_r$(git rev-list --count HEAD).g$(git rev-parse --short HEAD)"
+  git describe --long --abbrev=7 | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 prepare() {
