@@ -6,7 +6,7 @@
 pkgname=kwin
 _revision='branch=Plasma/6.0'
 #_revision='commit=166988cef75e6142b72f9bc3f9d58a8cfce1e26e'
-pkgver=6.0.4.1.r18.g3f5543e
+pkgver=6.0.4.1.r43.g0ddea8b
 pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
@@ -88,6 +88,7 @@ source=(
   effects-slide-springconstants.patch
   effects-overview-no-gaps-no-shadow-no-border.patch
   effects-overview-no-add-remove-hotkeys.patch
+  fix-chromium-drag-and-drop.patch::https://invent.kde.org/plasma/kwin/-/commit/711c5bb43f2823766d5189dc8d567c8f4cec253c.patch
 )
 install=$pkgname.install
 sha256sums=(
@@ -96,6 +97,7 @@ sha256sums=(
   3c8a202a172ff08a8dc21da5456c1aab4bf44e1e4645636ddf53fb092ff3211b
   dc1af4bee0914842e72ba76e7d5934fd7046f84ea58bc79c10a9e0995d6b7a17
   72d7cd67d6fb1d06f8966b2f0ed550f96785dcc716a26e419d1086f23a8068e0
+  1254b34e7088871af2f2f2b6a5b267fa29f8b30c3b7055336296e24f91f4a405
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
