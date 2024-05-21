@@ -5,9 +5,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=plasma-workspace
-_revision='branch=Plasma/6.0'
-#_revision='commit=d98b425cf7b6fe371172c3d4d792e14f03a73db1'
-pkgver=6.0.4.r37.g2538f12
+#_revision='branch=Plasma/6.0'
+_revision='commit=458667cdf1a3a2a9e9f8922329075d1350c0a3ad'
+pkgver=6.0.4.r44.g458667c
 pkgrel=1
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
@@ -135,10 +135,12 @@ groups=(plasma)
 source=(
   "$pkgname::git+https://invent.kde.org/plasma/$pkgname.git#${_revision}"
   'wallpaper-slideshow-timer.patch'
+  'revert-3a5e4f5d5eeb39c96cb55aecc0894ef86b7c497d.patch'
 )
 sha256sums=(
   'SKIP'
   '74452df2880bc86126271b5dc1970e6e035b216b5f44c030d1944d543ec9fe9f'
+  '4611ae31a1d5e9039dada361cbb4d3f08be6ea6bb1e1799cc132a21b435a0356'
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
