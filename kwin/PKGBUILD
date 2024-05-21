@@ -4,9 +4,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-_revision='branch=Plasma/6.0'
-#_revision='commit=166988cef75e6142b72f9bc3f9d58a8cfce1e26e'
-pkgver=6.0.4.1.r43.g0ddea8b
+#_revision='branch=Plasma/6.0'
+_revision='commit=1c7d007165e81b52bcd0b0c9fae3a68053cc0eb8'
+pkgver=6.0.4.1.r51.g1c7d007
 pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
@@ -59,7 +59,6 @@ depends=(breeze
          libxkbcommon-x11
          mesa
          pipewire-session-manager
-         python
          libplasma
          qt6-5compat
          qt6-base
