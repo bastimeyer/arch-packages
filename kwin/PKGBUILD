@@ -4,9 +4,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-#_revision='branch=Plasma/6.0'
-_revision='commit=1c7d007165e81b52bcd0b0c9fae3a68053cc0eb8'
-pkgver=6.0.4.1.r51.g1c7d007
+_revision='branch=Plasma/6.0'
+#_revision='commit=1c7d007165e81b52bcd0b0c9fae3a68053cc0eb8'
+pkgver=6.0.5.r1.gb787a9c
 pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
@@ -82,7 +82,7 @@ makedepends=(extra-cmake-modules
 optdepends=('maliit-keyboard: virtual keyboard for kwin-wayland')
 groups=(plasma)
 source=(
-  "$pkgname::git+https://invent.kde.org/plasma/kwin.git#${_revision}"
+  "${pkgname}::git+https://invent.kde.org/plasma/${pkgname}.git#${_revision}"
   revert-activity-switch-focus.patch
   effects-slide-springconstants.patch
   effects-overview-no-gaps-no-shadow-no-border.patch
