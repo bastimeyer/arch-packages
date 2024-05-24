@@ -1,0 +1,68 @@
+# Maintainer: Felix Yan <felixonmars@archlinux.org>
+# Maintainer: Antonio Rojas <arojas@archlinux.org>
+# Contributor: Andrea Scarpino <andrea@archlinux.org>
+# Contributor: Sebastian Meyer <mail@bastimeyer.de>
+
+pkgname=plasma-activities
+#_revision='branch=Plasma/6.0'
+_revision='commit=40e5b8753bcd8dd97135b1ca526739dbf0c71dc5'
+pkgver=6.0.5.r0.g40e5b87
+pkgrel=1
+pkgdesc='Core components for KDE Activities'
+arch=(x86_64)
+url='https://kde.org/plasma-desktop/'
+license=(LGPL-2.0-or-later)
+depends=(gcc-libs
+         glibc
+         kconfig
+         kcoreaddons
+         qt6-base)
+makedepends=(boost
+             doxygen
+             extra-cmake-modules
+             qt6-declarative
+             qt6-doc
+             qt6-tools)
+optdepends=('qt6-declarative: QML bindings')
+conflicts=(kactivities)
+replaces=(kactivities)
+groups=(plasma)
+source=(
+  "${pkgname}::git+https://invent.kde.org/plasma/${pkgname}.git#${_revision}"
+)
+sha256sums=(
+  'SKIP'
+)
+validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
+              '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
+              'D07BD8662C56CB291B316EB2F5675605C74E02CF'  # David Edmundson <davidedmundson@kde.org>
+              '1FA881591C26B276D7A5518EEAAF29B42A678C20') # Marco Martin <notmart@gmail.com>
+
+pkgver() {
+  cd "$pkgname"
+  git describe --long --abbrev=7 | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+prepare() {
+  cd "$pkgname"
+
+  local src
+  for src in "${source[@]}"; do
+    src="${src%%::*}"
+    src="${src##*/}"
+    [[ $src = *.patch ]] || continue
+    echo "Applying patch $src..."
+    patch -Np1 < "$srcdir/$src"
+  done
+}
+
+build() {
+  cmake -B build -S "$pkgname" \
+    -DBUILD_TESTING=OFF \
+    -DBUILD_QCH=ON
+  cmake --build build
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+}
