@@ -1,0 +1,94 @@
+From cefcdf7db507d37fb720597f74f67691f1ff5362 Mon Sep 17 00:00:00 2001
+From: David Redondo <kde@david-redondo.de>
+Date: Wed, 29 May 2024 10:55:45 +0200
+Subject: [PATCH] Unset suspended state of windows that are marked for
+ offscreen rendering
+
+Otherwise some clients will not render anything even though we are
+sending frame callbacks.
+BUG:487702
+FIXED-IN:6.1
+---
+ src/scene/windowitem.cpp |  3 ++-
+ src/window.cpp           | 11 +++++++++--
+ src/window.h             |  2 ++
+ 3 files changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/src/scene/windowitem.cpp b/src/scene/windowitem.cpp
+index a3f5c9f47d4..4283051e7e6 100644
+--- a/src/scene/windowitem.cpp
++++ b/src/scene/windowitem.cpp
+@@ -50,6 +50,7 @@ WindowItem::WindowItem(Window *window, Item *parent)
+     connect(window, &Window::hiddenByShowDesktopChanged, this, &WindowItem::updateVisibility);
+     connect(window, &Window::activitiesChanged, this, &WindowItem::updateVisibility);
+     connect(window, &Window::desktopsChanged, this, &WindowItem::updateVisibility);
++    connect(window, &Window::offscreenRenderingChanged, this, &WindowItem::updateVisibility);
+     connect(workspace(), &Workspace::currentActivityChanged, this, &WindowItem::updateVisibility);
+     connect(workspace(), &Workspace::currentDesktopChanged, this, &WindowItem::updateVisibility);
+     updateVisibility();
+@@ -187,7 +188,7 @@ void WindowItem::updateVisibility()
+     setVisible(visible);
+ 
+     if (m_window->readyForPainting()) {
+-        m_window->setSuspended(!visible);
++        m_window->setSuspended(!visible && !m_window->isOffscreenRendering());
+     }
+ }
+ 
+diff --git a/src/window.cpp b/src/window.cpp
+index a4e8264b51e..f58a043cf56 100644
+--- a/src/window.cpp
++++ b/src/window.cpp
+@@ -4261,10 +4261,11 @@ bool Window::isLockScreenOverlay() const
+ 
+ void Window::refOffscreenRendering()
+ {
+-    if (m_offscreenRenderCount == 0) {
++    m_offscreenRenderCount++;
++    if (m_offscreenRenderCount == 1) {
+         m_offscreenFramecallbackTimer.start(1'000'000 / output()->refreshRate());
++        Q_EMIT offscreenRenderingChanged();
+     }
+-    m_offscreenRenderCount++;
+ }
+ 
+ void Window::unrefOffscreenRendering()
+@@ -4273,9 +4274,15 @@ void Window::unrefOffscreenRendering()
+     m_offscreenRenderCount--;
+     if (m_offscreenRenderCount == 0) {
+         m_offscreenFramecallbackTimer.stop();
++        Q_EMIT offscreenRenderingChanged();
+     }
+ }
+ 
++bool Window::isOffscreenRendering() const
++{
++    return m_offscreenRenderCount > 0;
++}
++
+ void Window::maybeSendFrameCallback()
+ {
+     if (m_surface && !m_windowItem->isVisible()) {
+diff --git a/src/window.h b/src/window.h
+index 60d1f643c14..fb883fb6b82 100644
+--- a/src/window.h
++++ b/src/window.h
+@@ -1322,6 +1322,7 @@ public:
+ 
+     void refOffscreenRendering();
+     void unrefOffscreenRendering();
++    bool isOffscreenRendering() const;
+ 
+     qreal preferredBufferScale() const;
+     void setPreferredBufferScale(qreal scale);
+@@ -1447,6 +1448,7 @@ Q_SIGNALS:
+     void readyForPaintingChanged();
+     void maximizeGeometryRestoreChanged();
+     void fullscreenGeometryRestoreChanged();
++    void offscreenRenderingChanged();
+ 
+ protected:
+     Window();
+-- 
+GitLab
+
