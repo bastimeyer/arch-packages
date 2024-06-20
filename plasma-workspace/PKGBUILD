@@ -5,9 +5,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=plasma-workspace
-_revision='branch=Plasma/6.0'
-#_revision='commit=458667cdf1a3a2a9e9f8922329075d1350c0a3ad'
-pkgver=6.0.5.r5.g918cb38
+#_revision='branch=Plasma/6.1'
+_revision='commit=fb7f8557cc14a190f0ef5f8dd0c166b224446cc3'
+pkgver=6.1.0.r12.gfb7f855
 pkgrel=1
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
@@ -90,7 +90,6 @@ depends=(accountsservice
          milou
          ocean-sound-theme
          phonon-qt6
-         plasma-integration
          libplasma
          plasma5support
          prison
@@ -172,5 +171,7 @@ build() {
 }
 
 package() {
+  depends+=(plasma-integration) # Declare runtime dependency here to avoid dependency cycles at build time
+
   DESTDIR="$pkgdir" cmake --install build
 }
