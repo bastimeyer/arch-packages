@@ -5,9 +5,9 @@
 
 pkgname=kwin
 #_revision='branch=Plasma/6.1'
-_revision='commit=fd1de65a8509dc9a1edc97aad410d11c9382b7d3'
-pkgver=6.1.0.r20.gfd1de65
-pkgrel=3
+_revision='commit=b819606a740e44cf689781175fab7cf7731f162c'
+pkgver=6.1.1.r0.gb819606
+pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
 url='https://kde.org/plasma-desktop/'
@@ -87,7 +87,6 @@ source=(
   effects-slide-springconstants.patch
   effects-overview-no-gaps-no-shadow-no-border.patch
   effects-overview-no-add-remove-hotkeys.patch
-  'remove-gl-platform-details-log.patch::https://invent.kde.org/plasma/kwin/-/merge_requests/5969/diffs.patch?commit_id=44aa37298a0bdd11ace66ed80a8a6ee27da8331a'
 )
 install=$pkgname.install
 sha256sums=(
@@ -96,7 +95,6 @@ sha256sums=(
   3c8a202a172ff08a8dc21da5456c1aab4bf44e1e4645636ddf53fb092ff3211b
   238ff50bd2c70a2938da42d7da69557be16e3aef0b82efc9865493e8291d7ce6
   72d7cd67d6fb1d06f8966b2f0ed550f96785dcc716a26e419d1086f23a8068e0
-  ebc71735726d48feabf445cf6ba7e77d3dc7f5d280b22d032fb4551c151f7839
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
