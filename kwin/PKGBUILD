@@ -5,8 +5,8 @@
 
 pkgname=kwin
 #_revision='branch=Plasma/6.1'
-_revision='commit=b819606a740e44cf689781175fab7cf7731f162c'
-pkgver=6.1.1.r0.gb819606
+_revision='commit=2eaa4f45e799a22258149a9e27a51cef3ffa1f07'
+pkgver=6.1.1.2.r0.g2eaa4f4
 pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
