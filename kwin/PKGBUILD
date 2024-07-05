@@ -5,8 +5,8 @@
 
 pkgname=kwin
 #_revision='branch=Plasma/6.1'
-_revision='commit=2eaa4f45e799a22258149a9e27a51cef3ffa1f07'
-pkgver=6.1.1.2.r0.g2eaa4f4
+_revision='commit=9dfa660bb9433faf27dcb0933cd56cbc8112a1e0'
+pkgver=6.1.2.r12.g9dfa660
 pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
@@ -117,6 +117,12 @@ prepare() {
     echo "Applying patch $src..."
     patch -Np1 < "$srcdir/$src"
   done
+
+  local ver
+  ver=$(echo "${pkgver}" | grep -Eo '^[0-9]+\.[0-9]+\.[0-9]')
+  sed -Ei \
+    -e 's/set\(PROJECT_VERSION "[^"]+"\)/set(PROJECT_VERSION "'"${ver}"'")/' \
+    CMakeLists.txt
 }
 
 build() {
