@@ -4,9 +4,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwayland
-#_revision='branch=Plasma/6.0'
-_revision='commit=8c33923e04d7c85ce5839d3bc7f7910a3f96909a'
-pkgver=6.0.5.r0.g8c33923
+#_revision='branch=Plasma/6.1'
+_revision='commit=51d60ef8498b002d8cbb3cabc32aeb82d41880d4'
+pkgver=6.1.2.r0.g51d60ef
 pkgrel=1
 pkgdesc='Qt-style Client and Server library wrapper for the Wayland libraries'
 arch=(x86_64)
