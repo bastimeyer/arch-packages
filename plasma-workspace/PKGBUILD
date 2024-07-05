@@ -6,8 +6,8 @@
 
 pkgname=plasma-workspace
 #_revision='branch=Plasma/6.1'
-_revision='commit=0ebba515f8e240287af5d4a8ec96642147c6d240'
-pkgver=6.1.1.r0.g0ebba51
+_revision='commit=1784e9170d134654a83bef4623129108ebb39e09'
+pkgver=6.1.2.r4.g1784e91
 pkgrel=1
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
@@ -160,6 +160,12 @@ prepare() {
     echo "Applying patch $src..."
     patch -Np1 < "$srcdir/$src"
   done
+
+  local ver
+  ver=$(echo "${pkgver}" | grep -Eo '^[0-9]+\.[0-9]+\.[0-9]')
+  sed -Ei \
+    -e 's/set\(PROJECT_VERSION "[^"]+"\)/set(PROJECT_VERSION "'"${ver}"'")/' \
+    CMakeLists.txt
 }
 
 build() {
