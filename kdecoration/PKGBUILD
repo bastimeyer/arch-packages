@@ -4,9 +4,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kdecoration
-#_revision='branch=Plasma/6.0'
-_revision='commit=1e7ba093bb73785b204785f0633112ebce887232'
-pkgver=6.0.5.r0.g1e7ba09
+#_revision='branch=Plasma/6.1'
+_revision='commit=49f76516a1f5c7be8c96024056a9b28d0e94e6e7'
+pkgver=6.1.3.r0.g49f7651
 pkgrel=1
 pkgdesc='Plugin based library to create window decorations'
 arch=(x86_64)
