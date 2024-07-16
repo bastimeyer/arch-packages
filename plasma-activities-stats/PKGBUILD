@@ -4,9 +4,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=plasma-activities-stats
-#_revision='branch=Plasma/6.0'
-_revision='commit=24e06d633f75f528621afee03673e60c4e5378fe'
-pkgver=6.0.5.r0.g24e06d6
+#_revision='branch=Plasma/6.1'
+_revision='commit=f2733d58324db11016a2b675845e981631f5b127'
+pkgver=6.1.3.r0.gf2733d5
 pkgrel=1
 pkgdesc='A library for accessing the usage data collected by the activities system'
 arch=(x86_64)
