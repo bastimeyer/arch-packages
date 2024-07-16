@@ -5,8 +5,8 @@
 
 pkgname=kwayland
 #_revision='branch=Plasma/6.1'
-_revision='commit=51d60ef8498b002d8cbb3cabc32aeb82d41880d4'
-pkgver=6.1.2.r0.g51d60ef
+_revision='commit=f5d9d5a9d40d59d9c7042adb0e5b0a7b9ac9c40e'
+pkgver=6.1.3.r0.gf5d9d5a
 pkgrel=1
 pkgdesc='Qt-style Client and Server library wrapper for the Wayland libraries'
 arch=(x86_64)
