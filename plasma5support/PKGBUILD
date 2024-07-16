@@ -2,9 +2,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=plasma5support
-#_revision='branch=Plasma/6.0'
-_revision='commit=9841097965c51836f5fe8a9d90cf63bc965732c3'
-pkgver=6.0.5.r0.g9841097
+#_revision='branch=Plasma/6.1'
+_revision='commit=f73565e2a29b5ad2cb954a6cc9dfc6cdc2bc5850'
+pkgver=6.1.3.r0.gf73565e
 pkgrel=1
 pkgdesc='Support components for porting from KF5/Qt5 to KF6/Qt6'
 arch=(x86_64)
