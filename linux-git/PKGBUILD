@@ -5,7 +5,7 @@
 
 pkgbase=linux-git
 pkgver=6.10.r0.g0c3836482481
-pkgrel=1
+pkgrel=2
 pkgdesc='Linux'
 _srctag=v6.10
 _srcname=linux
@@ -41,7 +41,7 @@ validpgpkeys=(
 )
 b2sums=(
   'SKIP'
-  'd79621cc9350cd7bbb5155863c40524482e9faa3d41a07a4b142b28dde24a9923c289d3f3718918826af9d51cddd53e256c1472149cdd7c1012e9d7aabc039d8'
+  'b591064140306057ececa411931b040971cf082e42ad094f8aafbf881bb0d1afb157a6bd33cc5b10cea2aaf1e9fc0529295f91368b261f1b1b99da7792b8d84c'
   '9fbb5e140e11366eb0aab397ac1b42414351f3ff7ce3346e0de5a2526e5df4acb18817e3cdf88f375ed9f79e20f9b4d2ffb66a8a5f001bfa6439c0bccb46b2ba'
 )
 
