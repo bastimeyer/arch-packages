@@ -1,0 +1,13 @@
+diff --git a/src/virtualdesktops.h b/src/virtualdesktops.h
+index 9232369633..3d07ea4450 100644
+--- a/src/virtualdesktops.h
++++ b/src/virtualdesktops.h
+@@ -511,7 +511,7 @@ inline const QSize &VirtualDesktopGrid::size() const
+ 
+ inline uint VirtualDesktopManager::maximum()
+ {
+-    return 20;
++    return 25;
+ }
+ 
+ inline uint VirtualDesktopManager::count() const
