@@ -5,9 +5,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=plasma-workspace
-#_revision='branch=Plasma/6.1'
-_revision='commit=1ff8f37f6a8fb47697364d56460989abbd764bbf'
-pkgver=6.1.4.r6.g1ff8f37
+_revision='branch=Plasma/6.1'
+#_revision='commit=1ff8f37f6a8fb47697364d56460989abbd764bbf'
+pkgver=6.1.4.r14.gf82cbbf
 pkgrel=1
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
