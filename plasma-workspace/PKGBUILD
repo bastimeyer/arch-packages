@@ -7,7 +7,7 @@
 pkgname=plasma-workspace
 _revision='branch=Plasma/6.1'
 #_revision='commit=1ff8f37f6a8fb47697364d56460989abbd764bbf'
-pkgver=6.1.4.r22.gfead4fa
+pkgver=6.1.4.r35.gad4bd34
 pkgrel=1
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
@@ -137,7 +137,7 @@ source=(
 )
 sha256sums=(
   'SKIP'
-  '74452df2880bc86126271b5dc1970e6e035b216b5f44c030d1944d543ec9fe9f'
+  'be61d41be5584f6cd0ba7b1b66c3e04ba5b54df279d17108be5132f891923076'
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
