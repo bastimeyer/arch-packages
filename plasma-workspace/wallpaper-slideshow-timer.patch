@@ -1,4 +1,4 @@
-commit 990a79236b69093710de82775ac378f05da75eeb
+commit 8ece96215b1b2b520e2f4fdd16922179f5a0e7bf
 Author: Sebastian Meyer <mail@bastimeyer.de>
 Date:   Mon Sep 2 10:13:44 2024 +0200
 
@@ -62,15 +62,15 @@ index ec9a52a383..9fb9f365f5 100644
  
  void ImageBackend::slotSlideModelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QList<int> &roles)
 diff --git a/wallpapers/image/plugin/imagebackend.h b/wallpapers/image/plugin/imagebackend.h
-index 57f65da94b..5292c2ba0b 100644
+index 57f65da94b..84b39de8ab 100644
 --- a/wallpapers/image/plugin/imagebackend.h
 +++ b/wallpapers/image/plugin/imagebackend.h
 @@ -183,6 +183,8 @@ private:
      Q_OBJECT_BINDABLE_PROPERTY_WITH_ARGS(ImageBackend, bool, m_slideshowFoldersFirst, false, &ImageBackend::slideshowFoldersFirstChanged)
  
      QTimer m_timer;
-+    const int m_timer_duration_min = 1000;
-+    const int m_timer_duration_offset = 10;
++    static constexpr int m_timer_duration_min = 1000;
++    static constexpr int m_timer_duration_offset = 10;
      bool m_pauseSlideshow = false;
      std::optional<decltype(std::declval<QTimer>().remainingTimeAsDuration())> m_remainingTime;
  

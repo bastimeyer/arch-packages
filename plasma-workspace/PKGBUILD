@@ -5,9 +5,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=plasma-workspace
-_revision='branch=Plasma/6.1'
-#_revision='commit=1ff8f37f6a8fb47697364d56460989abbd764bbf'
-pkgver=6.1.4.r35.gad4bd34
+#_revision='branch=Plasma/6.1'
+_revision='commit=c5a524af27737a6f97aab4f9cd30f53fb7d5a9b3'
+pkgver=6.1.5.r0.gc5a524a
 pkgrel=1
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
@@ -137,7 +137,7 @@ source=(
 )
 sha256sums=(
   'SKIP'
-  'be61d41be5584f6cd0ba7b1b66c3e04ba5b54df279d17108be5132f891923076'
+  '12c8a49f47448561c9c19821e65aad8e865c2d7c2ae13fceec300b75d493203f'
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
