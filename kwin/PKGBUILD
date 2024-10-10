@@ -4,9 +4,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-#_revision='branch=Plasma/6.1'
-_revision='commit=c088a847a70052f300b18cb755a1a06785965c88'
-pkgver=6.1.5.r0.gc088a84
+#_revision='branch=Plasma/6.2'
+_revision='commit=ae29177ed760042c9b1fb709498bbeb0b93d0fb2'
+pkgver=6.2.0.r18.gae29177
 pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
@@ -45,6 +45,7 @@ depends=(breeze
          kwindowsystem
          kxmlgui
          lcms2
+         libcanberra
          libdisplay-info
          libdrm
          libepoxy
@@ -65,6 +66,7 @@ depends=(breeze
          qt6-declarative
          qt6-multimedia
          qt6-sensors
+         qt6-svg
          qt6-tools
          qt6-wayland
          systemd-libs
