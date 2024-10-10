@@ -5,23 +5,22 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=plasma-workspace
-#_revision='branch=Plasma/6.1'
-_revision='commit=c5a524af27737a6f97aab4f9cd30f53fb7d5a9b3'
-pkgver=6.1.5.r0.gc5a524a
-pkgrel=2
+#_revision='branch=Plasma/6.2'
+_revision='commit=9e3201d30a4c5d567396d21bef5bb39d28210797'
+pkgver=6.2.0.r19.g9e3201d
+pkgrel=1
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
 url='https://kde.org/plasma-desktop/'
 license=(LGPL-2.0-or-later)
 depends=(accountsservice
          appstream-qt
+         dbus
          fontconfig
          freetype2
          gcc-libs
          glibc
          icu
-         plasma-activities
-         plasma-activities-stats
          kactivitymanagerd
          karchive
          kauth
@@ -65,6 +64,7 @@ depends=(accountsservice
          ksystemstats
          ktexteditor
          ktextwidgets
+         kunitconversion
          kuserfeedback
          kwallet
          kwayland
@@ -77,6 +77,7 @@ depends=(accountsservice
          libice
          libkexiv2
          libksysguard
+         libplasma
          libqalculate
          libsm
          libx11
@@ -90,12 +91,14 @@ depends=(accountsservice
          milou
          ocean-sound-theme
          phonon-qt6
-         libplasma
+         plasma-activities
+         plasma-activities-stats
          plasma5support
          prison
          qt6-5compat
          qt6-base
          qt6-declarative
+         qt6-positioning
          qt6-svg
          qt6-tools # for qdbus
          qt6-virtualkeyboard
@@ -117,7 +120,8 @@ makedepends=(baloo
              kdoctools
              kunitconversion
              networkmanager-qt
-             plasma-wayland-protocols)
+             plasma-wayland-protocols
+             qcoro)
 optdepends=('appmenu-gtk-module: global menu support for GTK2 and some GTK3 applications'
             'baloo: Baloo search runner'
             'discover: manage applications installation from the launcher'
