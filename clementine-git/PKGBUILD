@@ -11,8 +11,8 @@
 
 _srcname=clementine
 pkgname=${_srcname}-git
-pkgver=1.4.0rc1.r901.g7b678f26e.30.gbd22ace4e
-pkgrel=2
+pkgver=1.4.1.r11.gcecc1c1b5.0.gcecc1c1b5
+pkgrel=1
 pkgdesc='A modern music player and library organizer'
 url='https://www.clementine-player.org/'
 license=(GPL)
