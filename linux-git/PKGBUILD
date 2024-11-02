@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.11.5.r0.g05b1367d372a
+pkgver=6.11.6.r0.g163b38476c50
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.11.5
+_srctag=v6.11.6
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -33,7 +33,7 @@ options=(
   !strip
 )
 source=(
-  "${_srcname}::${_src}#tag=${_srctag}"
+  "${_srcname}::${_src}?signed#tag=${_srctag}"
   config
   'https://github.com/archlinux/linux/compare/7aa21fec187b7bc2a55be4daad4585098e2f47df...2d31df3044353e9a26170997472f9472090a3096.patch'
 )
@@ -43,7 +43,7 @@ validpgpkeys=(
 )
 b2sums=(
   'SKIP'
-  '632406cbbd14ac1db306bd2dacc21ecf0320cbf04f028c6d09290404af63e642a873295a6bc7db14c6e395c910d5c8f731efd39e52f3ac8de51596d434236c2b'
+  '9bfd9dfc500c01ecabdc01ef03be09db2ffa812f93ac0297aeef5b8e0bf7d9989a8b7f8484f44c7c178be4d99dbb334d4b0f9a05531722a01822b5034224ebf1'
   '2178e1b975b6e8882de5276ef64928505d5c7885de44ab1b8447ba3300e94374430bab9efa151aa53b7e5787fc0124a1b0870e81f1fa5990ec395836cf7d3d70'
 )
 
