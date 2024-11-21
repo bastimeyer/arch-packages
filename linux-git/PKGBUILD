@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.11.9.r0.ga2316c84887a
+pkgver=6.12.r0.gadc218676eef
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.11.9
+_srctag=v6.12
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -43,7 +43,7 @@ validpgpkeys=(
 )
 b2sums=(
   'SKIP'
-  'd93b085af1eb81aacf91b79b06a1b7313f4d5290da4f0853beade5aab11a8a53fd1a541aa123ec8d445edee6c7d4a0b54c7d45afee2249b903614a582b5959bc'
+  '4e18288c251d640403e23697162308c9529c7d9574ea14c846f49224eebd034de30a96509b020afdcd3269d35e058b02eb5b289c7aaf1873bd2294282311acd6'
   '2178e1b975b6e8882de5276ef64928505d5c7885de44ab1b8447ba3300e94374430bab9efa151aa53b7e5787fc0124a1b0870e81f1fa5990ec395836cf7d3d70'
 )
 
@@ -104,6 +104,7 @@ _package() {
   optdepends=(
     'wireless-regdb: to set the correct wireless channels of your country'
     'linux-firmware: firmware images needed for some devices'
+    'scx-scheds: to use sched-ext schedulers'
   )
   provides=(
     KSMBD-MODULE
