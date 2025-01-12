@@ -74,7 +74,8 @@ depends=(breeze
          xcb-util-cursor
          xcb-util-keysyms
          xcb-util-wm)
-makedepends=(extra-cmake-modules
+makedepends=(ninja
+             extra-cmake-modules
              kdoctools
              krunner
              plasma-wayland-protocols
@@ -130,7 +131,8 @@ prepare() {
 }
 
 build() {
-  cmake -B build -S "$pkgname" \
+  cmake -B build -S "$pkgname" -G Ninja \
+    -DCMAKE_AUTOGEN_PARALLEL=1 \
     -DCMAKE_INSTALL_LIBEXECDIR=lib \
     -DBUILD_TESTING=OFF
   cmake --build build
