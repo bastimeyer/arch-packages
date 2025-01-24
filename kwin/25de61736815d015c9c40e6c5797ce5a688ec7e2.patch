@@ -1,0 +1,42 @@
+From 25de61736815d015c9c40e6c5797ce5a688ec7e2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Niccol=C3=B2=20Venerandi?= <niccolo@venerandi.com>
+Date: Tue, 21 Jan 2025 12:45:29 +0100
+Subject: [PATCH] Never show autohide/dodge windows panels when a window is
+ fullscreen
+
+Currently, if a edge with a autohide/dodge panel is triggered when a
+window is fullscreen, the panel will be shown; but, since it will not
+have focus, it will be drawn behind the fullscreen window. To avoid
+this, we make sure to never display autohide/dodge panels in this
+scenario.
+
+BUG:497826
+BUG:497829
+---
+ src/screenedge.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/screenedge.cpp b/src/screenedge.cpp
+index fa83749d98..522577e3bb 100644
+--- a/src/screenedge.cpp
++++ b/src/screenedge.cpp
+@@ -606,7 +606,7 @@ void Edge::setGeometry(const QRect &geometry)
+ void Edge::checkBlocking()
+ {
+     Window *client = Workspace::self()->activeWindow();
+-    const bool newValue = !m_edges->remainActiveOnFullscreen() && client && client->isFullScreen() && exclusiveContains(client->frameGeometry(), m_geometry.center()) && !(effects && effects->hasActiveFullScreenEffect());
++    const bool newValue = (!m_edges->remainActiveOnFullscreen() || m_client) && client && client->isFullScreen() && exclusiveContains(client->frameGeometry(), m_geometry.center()) && !(effects && effects->hasActiveFullScreenEffect());
+     if (newValue == m_blocked) {
+         return;
+     }
+@@ -1235,6 +1235,7 @@ std::unique_ptr<Edge> ScreenEdges::createEdge(ElectricBorder border, int x, int
+             }
+         }
+     }
++    edge->checkBlocking();
+     connect(edge.get(), &Edge::approaching, this, &ScreenEdges::approaching);
+     connect(this, &ScreenEdges::checkBlocking, edge.get(), &Edge::checkBlocking);
+     return edge;
+-- 
+GitLab
+
