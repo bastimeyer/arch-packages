@@ -5,9 +5,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=plasma-workspace
-#_revision='branch=Plasma/6.2'
-_revision='commit=5f960b21f9d0e98fc0c91a6c19b629fb7133ccb1'
-pkgver=6.2.5.r11.g5f960b2
+#_revision='branch=Plasma/6.3'
+_revision='commit=9f0f5ed9912749613db09cfdc33071d7bb119396'
+pkgver=6.3.0.r11.g9f0f5ed
 pkgrel=1
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
@@ -41,7 +41,6 @@ depends=(accountsservice
          kholidays
          ki18n
          kiconthemes
-         kidletime
          kio
          kio-extras
          kio-fuse
@@ -108,10 +107,10 @@ depends=(accountsservice
          systemd-libs
          wayland
          xcb-util
+	 xcb-util-cursor
          xcb-util-image
          xorg-xmessage
          xorg-xrdb
-         xorg-xsetroot
          xorg-xwayland
          zlib)
 makedepends=(ninja
@@ -119,7 +118,6 @@ makedepends=(ninja
              extra-cmake-modules
              gpsd
              kdoctools
-             kunitconversion
              networkmanager-qt
              plasma-wayland-protocols
              qcoro)
@@ -138,11 +136,9 @@ replaces=(plasma-wayland-session)
 groups=(plasma)
 source=(
   "$pkgname::git+https://invent.kde.org/plasma/$pkgname.git#${_revision}"
-  'wallpaper-slideshow-timer.patch::https://invent.kde.org/plasma/plasma-workspace/-/commit/170a0c9e396028a564c1ee12a0a85207d6fa9fb3.patch'
 )
 sha256sums=(
   'SKIP'
-  '7b4773f6e27e80f7e3b966586ca079c4824f7f2568209c1233c1760e6af3cbd9'
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
