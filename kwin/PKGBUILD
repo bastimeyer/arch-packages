@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-#_revision='branch=Plasma/6.2'
-_revision='commit=050506d5b8141e78da7f6dd9f3bf766c59445da1'
-pkgver=6.2.5.r4.g050506d
-pkgrel=2
+#_revision='branch=Plasma/6.3'
+_revision='commit=016655e45ee1b5d3cd5a4934510c96409dce5cd8'
+pkgver=6.3.0.r12.g016655e
+pkgrel=1
 pkgdesc='An easy to use, but flexible, composited Window Manager'
 arch=(x86_64)
 url='https://kde.org/plasma-desktop/'
@@ -91,7 +91,6 @@ source=(
   effects-overview-no-gaps-no-shadow-no-border.patch
   effects-overview-no-add-remove-hotkeys.patch
   virtualdesktops-increase-maximum.patch
-  'https://invent.kde.org/plasma/kwin/-/commit/25de61736815d015c9c40e6c5797ce5a688ec7e2.patch'
 )
 install=$pkgname.install
 sha256sums=(
@@ -101,7 +100,6 @@ sha256sums=(
   238ff50bd2c70a2938da42d7da69557be16e3aef0b82efc9865493e8291d7ce6
   72d7cd67d6fb1d06f8966b2f0ed550f96785dcc716a26e419d1086f23a8068e0
   64b0379c5f011cd2339dcd62a63b4cce1c2131e4a36828497ff42b58e944650e
-  a19e1d8660257889ae2475cef1c462d458cd0d2a76bbace3d302efaed5504086
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
