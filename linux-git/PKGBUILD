@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.13.5.r0.gc5e32b0a3c19
+pkgver=6.13.6.r0.g251aeb0f2f57
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.13.5
+_srctag=v6.13.6
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -36,7 +36,7 @@ source=(
   "${_srcname}::${_src}?signed#tag=${_srctag}"
   config
   'https://github.com/archlinux/linux/compare/7aa21fec187b7bc2a55be4daad4585098e2f47df...2d31df3044353e9a26170997472f9472090a3096.patch'
-  'https://github.com/archlinux/linux/commit/122edb422160af16e030838af5e0108c3f45a550.patch'
+  'https://github.com/archlinux/linux/compare/7141ca9d6b1c56f933ef81c78d69d1d0081dddd8...9a1ac76e947102c4814e11e1275fff5b47484d15~1.patch'
 )
 validpgpkeys=(
   ABAF11C65A2970B130ABE3C479BE3E4300411886  # Linus Torvalds
@@ -46,7 +46,7 @@ b2sums=(
   'SKIP'
   '2863d1754dd6cc350c9d95e791ad83f4978b719ebff628468c06832515cf991ee8a6406dc57da906581a7c4f13e84ca1da17dd52a822be6392c635914af14228'
   '2178e1b975b6e8882de5276ef64928505d5c7885de44ab1b8447ba3300e94374430bab9efa151aa53b7e5787fc0124a1b0870e81f1fa5990ec395836cf7d3d70'
-  '0c18751aa4eff926692659ffec806644f52fe9100601d33db4765a0480130f6537df388f9d26705aedd40deac9d85eb9873988edbff89aa5c140711fa57869b7'
+  'a9658f3d4da1d42326cf0c89b2b0602582f94001843ecbd3aeaf85ce51df77fd811f8789d8a8cdb1c920c1bc8d66cfcf7645d138749d1fa352caea39ae0b24d5'
 )
 
 export KBUILD_BUILD_HOST=archlinux
@@ -95,6 +95,7 @@ prepare() {
 build() {
   cd $_srcname
   _make all
+  _make -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
 }
 
 _package() {
@@ -133,7 +134,7 @@ _package() {
   ZSTD_CLEVEL=19 _make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 \
     DEPMOD=/doesnt/exist modules_install  # Suppress depmod
 
-  # remove build links
+  # remove build link
   rm "$modulesdir"/build
 }
 
@@ -146,10 +147,11 @@ _package-headers() {
 
   echo "Installing build files..."
   install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
-    localversion.* version vmlinux
+    localversion.* version vmlinux tools/bpf/bpftool/vmlinux.h
   install -Dt "$builddir/kernel" -m644 kernel/Makefile
   install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
   cp -t "$builddir" -a scripts
+  ln -srt "$builddir" "$builddir/scripts/gdb/vmlinux-gdb.py"
 
   # required when STACK_VALIDATION is enabled
   install -Dt "$builddir/tools/objtool" tools/objtool/objtool
@@ -199,7 +201,7 @@ _package-headers() {
   echo "Stripping build tools..."
   local file
   while read -rd '' file; do
-    case "$(file -Sbi "$file")" in
+    case "$(file -Sib "$file")" in
       application/x-sharedlib\;*)      # Libraries (.so)
         strip -v $STRIP_SHARED "$file" ;;
       application/x-archive\;*)        # Libraries (.a)
