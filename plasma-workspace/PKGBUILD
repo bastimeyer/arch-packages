@@ -6,8 +6,8 @@
 
 pkgname=plasma-workspace
 #_revision='branch=Plasma/6.3'
-_revision='commit=78a0ff3845f580a3deb2d4afa109a49a18344325'
-pkgver=6.3.2.r23.g78a0ff3
+_revision='commit=17112fbba3b8a834d2226724a50dca28510cc2fb'
+pkgver=6.3.3.r3.g17112fb
 pkgrel=1
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
