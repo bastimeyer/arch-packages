@@ -1,0 +1,11 @@
+diff --git a/src/kernel/dkms.conf b/src/kernel/dkms.conf
+index c2579d5..ce6ff4b 100644
+--- a/src/kernel/dkms.conf
++++ b/src/kernel/dkms.conf
+@@ -2,6 +2,5 @@ BUILT_MODULE_NAME=hid-lg-g710-plus
+ PACKAGE_NAME=hid-lg-g710-plus
+ PACKAGE_VERSION=0.1
+ MAKE="make KVERSION=$kernelver"
+-CLEAN="make clean KVERSION=$kernelver"
+ DEST_MODULE_LOCATION="/updates"
+ AUTOINSTALL="yes"

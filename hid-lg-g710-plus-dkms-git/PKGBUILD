@@ -1,0 +1,52 @@
+# Maintainer: Jonpas <jonpas33@gmail.com>
+# Contributor: forivall <forivall@gmail.com>
+# Contributor: Sebastian Meyer <mail@bastimeyer.de>
+
+_pkgbase=hid-lg-g710-plus
+_pkgname=${_pkgbase}-dkms
+pkgname=${_pkgname}-git
+pkgdesc="Linux DKMS kernel module allowing use of extra keys and LEDs on the Logitech G710+"
+pkgver=r35.ba8c9f6
+pkgrel=7
+arch=('x86_64')
+license=('GPL2')
+url="https://github.com/jonpas/logitech-g710-linux-driver"
+depends=('dkms')
+optdepends=('linux-headers: build the module against Arch kernel')
+makedepends=('git')
+provides=('hid-lg-g710-plus')
+conflicts=('hid-lg-g710-plus' 'logitech-g710-kmod-git' 'logitech-g710')
+
+source=(
+  "${_pkgbase}::git+https://github.com/jonpas/logitech-g710-linux-driver.git"
+  dkms.conf.patch
+)
+sha256sums=(
+  'SKIP'
+  52080a40b9ad84d05288ce385596f06b7aa8a35140ffdf88e7d0ac1345bf794c
+)
+
+pkgver() {
+  cd "$srcdir/$_pkgbase"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "$srcdir/$_pkgbase"
+  patch -Np1 < "$srcdir/dkms.conf.patch"
+}
+
+package() {
+  cd "$srcdir/$_pkgbase"
+
+  local rev="$(git rev-parse --short HEAD)"
+
+  mkdir -p "${pkgdir}/usr/src/"
+  cp -r src/kernel "${pkgdir}/usr/src/${_pkgbase}-$pkgver/"
+
+  mkdir -p "${pkgdir}/etc/udev/rules.d/"
+  cp misc/90-logitech-g710-plus.rules "$pkgdir/etc/udev/rules.d/"
+
+  mkdir -p "${pkgdir}/usr/share/logitech-g710/"
+  cp misc/.Xmodmap "${pkgdir}/usr/share/logitech-g710/"
+}
