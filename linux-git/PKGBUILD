@@ -5,7 +5,7 @@
 
 pkgbase=linux-git
 pkgver=6.14.4.r0.gea061bad207e
-pkgrel=1
+pkgrel=2
 pkgdesc='Linux'
 _srctag=v6.14.4
 _srcname=linux
@@ -44,7 +44,7 @@ validpgpkeys=(
 )
 b2sums=(
   'SKIP'
-  'dc9ac3c940ed17d5ecb96c8e8d7b3b76ad3fa82965112deb9e4fd547684cdd2c7fa50f1fd2912f4840c827bdedcbfc2028084fba15d98fdf24afa63673b7cd7a'
+  '63b72509117c51ea3e6e7a186bb7419716175990bb458bbf51c047bc86b06e0a0a2daee8ddf8c9e2d6c981db83ff733813411a3a3d3b86981d574e950ef3ba50'
   '29b06b1f932451656ac89a8e38aa49a9d101f7845c0d5be807be175aa22908a6719bd0ed93aadb8b1a4b4e3b5a681229ca5c0536af8af2f13623acc46dc90690'
   'a06a7d83da7cbcdeae22016388fb96bbceabca1fc581c0aac6a6d1b5bbce0ad9a23ea99e59f55ade39ded76660cd7be789ed3f10ca8fde7dfc70b25c0890fd00'
 )
