@@ -10,12 +10,12 @@
 # Based on clementine-git AUR PKGBUILD
 
 _srcname=clementine
-pkgname=${_srcname}-git
-pkgver=1.4.1.r38.g1fc7fe0e1.0.g1fc7fe0e1
+pkgname="${_srcname}-git"
+pkgver=1.4.1.r44.g41bcdca7f.0.g41bcdca7f
 pkgrel=1
 pkgdesc='A modern music player and library organizer'
 url='https://www.clementine-player.org/'
-license=(GPL)
+license=(GPL-3.0-or-later)
 arch=(x86_64)
 depends=(
     alsa-lib
@@ -31,7 +31,7 @@ depends=(
 )
 makedepends=(
     boost
-    cmake3
+    cmake
     git
     qt5-tools
 )
@@ -60,6 +60,7 @@ pkgver() {
 prepare() {
     cd "${_srcname}"
     sed -e 's|CRYPTOPP cryptopp|CRYPTOPP libcryptopp|' -i CMakeLists.txt # Fix crypto++ detection
+    sed -e 's/cmake_policy(SET CMP0053 OLD)/cmake_policy(SET CMP0026 NEW)/' -i CMakeLists.txt
     patch -p1 -i ../volume-up-down-adjustment.patch
     patch -p1 -i ../disable-guess-album.patch
     patch -p1 -i ../taglib1.patch
@@ -70,6 +71,7 @@ build() {
         -DCMAKE_INSTALL_PREFIX=/usr
         -DBUILD_WERROR=off
         -DCMAKE_BUILD_TYPE=Release
+	-DCMAKE_POLICY_VERSION_MINIMUM=3.5
         -DENABLE_GOOGLE_DRIVE=off
         -DENABLE_DROPBOX=off
         -DENABLE_SKYDRIVE=off
@@ -87,7 +89,7 @@ build() {
         -DENABLE_VISUALISATIONS=off
         -DUSE_SYSTEM_TAGLIB=ON
     )
-    export LDFLAGS="${LDFLAGS} -Wl,--copy-dt-needed-entries"
+    export CXXFLAGS+=" -Wno-error=cpp"
     cmake -B build -S "${_srcname}" "${args[@]}"
     cmake --build build
 }
