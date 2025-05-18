@@ -1,0 +1,13 @@
+diff --git a/src/plugins/private/qml/WindowHeapDelegate.qml b/src/plugins/private/qml/WindowHeapDelegate.qml
+index 0088f2ce98..19a36dc526 100644
+--- a/src/plugins/private/qml/WindowHeapDelegate.qml
++++ b/src/plugins/private/qml/WindowHeapDelegate.qml
+@@ -250,7 +250,7 @@ ExpoCell {
+             visible: !thumb.activeHidden && !activeDragHandler.active && !returnAnimation.running
+             PC3.Label {
+                 id: caption
+-                visible: thumb.windowTitleVisible
++                visible: false
+                 width: thumb.width
+                 maximumLineCount: 1
+                 anchors.top: parent.bottom

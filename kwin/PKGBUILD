@@ -91,6 +91,7 @@ source=(
   effects-overview-no-gaps-no-shadow-no-border.patch
   effects-overview-no-add-remove-hotkeys.patch
   effects-windowheapdelegate-no-close-button.patch
+  effects-windowheapdelegate-no-caption.patch
   virtualdesktops-increase-maximum.patch
 )
 install=$pkgname.install
@@ -101,6 +102,7 @@ sha256sums=(
   238ff50bd2c70a2938da42d7da69557be16e3aef0b82efc9865493e8291d7ce6
   72d7cd67d6fb1d06f8966b2f0ed550f96785dcc716a26e419d1086f23a8068e0
   0f452a461bf434ebfe3ec0142682a4f159234767b7a67f9d7e55ef921148a84a
+  243dc1107880acedf562ea40482db6adb446497533121da3d9c599225cecf2ff
   64b0379c5f011cd2339dcd62a63b4cce1c2131e4a36828497ff42b58e944650e
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
