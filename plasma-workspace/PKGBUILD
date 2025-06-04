@@ -8,7 +8,7 @@ pkgname=plasma-workspace
 #_revision='branch=Plasma/6.3'
 _revision='commit=bf67f25676d4d9777d888b6576127d368af66cb7'
 pkgver=6.3.5.r13.gbf67f25
-pkgrel=1
+pkgrel=2
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
 url='https://kde.org/plasma-desktop/'
@@ -136,9 +136,11 @@ replaces=(plasma-wayland-session)
 groups=(plasma)
 source=(
   "$pkgname::git+https://invent.kde.org/plasma/$pkgname.git#${_revision}"
+  'https://invent.kde.org/plasma/plasma-workspace/-/commit/6747aa9208a8c8133dde3d0a7c7ca728327e0a87.patch'
 )
 sha256sums=(
   'SKIP'
+  '220e6e34421f85a6150034dc4b0e77585129f4be26e0a168fea68d6338755ada'
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
