@@ -4,15 +4,16 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-#_revision='branch=Plasma/6.3'
-_revision='commit=3e687dc65c2b0af669e2778a63a72194fb967024'
-pkgver=6.3.5.r21.g3e687dc
+#_revision='branch=Plasma/6.4'
+_revision='commit=3db02beb1b416652b0d7d32500558c5ec3e40d78'
+pkgver=6.4.0.r9.g3db02be
 pkgrel=1
-pkgdesc='An easy to use, but flexible, composited Window Manager'
+pkgdesc='An easy to use, but flexible, Wayland compositor'
 arch=(x86_64)
 url='https://kde.org/plasma-desktop/'
 license=(LGPL-2.0-or-later)
-depends=(breeze
+depends=(aurorae
+         breeze
          gcc-libs
          glibc
          plasma-activities
@@ -20,7 +21,6 @@ depends=(breeze
          kcmutils
          kcolorscheme
          kconfig
-         kconfigwidgets
          kcoreaddons
          kcrash
          kdbusaddons
@@ -48,23 +48,20 @@ depends=(breeze
          libcanberra
          libdisplay-info
          libdrm
+         libei
          libepoxy
          libinput
          libpipewire
          libqaccessibilityclient-qt6
-         libx11
          libxcb
          libxcvt
-         libxi
          libxkbcommon
-         libxkbcommon-x11
          mesa
          pipewire-session-manager
          libplasma
          qt6-5compat
          qt6-base
          qt6-declarative
-         qt6-multimedia
          qt6-sensors
          qt6-svg
          qt6-tools
@@ -82,7 +79,7 @@ makedepends=(ninja
              python
              wayland-protocols
              xorg-xwayland)
-optdepends=('maliit-keyboard: virtual keyboard for kwin-wayland')
+optdepends=('maliit-keyboard: virtual keyboard')
 groups=(plasma)
 source=(
   "${pkgname}::git+https://invent.kde.org/plasma/${pkgname}.git#${_revision}"
@@ -102,12 +99,13 @@ sha256sums=(
   238ff50bd2c70a2938da42d7da69557be16e3aef0b82efc9865493e8291d7ce6
   72d7cd67d6fb1d06f8966b2f0ed550f96785dcc716a26e419d1086f23a8068e0
   0f452a461bf434ebfe3ec0142682a4f159234767b7a67f9d7e55ef921148a84a
-  243dc1107880acedf562ea40482db6adb446497533121da3d9c599225cecf2ff
+  590ee4f95044ad8ab3005e2470479af0f18c743cf76bf433ed3e4743e4aa7533
   64b0379c5f011cd2339dcd62a63b4cce1c2131e4a36828497ff42b58e944650e
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
               'D07BD8662C56CB291B316EB2F5675605C74E02CF'  # David Edmundson <davidedmundson@kde.org>
+              '90A968ACA84537CC27B99EAF2C8DF587A6D4AAC1'  # Nicolas Fella <nicolas.fella@kde>
               '1FA881591C26B276D7A5518EEAAF29B42A678C20') # Marco Martin <notmart@gmail.com>
 
 pkgver() {
