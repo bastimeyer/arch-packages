@@ -6,8 +6,8 @@
 
 pkgname=(plasma-workspace)
 #_revision='branch=Plasma/6.4'
-_revision='commit=915957dcd064bc02ca920d5e08aba5534bbad9dd'
-pkgver=6.4.0.r13.g915957d
+_revision='commit=3916582d0737397f68da607b8620fd5fa8fe022e'
+pkgver=6.4.1.r1.g3916582
 pkgrel=1
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
@@ -89,7 +89,6 @@ depends=(accountsservice
          libxtst
          milou
          ocean-sound-theme
-         phonon-qt6
          plasma-activities
          plasma-activities-stats
          plasma5support
@@ -119,6 +118,7 @@ makedepends=(ninja
              extra-cmake-modules
              kdoctools
              networkmanager-qt
+             phonon-qt6
              plasma-wayland-protocols
              qcoro)
 groups=(plasma)
