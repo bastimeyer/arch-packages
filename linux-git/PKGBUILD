@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.15.4.r0.ge60eb441596d
+pkgver=6.15.5.r0.g7b59ab988c01
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.15.4
+_srctag=v6.15.5
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -37,7 +37,6 @@ source=(
   config
   '0000-add-sysctl-to-allow-disabling-unprivileged-CLONE_NEWUSER.patch::https://github.com/archlinux/linux/commit/09d049b0379b2a8476d2c05910d5fbde47bcc5bb.patch'
   '0000-skip-simpledrm-if-nvidia-drm.modeset=1-is-set.patch::https://github.com/archlinux/linux/commit/3279859890cd6df4bf7f5c737745e2d07892fafd.patch'
-  '0000-btrfs-fix-invalid-inode-pointer-dereferences-during-log-replay.patch::https://github.com/archlinux/linux/commit/a99fa2f4142d06725f64df565270820289219eb5.patch'
 )
 validpgpkeys=(
   ABAF11C65A2970B130ABE3C479BE3E4300411886  # Linus Torvalds
@@ -48,7 +47,6 @@ b2sums=(
   1618f0b1e3552515d84afb18e296b2c5d240c6a074027319e494b96f56e4852892ccd1d383b0b12ae251768e8b1cc86aaca9d42a4d23755f0b54ca2605f42b9f
   7e9d95531dfed887601bde23b4d4932e1f918dd7b82a109db8bcdb187b1b0a800719b88f2cdd03812000355e6c06c30a7c47fb73494fb189ef27637d9a2ef577
   0fe4acbe8d9d8b1925e511b298443664ae69fc2e04810133cfff8aaad64c1ca788d9e65c8146add282819191d7e26eb357f5918ef6d839718adaaaf96f394d39
-  bacabde9b44269d8654ab1d7499d72b11a00e38c083937e6217d46579bf58aaaa1deb2e03e791281b0d0a023de171a4edf1ed1624db492d3a507782b80d8f46c
 )
 
 export KBUILD_BUILD_HOST=archlinux
