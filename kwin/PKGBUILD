@@ -5,8 +5,8 @@
 
 pkgname=kwin
 #_revision='branch=Plasma/6.4'
-_revision='commit=d51476569d24c863d875f96e26d555e96a2bcd23'
-pkgver=6.4.2.r2.gd514765
+_revision='commit=a0762137e15b9c09c40411f19c36ee730b3f6f6f'
+pkgver=6.4.2.r26.ga076213
 pkgrel=1
 pkgdesc='An easy to use, but flexible, Wayland compositor'
 arch=(x86_64)
@@ -83,7 +83,6 @@ optdepends=('maliit-keyboard: virtual keyboard')
 groups=(plasma)
 source=(
   "${pkgname}::git+https://invent.kde.org/plasma/${pkgname}.git#${_revision}"
-  revert-activity-switch-focus.patch
   effects-slide-springconstants.patch
   effects-overview-no-gaps-no-shadow-no-border.patch
   effects-overview-no-add-remove-hotkeys.patch
@@ -94,7 +93,6 @@ source=(
 install=$pkgname.install
 sha256sums=(
   SKIP
-  cfb3c3c5797d6a4b43af1327e61c61f438a7f958204c94360746c43c2ca7842c
   3c8a202a172ff08a8dc21da5456c1aab4bf44e1e4645636ddf53fb092ff3211b
   238ff50bd2c70a2938da42d7da69557be16e3aef0b82efc9865493e8291d7ce6
   72d7cd67d6fb1d06f8966b2f0ed550f96785dcc716a26e419d1086f23a8068e0
