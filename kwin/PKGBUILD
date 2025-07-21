@@ -5,8 +5,8 @@
 
 pkgname=kwin
 #_revision='branch=Plasma/6.4'
-_revision='commit=44e91a01735b31c7b6db54f3abae809ef648d915'
-pkgver=6.4.3.r1.g44e91a0
+_revision='commit=e4691e01495d90252dbfc22c9c1485c211d05279'
+pkgver=6.4.3.r6.ge4691e0
 pkgrel=1
 pkgdesc='An easy to use, but flexible, Wayland compositor'
 arch=(x86_64)
