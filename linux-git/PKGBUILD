@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.16.1.r0.g3e0969c9a8c5
+pkgver=6.16.2.r0.g25bf10be219d
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.16.1
+_srctag=v6.16.2
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -37,7 +37,6 @@ source=(
   config
   '0000-add-sysctl-to-allow-disabling-unprivileged-CLONE_NEWUSER.patch::https://github.com/archlinux/linux/commit/1e33585355b345976eea6b6e8f1ec3a5e787a63d.patch'
   '0000-skip-simpledrm-if-nvidia-drm.modeset=1-is-set.patch::https://github.com/archlinux/linux/commit/e5e142b09d1019863dada3c7860aeab5b2f56cdc.patch'
-  '0001-btrfs-fix-log-tree-replay-failure.patch::https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git/patch/?id=0a32e4f0025a74c70dcab4478e9b29c22f5ecf2f'
 )
 validpgpkeys=(
   ABAF11C65A2970B130ABE3C479BE3E4300411886  # Linus Torvalds
@@ -48,7 +47,6 @@ b2sums=(
   0aea5109845ffa5d80726854a9a8faff57cbff326a96bf8bf55543d6518cab894046b35fedcd4155fdc5e81e1c1c701c42f40e5c2dc928bd5ba1565d0a0ac2eb
   2f8ecf0c95a71960dfe91fc2a9df326c51ebf2d17e7328f63d81bc51308df11a1246bdd4edc443c7767a1639d1d08ab928e29f89df333feed9ea42a2d11497ed
   1bf8e28c489f58e958074d1794bb144c705e646e00c717ddf2c184edcf426fea6f90d3c36addea5d0191844678b87577ef0695e5a807606624703170d1df23b7
-  2e16c5aafbdc4bcb70a2f6687ae8a9fa32ca0287b129c386f27a11fa6b5a36cfba1818adc14ba3d9f323b570bdfb6683082c6a066480f4bb49141c207218da28
 )
 
 export KBUILD_BUILD_HOST=archlinux
