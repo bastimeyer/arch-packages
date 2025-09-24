@@ -1,0 +1,43 @@
+diff --git a/wallpapers/image/plugin/imagebackend.cpp b/wallpapers/image/plugin/imagebackend.cpp
+index 647c2cd471..8148f61229 100644
+--- a/wallpapers/image/plugin/imagebackend.cpp
++++ b/wallpapers/image/plugin/imagebackend.cpp
+@@ -406,7 +406,7 @@ void ImageBackend::nextSlide()
+     QString next = m_slideFilterModel->index(m_currentSlide, 0).data(ImageRoles::PackageNameRole).toString();
+     // And  avoid showing the same picture twice
+     if (previousSlide == rowCount - 1 && previousPath == next && rowCount > 1) {
+-        m_currentSlide += 1;
++        m_slideFilterModel->reverseRandomOrder();
+         next = m_slideFilterModel->index(m_currentSlide, 0).data(ImageRoles::PackageNameRole).toString();
+     }
+     if (next.isEmpty()) {
+diff --git a/wallpapers/image/plugin/slidefiltermodel.cpp b/wallpapers/image/plugin/slidefiltermodel.cpp
+index ed10a20b33..f023460fff 100644
+--- a/wallpapers/image/plugin/slidefiltermodel.cpp
++++ b/wallpapers/image/plugin/slidefiltermodel.cpp
+@@ -211,6 +211,13 @@ void SlideFilterModel::invalidateFilter()
+     QSortFilterProxyModel::invalidateFilter();
+ }
+ 
++void SlideFilterModel::reverseRandomOrder()
++{
++    std::reverse(m_randomOrder.begin(), m_randomOrder.end());
++    QSortFilterProxyModel::invalidate();
++    sort(0);
++}
++
+ int SlideFilterModel::indexOf(const QString &path)
+ {
+     if (!sourceModel())
+diff --git a/wallpapers/image/plugin/slidefiltermodel.h b/wallpapers/image/plugin/slidefiltermodel.h
+index 8fa65b2307..d1a57aa2c0 100644
+--- a/wallpapers/image/plugin/slidefiltermodel.h
++++ b/wallpapers/image/plugin/slidefiltermodel.h
+@@ -31,6 +31,7 @@ public:
+     void setSourceModel(QAbstractItemModel *sourceModel) override;
+     void invalidate();
+     void invalidateFilter();
++    void reverseRandomOrder();
+ 
+     Q_INVOKABLE int indexOf(const QString &path);
+     Q_INVOKABLE void openContainingFolder(int rowIndex);
