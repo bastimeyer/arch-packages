@@ -1,0 +1,15 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0502896f30..4da9595f67 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -406,10 +406,6 @@ add_definitions(-DQT_NO_URL_CAST_FROM_STRING)
+ # locate qdbus in the Qt path because not every distro makes a symlink at /usr/bin/qdbus
+ ecm_query_qt(QtBinariesDir QT_INSTALL_BINS)
+ 
+-if(KF6DocTools_FOUND)
+-  add_subdirectory(doc)
+-  kdoctools_install(po)
+-endif()
+ add_subdirectory(libkworkspace)
+ add_subdirectory(libdbusmenuqt)
+ add_subdirectory(appmenu)

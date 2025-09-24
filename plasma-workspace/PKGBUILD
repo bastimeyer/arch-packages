@@ -116,7 +116,6 @@ depends=(accountsservice
 makedepends=(ninja
              baloo
              extra-cmake-modules
-             kdoctools
              networkmanager-qt
              phonon-qt6
              plasma-wayland-protocols
@@ -124,9 +123,11 @@ makedepends=(ninja
 groups=(plasma)
 source=(
   "$pkgname::git+https://invent.kde.org/plasma/$pkgname.git#${_revision}"
+  dont-build-docs.patch
 )
 sha256sums=(
   'SKIP'
+  2d21d5bfbe78a27ee5820a03b0a00937a3fae73b3aa959cbe67e969a9e9ac410
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
