@@ -83,6 +83,7 @@ optdepends=('maliit-keyboard: virtual keyboard')
 groups=(plasma)
 source=(
   "${pkgname}::git+https://invent.kde.org/plasma/${pkgname}.git#${_revision}"
+  dont-build-docs.patch
   effects-slide-springconstants.patch
   effects-overview-no-gaps-no-shadow-no-border.patch
   effects-overview-no-add-remove-hotkeys.patch
@@ -93,6 +94,7 @@ source=(
 install=$pkgname.install
 sha256sums=(
   SKIP
+  5d9fd68d91cab46b81dca8dade8a59834fa9c25f2cb709ea5f1efabbef4b2579
   3c8a202a172ff08a8dc21da5456c1aab4bf44e1e4645636ddf53fb092ff3211b
   238ff50bd2c70a2938da42d7da69557be16e3aef0b82efc9865493e8291d7ce6
   72d7cd67d6fb1d06f8966b2f0ed550f96785dcc716a26e419d1086f23a8068e0

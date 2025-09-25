@@ -1,0 +1,16 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f31cc8e413..53b78b8079 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -484,11 +484,6 @@ ecm_setup_qtplugin_macro_names(
+         PACKAGE_SETUP_KWINEFFECTS_AUTOMOC_VARIABLES
+ )
+ 
+-if (KF6DocTools_FOUND)
+-    add_subdirectory(doc)
+-    kdoctools_install(po)
+-endif()
+-
+ add_subdirectory(data)
+ add_subdirectory(kconf_update)
+ add_subdirectory(src)
