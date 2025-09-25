@@ -124,12 +124,12 @@ groups=(plasma)
 source=(
   "$pkgname::git+https://invent.kde.org/plasma/$pkgname.git#${_revision}"
   dont-build-docs.patch
-  imageslideshow-transition-duplicate-reverse-order.patch
+  imageslideshow-swap-first-with-random-on-duplicate.patch
 )
 sha256sums=(
   'SKIP'
   2d21d5bfbe78a27ee5820a03b0a00937a3fae73b3aa959cbe67e969a9e9ac410
-  00a0ac5677a7441c7c7ce1f0ca6cef57d2813c781307f61dcde88a556de46a65
+  2755756bf0bb4b53fe95318f3f1f6d7f081334b6f97a3f4b33593ee2be0ac10b
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>

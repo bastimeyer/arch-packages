@@ -1,27 +1,40 @@
 diff --git a/wallpapers/image/plugin/imagebackend.cpp b/wallpapers/image/plugin/imagebackend.cpp
-index 647c2cd471..8148f61229 100644
+index 1863b1142a..855457b20f 100644
 --- a/wallpapers/image/plugin/imagebackend.cpp
 +++ b/wallpapers/image/plugin/imagebackend.cpp
-@@ -406,7 +406,7 @@ void ImageBackend::nextSlide()
+@@ -416,7 +416,7 @@ void ImageBackend::nextSlide()
      QString next = m_slideFilterModel->index(m_currentSlide, 0).data(ImageRoles::PackageNameRole).toString();
      // And  avoid showing the same picture twice
      if (previousSlide == rowCount - 1 && previousPath == next && rowCount > 1) {
 -        m_currentSlide += 1;
-+        m_slideFilterModel->reverseRandomOrder();
++        m_slideFilterModel->swapFirstWithRandom();
          next = m_slideFilterModel->index(m_currentSlide, 0).data(ImageRoles::PackageNameRole).toString();
      }
      if (next.isEmpty()) {
 diff --git a/wallpapers/image/plugin/slidefiltermodel.cpp b/wallpapers/image/plugin/slidefiltermodel.cpp
-index ed10a20b33..f023460fff 100644
+index ed10a20b33..29b1326f1f 100644
 --- a/wallpapers/image/plugin/slidefiltermodel.cpp
 +++ b/wallpapers/image/plugin/slidefiltermodel.cpp
-@@ -211,6 +211,13 @@ void SlideFilterModel::invalidateFilter()
+@@ -211,6 +211,26 @@ void SlideFilterModel::invalidateFilter()
      QSortFilterProxyModel::invalidateFilter();
  }
  
-+void SlideFilterModel::reverseRandomOrder()
++void SlideFilterModel::swapFirstWithRandom()
 +{
-+    std::reverse(m_randomOrder.begin(), m_randomOrder.end());
++    const int size = rowCount();
++    if (size < 2)
++        return;
++
++    // [start, end)
++    const int pos = QRandomGenerator::global()->bounded(1, size);
++    // get the randomOrder index of the sourceModel index of the proxy index
++    const QModelIndex srcIdxA = mapToSource(index(0, 0));
++    const QModelIndex srcIdxB = mapToSource(index(pos, 0));
++    const int rndIdxA = m_randomOrder.indexOf(srcIdxA.row());
++    const int rndIdxB = m_randomOrder.indexOf(srcIdxB.row());
++    // and finally swap
++    m_randomOrder.swapItemsAt(rndIdxA, rndIdxB);
++
 +    QSortFilterProxyModel::invalidate();
 +    sort(0);
 +}
@@ -30,14 +43,14 @@ index ed10a20b33..f023460fff 100644
  {
      if (!sourceModel())
 diff --git a/wallpapers/image/plugin/slidefiltermodel.h b/wallpapers/image/plugin/slidefiltermodel.h
-index 8fa65b2307..d1a57aa2c0 100644
+index 8fa65b2307..c0f34cedca 100644
 --- a/wallpapers/image/plugin/slidefiltermodel.h
 +++ b/wallpapers/image/plugin/slidefiltermodel.h
 @@ -31,6 +31,7 @@ public:
      void setSourceModel(QAbstractItemModel *sourceModel) override;
      void invalidate();
      void invalidateFilter();
-+    void reverseRandomOrder();
++    void swapFirstWithRandom();
  
      Q_INVOKABLE int indexOf(const QString &path);
      Q_INVOKABLE void openContainingFolder(int rowIndex);
