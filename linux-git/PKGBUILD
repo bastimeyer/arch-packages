@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.16.10.r0.gbcabc18865f3
+pkgver=6.17.r0.ge5f0a698b34e
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.16.10
+_srctag=v6.17
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -35,8 +35,7 @@ options=(
 source=(
   "${_srcname}::${_src}?signed#tag=${_srctag}"
   config
-  '0000-add-sysctl-to-allow-disabling-unprivileged-CLONE_NEWUSER.patch::https://github.com/archlinux/linux/commit/1e33585355b345976eea6b6e8f1ec3a5e787a63d.patch'
-  '0000-skip-simpledrm-if-nvidia-drm.modeset=1-is-set.patch::https://github.com/archlinux/linux/commit/e5e142b09d1019863dada3c7860aeab5b2f56cdc.patch'
+  '0000-add-sysctl-to-allow-disabling-unprivileged-CLONE_NEWUSER.patch::https://github.com/archlinux/linux/commit/65516c26569069f24bb4676576153c728f4728a8.patch'
 )
 validpgpkeys=(
   ABAF11C65A2970B130ABE3C479BE3E4300411886  # Linus Torvalds
@@ -44,9 +43,8 @@ validpgpkeys=(
 )
 b2sums=(
   'SKIP'
-  e34b70c742c488c506fea7faf2046c5707ce40b0475ed4862dcc2a549f47b840b370af42c97b84a64b5021ce09118a374b0afc19ea8618b91eec5f12fd234d46
-  2f8ecf0c95a71960dfe91fc2a9df326c51ebf2d17e7328f63d81bc51308df11a1246bdd4edc443c7767a1639d1d08ab928e29f89df333feed9ea42a2d11497ed
-  1bf8e28c489f58e958074d1794bb144c705e646e00c717ddf2c184edcf426fea6f90d3c36addea5d0191844678b87577ef0695e5a807606624703170d1df23b7
+  124bc7b0366bf79efed1a7737c4abc8639c270e72dee9aa364cce12e9c704e50278267239521fb011341ba8a4412cadb547ea77e1ad1fb70c4e3d279decce4df
+  277d396eec28fe82079b55514aa9162b73ba4f8a2497b9968c972cd4ce28071fdae2e808392511616883468b3533c0f03452b3f8f7d01eee12a8facf68e5567a
 )
 
 export KBUILD_BUILD_HOST=archlinux
