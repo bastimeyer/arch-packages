@@ -5,9 +5,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=(plasma-workspace)
-#_revision='branch=Plasma/6.4'
-_revision='commit=f8df1652fe42ae9d86998ed14ee7c9f01d5ab334'
-pkgver=6.4.5.r15.gf8df165
+#_revision='branch=Plasma/6.5'
+_revision='commit=d55cce087b939fc03d991fa1bf92083f2b00b72d'
+pkgver=6.5.0.r12.gd55cce0
 pkgrel=1
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
@@ -41,6 +41,7 @@ depends=(accountsservice
          kholidays
          ki18n
          kiconthemes
+         kidletime
          kio
          kio-extras
          kio-fuse
@@ -49,6 +50,7 @@ depends=(accountsservice
          kitemmodels
          kjobwidgets
          knewstuff
+         knighttime
          knotifications
          knotifyconfig
          kpackage
@@ -63,7 +65,6 @@ depends=(accountsservice
          ksystemstats
          ktexteditor
          ktextwidgets
-         kunitconversion
          kuserfeedback
          kwallet
          kwayland
@@ -127,7 +128,7 @@ source=(
 )
 sha256sums=(
   'SKIP'
-  2d21d5bfbe78a27ee5820a03b0a00937a3fae73b3aa959cbe67e969a9e9ac410
+  d6bffc10c12038577348344c34623afa468415f7b1e1e1b1ef8d467389180214
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
