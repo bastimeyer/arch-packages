@@ -1,7 +1,7 @@
 diff --git a/src/plugins/overview/qml/main.qml b/src/plugins/overview/qml/main.qml
 index 604d4ccf96..ae4c344065 100644
---- a/src/plugins/overview/qml/main.qml
-+++ b/src/plugins/overview/qml/main.qml
+--- a/src/plugins/overview/qml/Main.qml
++++ b/src/plugins/overview/qml/Main.qml
 @@ -475,7 +475,7 @@ FocusScope {
                      Scale {
                          origin.x: width / 2

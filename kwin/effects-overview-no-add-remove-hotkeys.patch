@@ -1,7 +1,7 @@
 diff --git a/src/plugins/overview/qml/main.qml b/src/plugins/overview/qml/main.qml
 index 5a63d32340..41c42a96de 100644
---- a/src/plugins/overview/qml/main.qml
-+++ b/src/plugins/overview/qml/main.qml
+--- a/src/plugins/overview/qml/Main.qml
++++ b/src/plugins/overview/qml/Main.qml
 @@ -185,10 +185,6 @@ FocusScope {
              } else {
                  effect.deactivate();

@@ -4,9 +4,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-#_revision='branch=Plasma/6.4'
-_revision='commit=1def83fb50b9a86da2a119eed8c9e0220312eb15'
-pkgver=6.4.5.r14.g1def83f
+#_revision='branch=Plasma/6.5'
+_revision='commit=4526fe9ee34c4a8a47ebf00046361d4913ad106b'
+pkgver=6.5.0.r31.g4526fe9
 pkgrel=1
 pkgdesc='An easy to use, but flexible, Wayland compositor'
 arch=(x86_64)
@@ -34,6 +34,7 @@ depends=(aurorae
          kirigami
          kitemmodels
          knewstuff
+         knighttime
          knotifications
          kpackage
          kquickcharts
@@ -68,7 +69,6 @@ depends=(aurorae
          qt6-wayland
          systemd-libs
          wayland
-         xcb-util-cursor
          xcb-util-keysyms
          xcb-util-wm)
 makedepends=(ninja
@@ -96,8 +96,8 @@ sha256sums=(
   SKIP
   5d9fd68d91cab46b81dca8dade8a59834fa9c25f2cb709ea5f1efabbef4b2579
   3c8a202a172ff08a8dc21da5456c1aab4bf44e1e4645636ddf53fb092ff3211b
-  238ff50bd2c70a2938da42d7da69557be16e3aef0b82efc9865493e8291d7ce6
-  72d7cd67d6fb1d06f8966b2f0ed550f96785dcc716a26e419d1086f23a8068e0
+  91928d9cc5fbb920b2df518801352d801c729bfc9c466aec90f0d512e88c91e4
+  4f38e7e68a0d031b04f54599440f8086b4c76a04ee93afe1c1eccc442ffc92d0
   0f452a461bf434ebfe3ec0142682a4f159234767b7a67f9d7e55ef921148a84a
   590ee4f95044ad8ab3005e2470479af0f18c743cf76bf433ed3e4743e4aa7533
   64b0379c5f011cd2339dcd62a63b4cce1c2131e4a36828497ff42b58e944650e
