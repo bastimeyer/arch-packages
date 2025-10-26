@@ -1,0 +1,63 @@
+From 16eddc30aa8dfa711af1c61920997de5e5614f7b Mon Sep 17 00:00:00 2001
+From: Ritchie Frodomar <alkalinethunder@gmail.com>
+Date: Sun, 26 Oct 2025 03:21:16 +0000
+Subject: [PATCH] Update KGlobalAccel shortcut backend for Plasma 6.5
+
+This commit updates the D-Bus interface and global shortcut
+backend for kglobalaccel. KDE Frameworks 6.19.0 and Plasma
+6.5 added a separate signal for shortcut key repeat events,
+which breaks Clementine's implementation.
+
+Kglobalaccel's previous behaviour was just to send key repeats
+as normal press events. I decided to just emulate that behaviour.
+Therefore, I've changed nothing other than connecting to the new
+signal.
+
+Signed-off-by: Ritchie Frodomar <alkalinethunder@gmail.com>
+---
+ src/core/kglobalaccelglobalshortcutbackend.cpp | 8 ++++++++
+ src/dbus/org.kde.kglobalaccel.Component.xml    | 5 +++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/src/core/kglobalaccelglobalshortcutbackend.cpp b/src/core/kglobalaccelglobalshortcutbackend.cpp
+index d0733ee22d..d7809a263d 100644
+--- a/src/core/kglobalaccelglobalshortcutbackend.cpp
++++ b/src/core/kglobalaccelglobalshortcutbackend.cpp
+@@ -85,6 +85,11 @@ bool KGlobalAccelShortcutBackend::DoRegister() {
+                    this, &KGlobalAccelShortcutBackend::OnShortcutPressed,
+                    Qt::UniqueConnection);
+ 
++  QObject::connect(component_,
++                   &OrgKdeKglobalaccelComponentInterface::globalShortcutRepeated,
++                   this, &KGlobalAccelShortcutBackend::OnShortcutPressed,
++                   Qt::UniqueConnection);
++
+   return complete;
+ #else   // HAVE_DBUS
+   qLog(Warning) << "dbus not available";
+@@ -104,6 +109,9 @@ void KGlobalAccelShortcutBackend::DoUnregister() {
+   QObject::disconnect(
+       component_, &OrgKdeKglobalaccelComponentInterface::globalShortcutPressed,
+       this, &KGlobalAccelShortcutBackend::OnShortcutPressed);
++  QObject::disconnect(
++        component_, &OrgKdeKglobalaccelComponentInterface::globalShortcutRepeated,
++        this, &KGlobalAccelShortcutBackend::OnShortcutPressed);
+ #endif  // HAVE_DBUS
+ }
+ 
+diff --git a/src/dbus/org.kde.kglobalaccel.Component.xml b/src/dbus/org.kde.kglobalaccel.Component.xml
+index aca7ef6ea8..8354bd40c2 100644
+--- a/src/dbus/org.kde.kglobalaccel.Component.xml
++++ b/src/dbus/org.kde.kglobalaccel.Component.xml
+@@ -9,6 +9,11 @@
+             <arg name="actionUnique" type="s" direction="out"/>
+             <arg name="timestamp" type="x" direction="out"/>
+         </signal>
++        <signal name="globalShortcutRepeated">
++            <arg name="componentUnique" type="s" direction="out"/>
++            <arg name="actionUnique" type="s" direction="out"/>
++            <arg name="timestamp" type="x" direction="out"/>
++        </signal>
+         <method name="cleanUp">
+             <arg type="b" direction="out"/>
+         </method>
