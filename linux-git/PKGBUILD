@@ -4,10 +4,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.18.3.r0.ga607c8f74434
+pkgver=6.18.4.r0.g3aa9aac0e8b7
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.18.3
+_srctag=v6.18.4
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -39,6 +39,7 @@ source=(
   'https://github.com/torvalds/linux/commit/991a4343b47acd34ba3541be76a5b3ff6fa71f9f.patch'
   'https://github.com/torvalds/linux/commit/20459c098d688971237e56e30263ddce467c8c9b.patch'
   'https://github.com/archlinux/linux/commit/fa9d9b94704bb2a69305a6222c4dfe797254b3f1.patch'
+  'drm-amd-display--bump-the-hdmi-clock-to-340mhz.patch::https://lore.kernel.org/amd-gfx/20260107155421.1999951-6-Matthew.Stewart2@amd.com/raw'
 )
 validpgpkeys=(
   ABAF11C65A2970B130ABE3C479BE3E4300411886  # Linus Torvalds
@@ -51,6 +52,7 @@ b2sums=(
   44e0f278a318c85ac3b30afbb65ddb278368ce52d5c8b38f4cb028dc3fe4b434446582730be34e0f36790639cf7ded5ac138faaff27004db0ff74b03562166cb
   b7e5d525c6b4ac548ca4b769e690eff7da46c98f616d965ceb86c4fc8a553c4c07d63a419b3eb81148d886662735c32552ab031c298cd808e69807ec958abdea
   f36bf600508f20bc280a1a4e6254fb942d919784b43ab94f2e44fc16d07c2984700d0e17b117766e6ad4f049ecb6ace7d412267e8f3753f79ae1e74c5a275214
+  c65c464b3f8117cd268f162c2d17071eaa142328aa08bd928b0ac42aed404fd96e48d0b7d0c621b7bdbcc19838215d055a55d6556bf58d3d32c93e59d00e2adc
 )
 
 export KBUILD_BUILD_HOST=archlinux
