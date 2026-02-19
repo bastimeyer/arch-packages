@@ -5,9 +5,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=(plasma-workspace)
-#_revision='branch=Plasma/6.5'
-_revision='commit=e1d7c885fc689d8641ab1c05f3dcf4cc67c63021'
-pkgver=6.5.5.r3.ge1d7c88
+#_revision='branch=Plasma/6.6'
+_revision='commit=df2587fe0c3c86f129aa7fddd41aa4987ec8e7ce'
+pkgver=6.6.0.r12.gdf2587f
 pkgrel=1
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
@@ -52,7 +52,6 @@ depends=(accountsservice
          knewstuff
          knighttime
          knotifications
-         knotifyconfig
          kpackage
          kparts
          kpipewire
@@ -92,7 +91,6 @@ depends=(accountsservice
          ocean-sound-theme
          plasma-activities
          plasma-activities-stats
-         plasma5support
          prison
          qt6-5compat
          qt6-base
@@ -118,7 +116,6 @@ makedepends=(ninja
              baloo
              extra-cmake-modules
              networkmanager-qt
-             phonon-qt6
              plasma-wayland-protocols
              qcoro)
 groups=(plasma)
@@ -151,9 +148,6 @@ prepare() {
     echo "Applying patch $src..."
     patch -Np1 < "$srcdir/$src"
   done
-
-  # wallpapers/image: swap first image on duplicate
-  git cherry-pick --no-commit c0d2abe1e9dd2fa046ad82aef85894e26c1da2fa
 
   local ver
   ver=$(echo "${pkgver}" | grep -Eo '^[0-9]+\.[0-9]+\.[0-9]')
