@@ -7,7 +7,7 @@ pkgname=kwin
 #_revision='branch=Plasma/6.6'
 _revision='commit=5681fe0ca04eddfdb78aa9425c953514d0ba92cd'
 pkgver=6.6.0.r22.g5681fe0
-pkgrel=1
+pkgrel=2
 pkgdesc='An easy to use, but flexible, Wayland compositor'
 arch=(x86_64)
 url='https://kde.org/plasma-desktop/'
@@ -91,6 +91,7 @@ source=(
   effects-overview-no-add-remove-hotkeys.patch
   effects-windowheapdelegate-no-close-button.patch
   effects-windowheapdelegate-no-caption.patch
+  "renderloopdrivenqanimationdriver.patch::https://invent.kde.org/plasma/kwin/-/commit/9166dbdfa2a5706f3d6b3a30f1e6fc1fe3da3320.patch?merge_request_iid=8838"
 )
 install=$pkgname.install
 sha256sums=(
@@ -101,6 +102,7 @@ sha256sums=(
   4f38e7e68a0d031b04f54599440f8086b4c76a04ee93afe1c1eccc442ffc92d0
   0f452a461bf434ebfe3ec0142682a4f159234767b7a67f9d7e55ef921148a84a
   590ee4f95044ad8ab3005e2470479af0f18c743cf76bf433ed3e4743e4aa7533
+  3bdd34d1575000aed64a747f17243d2a551559fd7dd4bbfd477d72e9b9cb1053
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
