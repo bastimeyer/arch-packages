@@ -2,10 +2,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.18.12.r0.g2784b1b43af3
+pkgver=6.18.13.r0.g25e0b1c206e3
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.18.12
+_srctag=v6.18.13
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -52,7 +52,7 @@ b2sums=(
   b7e5d525c6b4ac548ca4b769e690eff7da46c98f616d965ceb86c4fc8a553c4c07d63a419b3eb81148d886662735c32552ab031c298cd808e69807ec958abdea
 )
 b2sums_x86_64=(
-  bef3377ad86440af76e9dde4c29c9f4aaad42f5fe343f7d31f5eb537d6d358602f996f5d63986af275f2e92f94e71dc28c320edc8c03d05bd64dbd8ed23d75dc
+  9e161a131a1914eca05b7e69b04b544c7bec5b49c081aac08e7883ad3403e1578651e8e5560b083e47aa5830f5f271417ebecbbef0e3b245dd3ab7e06136940e
 )
 
 export KBUILD_BUILD_HOST=archlinux
