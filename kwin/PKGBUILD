@@ -5,8 +5,8 @@
 
 pkgname=kwin
 #_revision='branch=Plasma/6.6'
-_revision='commit=40f41b493c09be357131f191656fe1abed68afdc'
-pkgver=6.6.0.r27.g40f41b4
+_revision='commit=10687be9a085e3b3301e1a0528e225016c2dde3b'
+pkgver=6.6.1.r2.g10687be
 pkgrel=1
 pkgdesc='An easy to use, but flexible, Wayland compositor'
 arch=(x86_64)
@@ -138,6 +138,7 @@ build() {
   cmake -B build -S "$pkgname" -G Ninja \
     -DCMAKE_AUTOGEN_PARALLEL=1 \
     -DCMAKE_INSTALL_LIBEXECDIR=lib \
+    -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_TESTING=OFF
   cmake --build build
 }
