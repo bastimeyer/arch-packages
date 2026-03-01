@@ -2,10 +2,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.18.13.r0.g25e0b1c206e3
+pkgver=6.19.5.r0.gc89ce241c190
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.18.13
+_srctag=v6.19.5
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -35,8 +35,6 @@ options=(
 source=(
   "${_srcname}::${_src}?signed#tag=${_srctag}"
   '0000-add-sysctl-to-allow-disabling-unprivileged-CLONE_NEWUSER.patch::https://github.com/archlinux/linux/commit/65516c26569069f24bb4676576153c728f4728a8.patch'
-  'https://github.com/torvalds/linux/commit/991a4343b47acd34ba3541be76a5b3ff6fa71f9f.patch'
-  'https://github.com/torvalds/linux/commit/20459c098d688971237e56e30263ddce467c8c9b.patch'
 )
 source_x86_64=(
   config.x86_64
@@ -48,11 +46,9 @@ validpgpkeys=(
 b2sums=(
   'SKIP'
   277d396eec28fe82079b55514aa9162b73ba4f8a2497b9968c972cd4ce28071fdae2e808392511616883468b3533c0f03452b3f8f7d01eee12a8facf68e5567a
-  44e0f278a318c85ac3b30afbb65ddb278368ce52d5c8b38f4cb028dc3fe4b434446582730be34e0f36790639cf7ded5ac138faaff27004db0ff74b03562166cb
-  b7e5d525c6b4ac548ca4b769e690eff7da46c98f616d965ceb86c4fc8a553c4c07d63a419b3eb81148d886662735c32552ab031c298cd808e69807ec958abdea
 )
 b2sums_x86_64=(
-  9e161a131a1914eca05b7e69b04b544c7bec5b49c081aac08e7883ad3403e1578651e8e5560b083e47aa5830f5f271417ebecbbef0e3b245dd3ab7e06136940e
+  42b5f6ab156e0ac2b8799c7294c1b0987f42d5043d951560474af73d2f19f5203b8d247b2119732e63dc18c844aef279a57d77dd1ae2a0f2e485851c6dd9e2d4
 )
 
 export KBUILD_BUILD_HOST=archlinux
