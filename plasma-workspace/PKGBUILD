@@ -6,8 +6,8 @@
 
 pkgname=(plasma-workspace)
 #_revision='branch=Plasma/6.6'
-_revision='commit=eec79245e3627a550fbb545948824460bfaec2d0'
-pkgver=6.6.1.r2.geec7924
+_revision='commit=6086254f84186a7a28b86ee9948e6008a0e3e502'
+pkgver=6.6.2.r1.g6086254
 pkgrel=1
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
@@ -100,7 +100,6 @@ depends=(accountsservice
          qt6-svg
          qt6-tools # for qdbus
          qt6-virtualkeyboard
-         qt6-wayland
          sh
          solid
          systemd-libs
@@ -167,7 +166,7 @@ build() {
 }
 
 package_plasma-workspace() {
-  optdepends=('appmenu-gtk-module: global menu support for GTK2 and some GTK3 applications'
+  optdepends=('appmenu-gtk-module: global menu support for some GTK3 applications'
             'baloo: Baloo search runner'
             'discover: manage applications installation from the launcher'
             'kdepim-addons: displaying PIM events in the calendar'
