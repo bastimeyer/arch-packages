@@ -2,10 +2,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.19.5.r0.gc89ce241c190
+pkgver=6.19.6.r0.g6a753907865e
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.19.5
+_srctag=v6.19.6
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -42,13 +42,14 @@ source_x86_64=(
 validpgpkeys=(
   ABAF11C65A2970B130ABE3C479BE3E4300411886  # Linus Torvalds
   647F28654894E3BD457199BE38DBBDC86092693E  # Greg Kroah-Hartman
+  E27E5D8A3403A2EF66873BBCDEA66FF797772CDC  # Sasha Levin
 )
 b2sums=(
   'SKIP'
   277d396eec28fe82079b55514aa9162b73ba4f8a2497b9968c972cd4ce28071fdae2e808392511616883468b3533c0f03452b3f8f7d01eee12a8facf68e5567a
 )
 b2sums_x86_64=(
-  42b5f6ab156e0ac2b8799c7294c1b0987f42d5043d951560474af73d2f19f5203b8d247b2119732e63dc18c844aef279a57d77dd1ae2a0f2e485851c6dd9e2d4
+  e5b25c5404cd07af0db440c68926de476176cf741777e1389322c65fc2404a8111526a9191d68e721d4cfa2fea184ee3fbbc75c2a6f3f6c009e83e9ec9843473
 )
 
 export KBUILD_BUILD_HOST=archlinux
