@@ -5,8 +5,8 @@
 
 pkgname=kwin
 #_revision='branch=Plasma/6.6'
-_revision='commit=0ae3fe1734f20c91f6c5692e23f83f83e649bb5f'
-pkgver=6.6.2.r2.g0ae3fe1
+_revision='commit=2bfb6811ba044c82abdeeefb7019d5adda050ad5'
+pkgver=6.6.2.r13.g2bfb681
 pkgrel=1
 pkgdesc='An easy to use, but flexible, Wayland compositor'
 arch=(x86_64)
@@ -90,7 +90,7 @@ source=(
   effects-overview-no-add-remove-hotkeys.patch
   effects-windowheapdelegate-no-close-button.patch
   effects-windowheapdelegate-no-caption.patch
-  'compositor-make-cursor-repaints-async.patch::https://bugsfiles.kde.org/attachment.cgi?id=189827'
+  'compositor-make-cursor-repaints-async.patch::https://bugsfiles.kde.org/attachment.cgi?id=190458'
 )
 install=$pkgname.install
 sha256sums=(
@@ -101,7 +101,7 @@ sha256sums=(
   4f38e7e68a0d031b04f54599440f8086b4c76a04ee93afe1c1eccc442ffc92d0
   0f452a461bf434ebfe3ec0142682a4f159234767b7a67f9d7e55ef921148a84a
   590ee4f95044ad8ab3005e2470479af0f18c743cf76bf433ed3e4743e4aa7533
-  02fcf4e273b3a40485c0acd16a4d4e9664d2e88edad4a33a594c27f31619f1be
+  c7137836ce1caeb6219cd60369a9f5e7ba061f73ed8bdae00c8502f0f4303933
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
