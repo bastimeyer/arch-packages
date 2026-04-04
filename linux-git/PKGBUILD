@@ -2,10 +2,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=6.19.10.r0.g271f8eab9590
+pkgver=6.19.11.r0.g48273703aa25
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v6.19.10
+_srctag=v6.19.11
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -15,10 +15,14 @@ arch=(
 license=(GPL-2.0-only)
 makedepends=(
   bc
+  binutils
   cpio
   gettext
+  glibc
   git
   libelf
+  libgcc
+  openssl
   pahole
   perl
   python
@@ -26,7 +30,10 @@ makedepends=(
   rust-bindgen
   rust-src
   tar
+  xxhash
   xz
+  zlib
+  zstd
 )
 options=(
   !debug
@@ -148,7 +155,18 @@ _package() {
 
 _package-headers() {
   pkgdesc="Headers and scripts for building modules for the $pkgdesc kernel"
-  depends=(pahole)
+  depends=(
+    binutils
+    glibc
+    libelf
+    libgcc
+    openssl
+    pahole
+    xxhash
+    zlib
+    zstd
+  )
+
   provides=(LINUX-HEADERS)
 
   cd $_srcname
