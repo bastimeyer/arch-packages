@@ -3,7 +3,7 @@
 
 pkgbase=linux-git
 pkgver=6.19.11.r0.g48273703aa25
-pkgrel=1
+pkgrel=2
 pkgdesc='Linux'
 _srctag=v6.19.11
 _srcname=linux
@@ -43,6 +43,13 @@ source=(
   "${_srcname}::${_src}?signed#tag=${_srctag}"
   '0000-add-sysctl-to-allow-disabling-unprivileged-CLONE_NEWUSER.patch::https://github.com/archlinux/linux/commit/65516c26569069f24bb4676576153c728f4728a8.patch'
   'https://github.com/archlinux/linux/commit/03d048ff0d85018a99595c93494cce2efcf14f24.patch'
+  # https://pixelcluster.github.io/VRAM-Mgmt-fixed/
+  'dmemcg-01.patch::https://gitlab.freedesktop.org/pixelcluster/kernel/-/commit/9d928b2c5af078304205c12c71fec4904860d8cc.patch'
+  'dmemcg-02.patch::https://gitlab.freedesktop.org/pixelcluster/kernel/-/commit/9a02490c9f7938a4ed8950f0d61bcf677f67c07b.patch'
+  'dmemcg-03.patch::https://gitlab.freedesktop.org/pixelcluster/kernel/-/commit/1f24ddd4ffd04f47a04bd84987f36dc545bc7421.patch'
+  'dmemcg-04.patch::https://gitlab.freedesktop.org/pixelcluster/kernel/-/commit/f6bde8345b0c66e9cd81fa368343d4438ac9b3b0.patch'
+  'dmemcg-05.patch::https://gitlab.freedesktop.org/pixelcluster/kernel/-/commit/68f051af747220ac7d1d74bec8d79f2cb3a58304.patch'
+  'dmemcg-06.patch::https://gitlab.freedesktop.org/pixelcluster/kernel/-/commit/9260440455cd61f2c90cca172bc9d3e83bf1206d.patch'
 )
 source_x86_64=(
   config.x86_64
@@ -56,6 +63,12 @@ b2sums=(
   'SKIP'
   277d396eec28fe82079b55514aa9162b73ba4f8a2497b9968c972cd4ce28071fdae2e808392511616883468b3533c0f03452b3f8f7d01eee12a8facf68e5567a
   9ef31d8948ec943b564f0353855d6865dbadb881dd7d4940f0be941ed38faaccbb7df313412e775d81f0fd5dedeade88a2b04ec3e9339f4e52e82ab412e1521a
+  574e68a1b8a4efe6da14615780535243521a537433ce18767770b00c450aab3be3970434ff7114cb70a44e092496c3f84bdab783b121bc7905f544e2194a2028
+  4cfebc103f59eb978e08282c0700dce7d0c7eb17740afa9ca6e08e0c8f1fb1b4f572419c4a8e458301e1f588a509fa9272078f3163d07d4fe3576664c63a4dd7
+  602377082169218b657ad980eae0bda26092506768566b5d9865db4c75cb212793ae12335fb254acdc021a27aaef706896a0b9c1d4ed74ae2f62e2379d80edf2
+  21f7ac9962c140fd64c7e018b61e26ac09031d0a5d68c0e8455d3481e5f28b55d91da540c869bdea6cb312c9804acda1bae4a23c6b2e4227b2dd18296be9b033
+  001476bae7a30d1bf85778aac91925f774c6f94a49ef0e8fe9f921d9bf0f0b844eca9907a4d95e15ffc133e02bcc7d15ceaf748d6552215faf8887f652a63e5b
+  8a9d6aa914af5a048e63ac6bc10d5d4885b989e760b4b5a4407d0a6114e775abb969fdf1a5f54edceb1e3909b62764dfa296022641e3da72348d7fcfe79e4a33
 )
 b2sums_x86_64=(
   0fe195286246b83f0859f79dd2f6c633f5370057aa6afad4525309822ade855f7f6ebcfb01109786313c9331ad61d667b0257ecc7b7f239d2f962c9d34f0b10d
