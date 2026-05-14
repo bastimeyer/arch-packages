@@ -2,10 +2,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=7.0.5.r0.g3fd2ca34a3e7
+pkgver=7.0.7.r0.g4d7dbcd7f2c8
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v7.0.5
+_srctag=v7.0.7
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -42,8 +42,9 @@ options=(
 source=(
   "${_srcname}::${_src}?signed#tag=${_srctag}"
   '0000-add-sysctl-to-allow-disabling-unprivileged-CLONE_NEWUSER.patch::https://github.com/archlinux/linux/commit/65516c26569069f24bb4676576153c728f4728a8.patch'
-  'https://github.com/archlinux/linux/commit/21c49382206f30695ad9202589ded69bd325bb36.patch'
-  'https://github.com/archlinux/linux/commit/d0dea084a24ec6cd73cd310233934ba61788a890.patch'
+  'https://github.com/archlinux/linux/commit/3614bb8f8c8d1c86d77b6f757eed11ead4153938.patch'
+  'https://github.com/archlinux/linux/commit/1909d6c7d700771074b2dc68e2af9b2e88cbbe58.patch'
+  'https://github.com/archlinux/linux/commit/c669c258f03c2a6d351696d8271c4f88f87bb3bc.patch'
   # https://pixelcluster.github.io/VRAM-Mgmt-fixed/
   'dmemcg.patch::https://gitlab.freedesktop.org/pixelcluster/kernel/-/compare/73677a30525a3e42d457039c5ff9af7f90760b04..9260440455cd61f2c90cca172bc9d3e83bf1206d?from_project_id=26726&format=patch'
 )
@@ -58,8 +59,9 @@ validpgpkeys=(
 b2sums=(
   'SKIP'
   277d396eec28fe82079b55514aa9162b73ba4f8a2497b9968c972cd4ce28071fdae2e808392511616883468b3533c0f03452b3f8f7d01eee12a8facf68e5567a
-  58a2f5560e6c7be0f6d97f386506586ffe2311dd2033cf75b3cf661ee416ec74abc5675451d0f120365a4597ccdc7ddb3816c81690db4dc3027ea18cbf0cb849
-  5f6efd0d4cc10e168baa2f04da23d8f873766e03d4607a8c0f7395f1f63d3eea1453dc8dcbe57a138250c2dee82d32c417bd976711148dc6c3df1799d7f86af4
+  587454bcd20d0e124e323ad54cc617e58b09432c1b37f9d6f47bcdaed433b2e1e728dbb0a02353d034606a9db9864ad8af72c444ac652828bea1ce54b4e901c0
+  fa778a5803155fe237bd208735e9577071bf77c8a52b884f9956ca8d335da6f8a472bd3cfc6aa101c277dc797c44c65ee69482266102159ce5ea7216dcaf292d
+  a28217fe0c3c379b0418ae7e1ffab45bb501ae7fd435cd29d6cc018ab69cb0b598bf87ad2de1b28a3c8f032d54a68474924c8b4c39e508a1900cd61c7ee1af77
   bb7fd94f446b330885c9a606c43b38383c5494f2719db41cec02f1440fa34910d7df99021d128230eec43dba58cb6f4d576026d3321ecdf9cf9a7a5477de383e
 )
 b2sums_x86_64=(
