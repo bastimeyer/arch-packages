@@ -11,7 +11,7 @@
 
 _srcname=clementine
 pkgname="${_srcname}-git"
-pkgver=1.4.1.r76.gfd1617827.0.gfd1617827
+pkgver=1.4.1.r78.gb55eca391.0.gb55eca391
 pkgrel=1
 pkgdesc='A modern music player and library organizer'
 url='https://www.clementine-player.org/'
