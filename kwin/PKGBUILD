@@ -4,9 +4,9 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgname=kwin
-#_revision='branch=Plasma/6.6'
-_revision='commit=2f4b8c8a1303139f6985823d9ec72ff84f23b916'
-pkgver=6.6.5.r14.g2f4b8c8
+#_revision='branch=Plasma/6.7'
+_revision='commit=0287f7fa9d6bb58250471b988265257cd348132d'
+pkgver=6.7.0.r16.g0287f7f
 pkgrel=1
 pkgdesc='An easy to use, but flexible, Wayland compositor'
 arch=(x86_64)
@@ -14,7 +14,6 @@ url='https://kde.org/plasma-desktop/'
 license=(LGPL-2.0-or-later)
 depends=(aurorae
          breeze
-         gcc-libs
          glibc
          iio-sensor-proxy
          plasma-activities
@@ -53,9 +52,11 @@ depends=(aurorae
          libei
          libepoxy
          libevdev
+         libgcc
          libinput
          libpipewire
          libqaccessibilityclient-qt6
+         libstdc++
          libxcb
          libxcvt
          libxkbcommon
@@ -69,6 +70,7 @@ depends=(aurorae
          qt6-svg
          qt6-tools
          systemd-libs
+         vulkan-icd-loader
          wayland
          xcb-util-keysyms
          xcb-util-wm)
@@ -78,6 +80,7 @@ makedepends=(ninja
              krunner
              plasma-wayland-protocols
              python
+             vulkan-headers
              wayland-protocols
              xorg-xwayland)
 optdepends=('plasma-keyboard: virtual keyboard')
@@ -90,18 +93,18 @@ source=(
   effects-overview-no-add-remove-hotkeys.patch
   effects-windowheapdelegate-no-close-button.patch
   effects-windowheapdelegate-no-caption.patch
-  'compositor-make-cursor-repaints-async.patch::https://bugsfiles.kde.org/attachment.cgi?id=190458'
+  'compositor-make-cursor-repaints-async.patch::https://bugsfiles.kde.org/attachment.cgi?id=192313'
 )
 install=$pkgname.install
 sha256sums=(
   SKIP
   5d9fd68d91cab46b81dca8dade8a59834fa9c25f2cb709ea5f1efabbef4b2579
-  3c8a202a172ff08a8dc21da5456c1aab4bf44e1e4645636ddf53fb092ff3211b
+  03927c5a33068f0376d5b5b29d70493c943d412d95f960b1db08a01b8024b9ee
   91928d9cc5fbb920b2df518801352d801c729bfc9c466aec90f0d512e88c91e4
   4f38e7e68a0d031b04f54599440f8086b4c76a04ee93afe1c1eccc442ffc92d0
   0f452a461bf434ebfe3ec0142682a4f159234767b7a67f9d7e55ef921148a84a
   590ee4f95044ad8ab3005e2470479af0f18c743cf76bf433ed3e4743e4aa7533
-  c7137836ce1caeb6219cd60369a9f5e7ba061f73ed8bdae00c8502f0f4303933
+  8d112a748dc64cfa084df977fc099dfafb1ba8b1dc4e656832117bb873d248ff
 )
 validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
