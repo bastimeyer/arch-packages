@@ -3,7 +3,7 @@
 
 pkgbase=linux-git
 pkgver=7.1.3.r0.g199c9959d3a9
-pkgrel=1
+pkgrel=2
 pkgdesc='Linux'
 _srctag=v7.1.3
 _srcname=linux
@@ -44,6 +44,7 @@ source=(
   '0000-add-sysctl-to-allow-disabling-unprivileged-CLONE_NEWUSER.patch::https://github.com/archlinux/linux/commit/65516c26569069f24bb4676576153c728f4728a8.patch'
   'https://github.com/archlinux/linux/commit/dbeb4afd099a56cb2e99011dbdf608bcf7bb1d94.patch'
   'https://github.com/archlinux/linux/commit/296a6e039e406c67ad3ee689498854f14334a839.patch'
+  'https://github.com/archlinux/linux/commit/09984c200994653d5a0ab4c1e9a2f579a9fc4699.patch'
   # https://pixelcluster.github.io/VRAM-Mgmt-fixed/
   # conflicts since v7.0.10
   # 'dmemcg.patch::https://gitlab.freedesktop.org/pixelcluster/kernel/-/compare/73677a30525a3e42d457039c5ff9af7f90760b04..9260440455cd61f2c90cca172bc9d3e83bf1206d?from_project_id=26726&format=patch'
@@ -61,10 +62,11 @@ b2sums=(
   277d396eec28fe82079b55514aa9162b73ba4f8a2497b9968c972cd4ce28071fdae2e808392511616883468b3533c0f03452b3f8f7d01eee12a8facf68e5567a
   a5214c1cac381a594249b74d287ee4ab2b671c0868005631045612311e806bb4142c1e7344d90c02fcb2f725c549ce88e1a2221d7816842960a630f9abdb62ca
   37b805306a234307f97dddbe0aa048b1266e031dbc66b05716856583b6f315212c5bdfd6d476c56922c34fc5578919dc085dc9590355f97f7f56b9643575fcae
+  8f1bc92f881142f168e15faae162ff932337d58a757bd454a00201d8c6eeb00a1d373a8aab0a45ef6711e4aa1b86a462d7df13e4ecb7f2acfcfef6ac3f7825f5
   # bb7fd94f446b330885c9a606c43b38383c5494f2719db41cec02f1440fa34910d7df99021d128230eec43dba58cb6f4d576026d3321ecdf9cf9a7a5477de383e
 )
 b2sums_x86_64=(
-  cf7e2e7108ebfabca3c449475a68c3044c291795a9db4c3fa6f803c925f6800d34f2318cf9fce06520434a2a6086001e2addfdf5747a8550eb11d0d5c30f3735
+  512543621b3244ee00fbc3a6071a784ed63a269c8c8dd25da0da0a90269ba8539b558b555aa63bad9bf52d96148e3184ad6bba0b62edf9a5ba3111643241a96f
 )
 
 export KBUILD_BUILD_HOST=archlinux
