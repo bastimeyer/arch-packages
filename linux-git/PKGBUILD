@@ -2,10 +2,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=7.1.3.r0.g199c9959d3a9
-pkgrel=2
+pkgver=7.1.4.r0.g7a5cef0db479
+pkgrel=1
 pkgdesc='Linux'
-_srctag=v7.1.3
+_srctag=v7.1.4
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -42,9 +42,10 @@ options=(
 source=(
   "${_srcname}::${_src}?signed#tag=${_srctag}"
   '0000-add-sysctl-to-allow-disabling-unprivileged-CLONE_NEWUSER.patch::https://github.com/archlinux/linux/commit/65516c26569069f24bb4676576153c728f4728a8.patch'
-  'https://github.com/archlinux/linux/commit/dbeb4afd099a56cb2e99011dbdf608bcf7bb1d94.patch'
+  'https://github.com/archlinux/linux/commit/b1a5d8c449d38a9cf689c6ee0808e2d3869dfa9e.patch'
   'https://github.com/archlinux/linux/commit/296a6e039e406c67ad3ee689498854f14334a839.patch'
   'https://github.com/archlinux/linux/commit/09984c200994653d5a0ab4c1e9a2f579a9fc4699.patch'
+  'https://github.com/archlinux/linux/commit/6fa4ba781ceaf58f950b07e549780e0789ceb5eb.patch'
   # https://pixelcluster.github.io/VRAM-Mgmt-fixed/
   # conflicts since v7.0.10
   # 'dmemcg.patch::https://gitlab.freedesktop.org/pixelcluster/kernel/-/compare/73677a30525a3e42d457039c5ff9af7f90760b04..9260440455cd61f2c90cca172bc9d3e83bf1206d?from_project_id=26726&format=patch'
@@ -60,9 +61,10 @@ validpgpkeys=(
 b2sums=(
   'SKIP'
   277d396eec28fe82079b55514aa9162b73ba4f8a2497b9968c972cd4ce28071fdae2e808392511616883468b3533c0f03452b3f8f7d01eee12a8facf68e5567a
-  a5214c1cac381a594249b74d287ee4ab2b671c0868005631045612311e806bb4142c1e7344d90c02fcb2f725c549ce88e1a2221d7816842960a630f9abdb62ca
+  0326463ca14f7d18f591bc09df8e098c88b216238f0e47465eb4b382eb6b71864433eaa27a02493915655ef3b63cc83a582f002c5c562e82b3947d038fd1085b
   37b805306a234307f97dddbe0aa048b1266e031dbc66b05716856583b6f315212c5bdfd6d476c56922c34fc5578919dc085dc9590355f97f7f56b9643575fcae
   8f1bc92f881142f168e15faae162ff932337d58a757bd454a00201d8c6eeb00a1d373a8aab0a45ef6711e4aa1b86a462d7df13e4ecb7f2acfcfef6ac3f7825f5
+  0a8a0227f8bfc79515361d10017f93dad2b935a065b371fd0d7f4aa8b258f2a2a08267fa0a13d0bff10b07fb01e3c1295f63b9c6c9da0649db47b868b9c74f36
   # bb7fd94f446b330885c9a606c43b38383c5494f2719db41cec02f1440fa34910d7df99021d128230eec43dba58cb6f4d576026d3321ecdf9cf9a7a5477de383e
 )
 b2sums_x86_64=(
