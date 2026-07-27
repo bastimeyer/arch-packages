@@ -2,10 +2,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=7.1.4.r0.g7a5cef0db479
+pkgver=7.1.5.r0.g155b42bec9cb
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v7.1.4
+_srctag=v7.1.5
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -68,7 +68,7 @@ b2sums=(
   # bb7fd94f446b330885c9a606c43b38383c5494f2719db41cec02f1440fa34910d7df99021d128230eec43dba58cb6f4d576026d3321ecdf9cf9a7a5477de383e
 )
 b2sums_x86_64=(
-  512543621b3244ee00fbc3a6071a784ed63a269c8c8dd25da0da0a90269ba8539b558b555aa63bad9bf52d96148e3184ad6bba0b62edf9a5ba3111643241a96f
+  0564ea851810a155cd589bd3a5d74344f16ab2c7c5ea5aa740faaf6776230ccd115474b6164ebd32d89d8615e41d24d2612d649b987f1f2cde58476e5561fe5e
 )
 
 export KBUILD_BUILD_HOST=archlinux
