@@ -5,8 +5,8 @@
 
 pkgname=kwin
 #_revision='branch=Plasma/6.7'
-_revision='commit=c260d66b8fb3e9d1fb8d26e910be6a2d21f3e424'
-pkgver=6.7.3.r4.gc260d66
+_revision='commit=ebe82fab83eed6c9211067d77bdc478f1c8c195d'
+pkgver=6.7.3.r26.gebe82fa
 pkgrel=1
 pkgdesc='An easy to use, but flexible, Wayland compositor'
 arch=(x86_64)
@@ -91,6 +91,7 @@ source=(
   effects-slide-springconstants.patch
   effects-overview-no-gaps-no-shadow-no-border.patch
   effects-overview-no-add-remove-hotkeys.patch
+  effects-overview-no-wheelhandler.patch
   effects-windowheapdelegate-no-close-button.patch
   effects-windowheapdelegate-no-caption.patch
   'compositor-make-cursor-repaints-smoother.patch::https://invent.kde.org/plasma/kwin/-/commit/0e4fd91bfbb80847f0fec1baf0494fdfbeaab2e.patch'
@@ -102,6 +103,7 @@ sha256sums=(
   03927c5a33068f0376d5b5b29d70493c943d412d95f960b1db08a01b8024b9ee
   91928d9cc5fbb920b2df518801352d801c729bfc9c466aec90f0d512e88c91e4
   4f38e7e68a0d031b04f54599440f8086b4c76a04ee93afe1c1eccc442ffc92d0
+  d2133d7b08033046cbb6778f347d70da48c77780e265de60ea062e4440ced5a9
   0f452a461bf434ebfe3ec0142682a4f159234767b7a67f9d7e55ef921148a84a
   590ee4f95044ad8ab3005e2470479af0f18c743cf76bf433ed3e4743e4aa7533
   b8849a11d80e4ffd23f4b43c456d8ed12d2e84caca5be29f9129c7797fdc19cd
