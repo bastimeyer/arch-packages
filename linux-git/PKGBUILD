@@ -2,10 +2,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=7.1.8.r0.g25c76bea853d
+pkgver=7.1.9.r0.gffc82ed66531
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v7.1.8
+_srctag=v7.1.9
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
