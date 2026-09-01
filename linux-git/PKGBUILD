@@ -2,10 +2,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=7.1.12.r0.gbadc4fe5a9c1
+pkgver=7.2.2.r0.g52c36105f76e
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v7.1.12
+_srctag=v7.2.2
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -41,12 +41,9 @@ options=(
 )
 source=(
   "${_srcname}::${_src}?signed#tag=${_srctag}"
-  '0000-add-sysctl-to-allow-disabling-unprivileged-CLONE_NEWUSER.patch::https://github.com/archlinux/linux/commit/65516c26569069f24bb4676576153c728f4728a8.patch'
-  'https://github.com/archlinux/linux/commit/b1a5d8c449d38a9cf689c6ee0808e2d3869dfa9e.patch'
-  'https://github.com/archlinux/linux/commit/09984c200994653d5a0ab4c1e9a2f579a9fc4699.patch'
-  # https://pixelcluster.github.io/VRAM-Mgmt-fixed/
-  # conflicts since v7.0.10
-  # 'dmemcg.patch::https://gitlab.freedesktop.org/pixelcluster/kernel/-/compare/73677a30525a3e42d457039c5ff9af7f90760b04..9260440455cd61f2c90cca172bc9d3e83bf1206d?from_project_id=26726&format=patch'
+  '0000-add-sysctl-to-allow-disabling-unprivileged-CLONE_NEWUSER.patch::https://github.com/archlinux/linux/commit/bcc3ec9aa40b84f8ca4c69efad08aa1f4e84919c.patch'
+  # https://pixelcluster.dev/VRAM-Overcommit/
+  'vram-overcommit.patch::https://gitlab.freedesktop.org/pixelcluster/kernel/-/compare/00d0c60b6fdb44563aaa72a58d3e3e50509d68aa..2d900c1f9793fdb23bbbd6a42585b72c555266b7?from_project_id=26726&format=patch'
 )
 source_x86_64=(
   config.x86_64
@@ -59,12 +56,10 @@ validpgpkeys=(
 b2sums=(
   'SKIP'
   277d396eec28fe82079b55514aa9162b73ba4f8a2497b9968c972cd4ce28071fdae2e808392511616883468b3533c0f03452b3f8f7d01eee12a8facf68e5567a
-  0326463ca14f7d18f591bc09df8e098c88b216238f0e47465eb4b382eb6b71864433eaa27a02493915655ef3b63cc83a582f002c5c562e82b3947d038fd1085b
-  8f1bc92f881142f168e15faae162ff932337d58a757bd454a00201d8c6eeb00a1d373a8aab0a45ef6711e4aa1b86a462d7df13e4ecb7f2acfcfef6ac3f7825f5
-  # bb7fd94f446b330885c9a606c43b38383c5494f2719db41cec02f1440fa34910d7df99021d128230eec43dba58cb6f4d576026d3321ecdf9cf9a7a5477de383e
+  0ec04317a5b345d6700b34bf9269630f881a615f4c937be213777d291577bf37459068969bfb46c56983849773b92fefff1e388c4d5b67ced23c17663974b912
 )
 b2sums_x86_64=(
-  e5a79d3120d8eaa784ba65892f92da11fc21f33e9bc33aaa256f3a9ba58d9fd2c6781e475f0210368191ddafb1fcaab2aa68764d6503c3b7bed05906c4b8d105
+  829f887f9867135dc8977d536ef31f9b1c42418f05ef5552443955e23cf0d60dad2b5d9ac138670f976e4ab71e982fbf25dbb3be654fcfcd54ca22ef0fb72ed3
 )
 
 export KBUILD_BUILD_HOST=archlinux
