@@ -2,10 +2,10 @@
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
 pkgbase=linux-git
-pkgver=7.2.4.r0.g5015d0d945b3
+pkgver=7.2.6.r0.g500df175a7f9
 pkgrel=1
 pkgdesc='Linux'
-_srctag=v7.2.4
+_srctag=v7.2.6
 _srcname=linux
 _src="git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 url="https://www.kernel.org/"
@@ -42,6 +42,7 @@ options=(
 source=(
   "${_srcname}::${_src}?signed#tag=${_srctag}"
   '0000-add-sysctl-to-allow-disabling-unprivileged-CLONE_NEWUSER.patch::https://github.com/archlinux/linux/commit/bcc3ec9aa40b84f8ca4c69efad08aa1f4e84919c.patch'
+  'https://github.com/archlinux/linux/commit/652109677357bb700ad381a26520721914ecb007.patch'
   # https://pixelcluster.dev/VRAM-Overcommit/
   'vram-overcommit.patch::https://gitlab.freedesktop.org/pixelcluster/kernel/-/compare/00d0c60b6fdb44563aaa72a58d3e3e50509d68aa..2d900c1f9793fdb23bbbd6a42585b72c555266b7?from_project_id=26726&format=patch'
 )
@@ -56,10 +57,11 @@ validpgpkeys=(
 b2sums=(
   'SKIP'
   277d396eec28fe82079b55514aa9162b73ba4f8a2497b9968c972cd4ce28071fdae2e808392511616883468b3533c0f03452b3f8f7d01eee12a8facf68e5567a
+  f0d5f79c8d0b49a5626e3d6620fa1d923fc02123f1230badd725a946e10ab75cc22aeab2a1b5645299e902df3e4cd2088782dc0538216dd1067c8267d0002309
   0ec04317a5b345d6700b34bf9269630f881a615f4c937be213777d291577bf37459068969bfb46c56983849773b92fefff1e388c4d5b67ced23c17663974b912
 )
 b2sums_x86_64=(
-  60a991bded2a41a9b3880445f5cefe3f19e593b2204a007a423d8a5f2858bbc7d3babab02ffebd9ff8fd37f3a1a32b3ca2512cbe768f5cb154deffacfbfee28a
+  cce32cf49e4639cdce0f950e55f6c6a44b2f68741c4aded81171773015dd5cb9a4a673e315a2d2056280dccdd52c116fc120e4bb11e0b81b2a3916bd9cc9ed0c
 )
 
 export KBUILD_BUILD_HOST=archlinux
