@@ -11,7 +11,7 @@
 
 _srcname=clementine
 pkgname="${_srcname}-git"
-pkgver=1.4.1.r106.ga4b3599ec.0.ga4b3599ec
+pkgver=1.4.1.r158.gfe46206dd.0.g52f695e49
 pkgrel=1
 pkgdesc='A modern music player and library organizer'
 url='https://www.clementine-player.org/'
@@ -20,20 +20,30 @@ arch=(x86_64)
 depends=(
     alsa-lib
     chromaprint
-    crypto++
+    fftw
+    glib2
+    glibc
     gst-plugins-base-libs
+    gstreamer
     hicolor-icon-theme
+    libgcc
+    #libglvnd
     libpulse
-    protobuf
-    qt5-x11extras
-    udisks2-qt5
-    taglib1
+    libstdc++
+    protobuf libprotobuf.so
+    qt6-base
+    qt6-5compat
+    sqlite
+    taglib
+    zlib
 )
 makedepends=(
     boost
     cmake
     git
-    qt5-tools
+    #glu
+    qt6-tools
+    #vulkan-headers
 )
 conflicts=("${_srcname}")
 replaces=("${_srcname}")
@@ -42,14 +52,12 @@ source=(
     "${_srcname}::git+https://github.com/clementine-player/Clementine.git"
     'volume-up-down-adjustment.patch'
     'disable-guess-album.patch'
-    'taglib1.patch'
     'global-shortcut-repeated.patch'
 )
 sha256sums=(
     'SKIP'
     'ab9663becb509379c9e05990de00881ed53096e0e77824218564d66b8059d507'
     '42ffd68d0428992436ebed879f2b1833a4c471f1a78e642d36e2830e675d8bd9'
-    'd0ffe9459dd1153662bdf0c9c6f3784faa0b419bfe9ec5f16c0ffac4b96da0c3'
     '62240466fef4883f97baf40424b6f09baa9edc312b2ad18c2dd97a33330b32a1'
 )
 
@@ -61,11 +69,8 @@ pkgver() {
 
 prepare() {
     cd "${_srcname}"
-    sed -e 's|CRYPTOPP cryptopp|CRYPTOPP libcryptopp|' -i CMakeLists.txt # Fix crypto++ detection
-    sed -e 's/cmake_policy(SET CMP0053 OLD)/cmake_policy(SET CMP0026 NEW)/' -i CMakeLists.txt
     patch -p1 -i ../volume-up-down-adjustment.patch
     patch -p1 -i ../disable-guess-album.patch
-    patch -p1 -i ../taglib1.patch
     patch -p1 -i ../global-shortcut-repeated.patch
 }
 
@@ -74,25 +79,22 @@ build() {
         -DCMAKE_INSTALL_PREFIX=/usr
         -DBUILD_WERROR=off
         -DCMAKE_BUILD_TYPE=Release
-        -DENABLE_GOOGLE_DRIVE=off
-        -DENABLE_DROPBOX=off
-        -DENABLE_SKYDRIVE=off
-        -DENABLE_BOX=off
-        -DENABLE_SEAFILE=off
         -DENABLE_AUDIOCD=off
-        -DENABLE_LIBGPOD=off
+        -DENABLE_BOX=off
+        -DENABLE_DROPBOX=off
         -DENABLE_GIO=off
+        -DENABLE_GOOGLE_DRIVE=off
+        -DENABLE_LIBGPOD=off
         -DENABLE_LIBMTP=off
-        -DENABLE_LIBLASTFM=off
-        -DENABLE_WIIMOTEDEV=off
-        -DENABLE_UDISKS2=on
-        -DENABLE_SPOTIFY_BLOB=off
+        -DENABLE_SEAFILE=off
+        -DENABLE_SKYDRIVE=off
         -DENABLE_SPARKLE=off
+        -DENABLE_UDISKS2=on
         -DENABLE_VISUALISATIONS=off
+        -DENABLE_WIIMOTEDEV=off
         -DUSE_SYSTEM_TAGLIB=ON
     )
-    export CXXFLAGS+=" -Wno-error=cpp"
-    cmake -B build -S "${_srcname}" "${args[@]}"
+    cmake -B build -S "${_srcname}" -Wno-author "${args[@]}"
     cmake --build build
 }
 
