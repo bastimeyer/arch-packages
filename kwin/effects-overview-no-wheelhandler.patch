@@ -1,0 +1,42 @@
+diff --git a/src/plugins/overview/qml/Main.qml b/src/plugins/overview/qml/Main.qml
+index 209d63131c..25f38f7110 100644
+--- a/src/plugins/overview/qml/Main.qml
++++ b/src/plugins/overview/qml/Main.qml
+@@ -260,37 +260,6 @@ FocusScope {
+     Keys.priority: Keys.AfterItem
+     Keys.forwardTo: [allDesktopHeaps.currentHeap, searchField, searchResults]
+ 
+-    WheelHandler {
+-        property int wheelDelta: 0
+-        acceptedDevices: PointerDevice.Mouse
+-
+-        onWheel: (event) => {
+-            const delta = (event.inverted ? -1 : 1) * (event.angleDelta.y ? event.angleDelta.y : -event.angleDelta.x);
+-            wheelDelta += delta;
+-
+-            let currentIndex = container.currentDesktopIndex();
+-            // Magic number 120 for common "one click"
+-            // See: https://qt-project.org/doc/qt-5/qml-qtquick-wheelevent.html#angleDelta-prop
+-            while (wheelDelta >= 120) {
+-                wheelDelta -= 120;
+-                if (KWinComponents.Workspace.virtualDesktopNavigationWrapsAround) {
+-                    currentIndex = (currentIndex - 1 + allDesktopHeaps.count) % allDesktopHeaps.count;
+-                } else {
+-                    currentIndex = Math.max(0, currentIndex - 1);
+-                }
+-            }
+-            while (wheelDelta <= -120) {
+-                wheelDelta += 120;
+-                if (KWinComponents.Workspace.virtualDesktopNavigationWrapsAround) {
+-                    currentIndex = (currentIndex + 1) % allDesktopHeaps.count;
+-                } else {
+-                    currentIndex = Math.min(allDesktopHeaps.count - 1, currentIndex + 1);
+-                }
+-            }
+-            KWinComponents.Workspace.currentDesktop = allDesktopHeaps.itemAt(currentIndex).desktop;
+-        }
+-    }
+-
+     Item {
+         width: backgroundItem.width
+         height: backgroundItem.height
