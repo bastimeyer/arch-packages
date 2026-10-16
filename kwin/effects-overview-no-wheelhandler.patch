@@ -1,7 +1,7 @@
 diff --git a/src/plugins/overview/qml/Main.qml b/src/plugins/overview/qml/Main.qml
 index 209d63131c..25f38f7110 100644
---- a/src/plugins/overview/qml/Main.qml
-+++ b/src/plugins/overview/qml/Main.qml
+--- a/src/plugins/overview/Main.qml
++++ b/src/plugins/overview/Main.qml
 @@ -260,37 +260,6 @@ FocusScope {
      Keys.priority: Keys.AfterItem
      Keys.forwardTo: [allDesktopHeaps.currentHeap, searchField, searchResults]
