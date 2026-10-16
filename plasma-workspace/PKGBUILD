@@ -4,10 +4,10 @@
 # Contributor: Alexey D. <lq07829icatm at rambler.ru>
 # Contributor: Sebastian Meyer <mail@bastimeyer.de>
 
-pkgname=(plasma-workspace)
-#_revision='branch=Plasma/6.7'
-_revision='commit=3d05dba7e93797c33635563d37a0be311df648bf'
-pkgver=6.7.5.r11.g3d05dba
+pkgname=plasma-workspace
+#_revision='branch=Plasma/6.8'
+_revision='commit=fb7e6982bcddf9e0ceb8cca56cad0cd8f2544eb8'
+pkgver=6.8.0.r14.gfb7e698
 pkgrel=1
 pkgdesc='KDE Plasma Workspace'
 arch=(x86_64)
@@ -84,8 +84,6 @@ depends=(accountsservice
          libxau
          libxcb
          libxcrypt
-         libxcursor
-         libxfixes
          libxft
          libxtst
          milou
@@ -104,6 +102,7 @@ depends=(accountsservice
          sh
          solid
          systemd-libs
+         union
          wayland
          xcb-util
          xcb-util-cursor
@@ -119,6 +118,17 @@ makedepends=(ninja
              networkmanager-qt
              plasma-wayland-protocols
              qcoro)
+optdepends=('appmenu-gtk-module: global menu support for some GTK3 applications'
+            'baloo: Baloo search runner'
+            'discover: manage applications installation from the launcher'
+            'kdepim-addons: displaying PIM events in the calendar'
+            'kwayland-integration: Wayland integration for Qt5 applications'
+            'networkmanager-qt: IP based geolocation'
+            'plasma-workspace-wallpapers: additional wallpapers'
+            'plasma5-integration: use Plasma settings in Qt5 applications'
+            'xdg-desktop-portal-gtk: sync font settings to Flatpak apps')
+conflicts=(plasma-wayland-session
+           plasma-x11-session)
 groups=(plasma)
 source=(
   "$pkgname::git+https://invent.kde.org/plasma/$pkgname.git#${_revision}"
@@ -160,30 +170,14 @@ prepare() {
 build() {
   cmake -B build -S "$pkgname" -G Ninja \
     -DCMAKE_AUTOGEN_PARALLEL=1 \
-    -DCMAKE_INSTALL_LIBEXECDIR=lib \
+    -DKDE_INSTALL_LIBEXECDIR=lib \
     -DGLIBC_LOCALE_GEN=OFF \
     -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_TESTING=OFF
   cmake --build build
 }
 
-package_plasma-workspace() {
-  optdepends=('appmenu-gtk-module: global menu support for some GTK3 applications'
-            'baloo: Baloo search runner'
-            'discover: manage applications installation from the launcher'
-            'kdepim-addons: displaying PIM events in the calendar'
-            'kwayland-integration: Wayland integration for Qt5 applications'
-            'kwin-x11: X session window manager'
-            'networkmanager-qt: IP based geolocation'
-            'plasma-workspace-wallpapers: additional wallpapers'
-            'plasma5-integration: use Plasma settings in Qt5 applications'
-            'xdg-desktop-portal-gtk: sync font settings to Flatpak apps')
+package() {
   depends+=(plasma-integration) # Declare runtime dependency here to avoid dependency cycles at build time
-  conflicts=(plasma-wayland-session)
-  replaces=(plasma-wayland-session)
-
   DESTDIR="$pkgdir" cmake --install build
-
-  rm -r "$pkgdir"/usr/share/xsessions/plasmax11.desktop
 }
-
