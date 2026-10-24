@@ -5,87 +5,95 @@
 
 pkgname=kwin
 #_revision='branch=Plasma/6.8'
-_revision='commit=0dcc90e6b56cefeb2b912a1cfb2fa0d4fad8efb7'
-pkgver=6.8.0.r36.g0dcc90e
+_revision='commit=d24d34c21c341a6976d2d9a9fc48bb8b27e37f80'
+pkgver=6.8.1.r46.gd24d34c
 pkgrel=1
 pkgdesc='An easy to use, but flexible, Wayland compositor'
 arch=(x86_64)
 url='https://kde.org/plasma-desktop/'
 license=(LGPL-2.0-or-later)
-depends=(aurorae
-         breeze
-         glibc
-         iio-sensor-proxy
-         plasma-activities
-         kauth
-         kcmutils
-         kcolorscheme
-         kconfig
-         kcoreaddons
-         kcrash
-         kdbusaddons
-         kdeclarative
-         kdecoration
-         kglobalaccel
-         kglobalacceld
-         kguiaddons
-         ki18n
-         kidletime
-         kirigami
-         kitemmodels
-         knewstuff
-         knighttime
-         knotifications
-         kpackage
-         kquickcharts
-         krunner
-         kscreenlocker
-         kservice
-         ksvg
-         kwayland
-         kwidgetsaddons
-         kwindowsystem
-         kxmlgui
-         lcms2
-         libcanberra
-         libdisplay-info
-         libdrm
-         libei
-         libepoxy
-         libevdev
-         libgcc
-         libinput
-         libpipewire
-         libqaccessibilityclient-qt6
-         libstdc++
-         libxcb
-         libxcvt
-         libxkbcommon
-         mesa
-         milou
-         pipewire-session-manager
-         libplasma
-         qt6-5compat
-         qt6-base
-         qt6-declarative
-         qt6-svg
-         qt6-tools
-         systemd-libs
-         vulkan-icd-loader
-         wayland
-         xcb-util-keysyms
-         xcb-util-wm)
-makedepends=(ninja
-             extra-cmake-modules
-             kdoctools
-             krunner
-             plasma-wayland-protocols
-             python
-             vulkan-headers
-             wayland-protocols
-             xorg-xwayland)
-optdepends=('plasma-keyboard: virtual keyboard')
-groups=(plasma)
+depends=(
+  aurorae
+  breeze
+  glibc
+  iio-sensor-proxy
+  plasma-activities
+  kauth
+  kcmutils
+  kcolorscheme
+  kconfig
+  kcoreaddons
+  kcrash
+  kdbusaddons
+  kdeclarative
+  kdecoration
+  kglobalaccel
+  kglobalacceld
+  kguiaddons
+  ki18n
+  kidletime
+  kirigami
+  kitemmodels
+  knewstuff
+  knighttime
+  knotifications
+  kpackage
+  kquickcharts
+  krunner
+  kscreenlocker
+  kservice
+  ksvg
+  kwayland
+  kwidgetsaddons
+  kwindowsystem
+  kxmlgui
+  lcms2
+  libcanberra
+  libdisplay-info
+  libdrm
+  libei
+  libepoxy
+  libevdev
+  libgcc
+  libinput
+  libpipewire
+  libqaccessibilityclient-qt6
+  libstdc++
+  libxcb
+  libxcvt
+  libxkbcommon
+  mesa
+  milou
+  pipewire-session-manager
+  libplasma
+  qt6-5compat
+  qt6-base
+  qt6-declarative
+  qt6-svg
+  qt6-tools
+  systemd-libs
+  vulkan-icd-loader
+  wayland
+  xcb-util-keysyms
+  xcb-util-wm
+)
+makedepends=(
+  ninja
+  extra-cmake-modules
+  kdoctools
+  krunner
+  plasma-wayland-protocols
+  python
+  vulkan-headers
+  wayland-protocols
+  xorg-xwayland
+)
+optdepends=(
+  'plasma-keyboard: virtual keyboard'
+)
+groups=(
+  plasma
+)
 source=(
   "${pkgname}::git+https://invent.kde.org/plasma/${pkgname}.git#${_revision}"
   dont-build-docs.patch
@@ -96,7 +104,6 @@ source=(
   effects-windowheapdelegate-no-close-button.patch
   effects-windowheapdelegate-no-caption.patch
 )
-install=$pkgname.install
 sha256sums=(
   SKIP
   5d9fd68d91cab46b81dca8dade8a59834fa9c25f2cb709ea5f1efabbef4b2579
