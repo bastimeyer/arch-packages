@@ -3,7 +3,7 @@
 
 pkgbase=linux-git
 pkgver=7.3.4.r0.g7595a62d45ee
-pkgrel=1
+pkgrel=3
 pkgdesc='Linux'
 _srctag=v7.3.4
 _srcname=linux
@@ -42,6 +42,8 @@ options=(
 source=(
   "${_srcname}::${_src}?signed#tag=${_srctag}"
   '0000-add-sysctl-to-allow-disabling-unprivileged-CLONE_NEWUSER.patch::https://github.com/archlinux/linux/commit/bcc3ec9aa40b84f8ca4c69efad08aa1f4e84919c.patch'
+  0000-revert-eb5650d1f367722d0136de18998749008fe7d2a7.patch
+  0001-revert-106b4a2a78b2a2f14885604891957b84bba502db.patch
   # https://pixelcluster.dev/VRAM-Overcommit/
   #'vram-overcommit.patch::https://gitlab.freedesktop.org/pixelcluster/kernel/-/compare/00d0c60b6fdb44563aaa72a58d3e3e50509d68aa..2d900c1f9793fdb23bbbd6a42585b72c555266b7?from_project_id=26726&format=patch'
 )
@@ -56,6 +58,8 @@ validpgpkeys=(
 b2sums=(
   'SKIP'
   277d396eec28fe82079b55514aa9162b73ba4f8a2497b9968c972cd4ce28071fdae2e808392511616883468b3533c0f03452b3f8f7d01eee12a8facf68e5567a
+  3d9c883e25996e1d3c9f7e1bdc2d4387adccb558b4dc661abe98043476f53c99120fd830879f54d5614037f896b8a204fef8e54c59e32eed784e3a9292d586b3
+  f7642ec0bc304435c868f3532acac6f0982f3ceeddc0675b55c0aaa6b05783f55998fc08db243f95ce335ae1a6c1dcc1720de4c2afd5bc5832b4948537de058a
 )
 b2sums_x86_64=(
   6948a9e708325cb54446530da2bd6ded6f0717a534893fff6acaa1a113bce42eed085f6cc5b3a7972f9a1aa4e6bc7d8484ab2bf74ae3253d444fb274a23beae1
